@@ -1,0 +1,19 @@
+@startuml
+actor "Personal Escuela" as PE
+participant "Interfaz de Operador" as IO
+participant "Sistema de Gestión" as SG
+participant "Base de Datos" as BD
+
+PE -> IO: Iniciar Sesión
+IO -> SG: Validar Credenciales
+SG -> BD: Consultar Usuario
+BD -> SG: Confirmar Acceso
+SG -> IO: Acceso Concedido
+PE -> IO: Seleccionar Generación de Reportes
+IO -> SG: Solicitar Tipo de Reporte
+PE -> IO: Elegir Tipo de Reporte (Por Profesor, Aula, etc.)
+IO -> SG: Generar Reporte Seleccionado
+SG -> BD: Consultar Datos para Reporte
+BD -> SG: Datos de Reporte
+SG -> IO: Mostrar Reporte
+@enduml

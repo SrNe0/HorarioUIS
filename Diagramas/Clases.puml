@@ -1,0 +1,79 @@
+@startuml
+class Asignatura {
+    - idAsignatura: int
+    - codigo: String
+    - nombre: String
+    - horasTeoria: int
+    - horasPractica: int
+    + obtenerInformacion(): String
+}
+
+class Grupo {
+    - idGrupo: int
+    - asignatura: Asignatura
+    - nombreGrupo: String
+    + obtenerInformacion(): String
+}
+
+class Edificio {
+    - idEdificio: int
+    - nombre: String
+    + obtenerInformacion(): String
+}
+
+class Aula {
+    - idAula: int
+    - codigo: int
+    - descripcion: String
+    - capacidad: int
+    - edificio: Edificio
+    + obtenerInformacion(): String
+}
+
+class Personal {
+    - idPersonal: int
+    - documentoIdentidad: String
+    - apellidos: String
+    - nombres: String
+    - telefono: String
+    - correo: String
+    - condicion: String
+    - nombreUsuario: String
+    - claveAcceso: String
+    - rol: Rol
+    + obtenerInformacion(): String
+}
+
+class Rol {
+    - idRol: int
+    - nombreRol: String
+    + obtenerInformacion(): String
+}
+
+class Horario {
+    - idHorario: int
+    - grupo: Grupo
+    - aula: Aula
+    - documentoDocente: String
+    - dia: String
+    - horaInicio: Time
+    - horaFin: Time
+    + obtenerInformacion(): String
+}
+
+Asignatura "1" *-- "1..*" Grupo
+Grupo "1" *-- "1" Horario
+Edificio "1" *-- "1..*" Aula
+Personal "1" *-- "1" Rol
+Personal "1" *-- "0..*" Horario
+Aula "1" *-- "0..*" Horario
+
+Asignatura : +obtenerInformacion(): String
+Grupo : +obtenerInformacion(): String
+Edificio : +obtenerInformacion(): String
+Aula : +obtenerInformacion(): String
+Personal : +obtenerInformacion(): String
+Rol : +obtenerInformacion(): String
+Horario : +obtenerInformacion(): String
+
+@enduml

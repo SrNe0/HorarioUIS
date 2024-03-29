@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+actor Director as d
+actor "Personal Escuela" as pe
+actor Profesor as p
+
+rectangle Sistema {
+  d --> (Gestión de Usuarios)
+  d --> (Generación de Horarios)
+  pe --> (Importar/Exportar Datos)
+  p --> (Consulta de Horarios)
+  (Gestión de Usuarios) .> (Asignación de Roles) : <<include>>
+  (Generación de Horarios) .> (Validación de Horarios) : <<include>>
+}
+
+@enduml

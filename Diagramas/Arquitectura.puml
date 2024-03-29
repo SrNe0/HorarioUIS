@@ -1,0 +1,27 @@
+@startuml
+package "Capa de Presentación" {
+    [Interfaz de Usuario]
+    [Web]
+}
+
+package "Capa de Lógica de Negocio" {
+    [Controlador de Horarios]
+    [Gestor de Usuarios]
+    [Gestor de Reportes]
+}
+
+package "Capa de Datos" {
+    [Base de Datos]
+}
+
+[Interfaz de Usuario] --> [Controlador de Horarios] : Usa
+[Interfaz de Usuario] --> [Gestor de Usuarios] : Usa
+[Interfaz de Usuario] --> [Gestor de Reportes] : Usa
+[Web] --> [Controlador de Horarios] : Usa
+[Web] --> [Gestor de Usuarios] : Usa
+[Web] --> [Gestor de Reportes] : Usa
+[Controlador de Horarios] --> [Base de Datos] : Accede
+[Gestor de Usuarios] --> [Base de Datos] : Accede
+[Gestor de Reportes] --> [Base de Datos] : Accede
+
+@enduml

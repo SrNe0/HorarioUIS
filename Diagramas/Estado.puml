@@ -1,0 +1,7 @@
+@startuml
+[*] --> Borrador
+Borrador --> Validación: Validar
+Validación --> Finalizado: Aprobar
+Finalizado --> Publicado: Publicar
+Publicado --> [*]
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+package "Sistema Gestión Horarios" {
+  [Interfaz de Usuario] as UI
+  [Gestor de Horarios] as GM
+  [Base de Datos] as DB
+}
+
+[UI] ..> [GM] : Usa
+[GM] ..> [DB] : Consulta/Actualiza
+@enduml

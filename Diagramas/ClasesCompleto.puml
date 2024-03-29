@@ -1,0 +1,51 @@
+@startuml
+
+class Asignatura {
+    -nombre: String
+    -codigo: String
+    -horasTeoria: Int
+    -horasPractica: Int
+
+    +crearAsignatura(): void
+    +modificarAsignatura(): void
+    +eliminarAsignatura(): void
+}
+
+class Profesor {
+    -nombre: String
+    -id: String
+    -telefono: String
+    -correo: String
+
+    +asignarAsignatura(asignatura: Asignatura): void
+    +eliminarAsignatura(asignatura: Asignatura): void
+}
+
+class Aula {
+    -codigo: String
+    -capacidad: Int
+    -descripcion: String
+
+    +crearAula(): void
+    +modificarAula(): void
+    +eliminarAula(): void
+}
+
+class Horario {
+    -horaInicio: Time
+    -horaFin: Time
+    -profesor: Profesor
+    -asignatura: Asignatura
+    -aula: Aula
+
+    +crearHorario(): void
+    +modificarHorario(): void
+    +eliminarHorario(): void
+}
+
+Asignatura "1" -- "1..*" Profesor : imparte >
+Asignatura "1" -- "0..*" Aula : se imparte en >
+Profesor "1..*" -- "1..*" Horario : dicta >
+Aula "1..*" -- "1" Horario : se utiliza en >
+
+@enduml

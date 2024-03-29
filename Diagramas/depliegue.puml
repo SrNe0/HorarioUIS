@@ -1,0 +1,33 @@
+@startuml
+node "Usuario" as Usuario {
+    actor "Personal Escuela" as PersonalEscuela
+    actor Profesor
+    actor Administrador
+}
+
+node "PC" as PC {
+    component "Navegador Web" as Navegador
+}
+
+node "Entorno" as Entorno {
+    component "Autenticación de Usuarios" as Autenticacion
+    component "Front-end (?)" as FrontEnd
+    component "Back-end (Java/Spring)" as BackEnd
+    component "Aplicación Web" as AppWeb
+}
+
+node "Servidor" as Servidor {
+    component "Servidor de Aplicaciones" as ServidorApp
+    component "Servidor de Base de Datos" as ServidorBD
+}
+
+PersonalEscuela --> Navegador
+Profesor --> Navegador
+Administrador --> Navegador
+
+Navegador --> Autenticacion : HTTP
+Autenticacion --> FrontEnd : HTTP
+FrontEnd --> BackEnd : HTTP
+BackEnd --> ServidorApp : JDBC
+ServidorApp --> ServidorBD : JDBC
+@enduml

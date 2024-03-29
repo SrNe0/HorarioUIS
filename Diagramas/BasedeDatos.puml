@@ -1,0 +1,63 @@
+@startuml
+entity "Asignatura" {
+    * idAsignatura: int
+    * codigo: String
+    * nombre: String
+    * horasTeoria: int
+    * horasPractica: int
+}
+
+entity "Grupo" {
+    * idGrupo: int
+    * idAsignatura: int // Clave foránea a la tabla Asignatura
+    * nombreGrupo: String
+}
+
+entity "Edificio" {
+    * idEdificio: int
+    * nombre: String
+}
+
+entity "Aula" {
+    * idAula: int
+    * codigo: int
+    * descripcion: String
+    * capacidad: int
+    * idEdificio: String // Clave foránea a la tabla Edificio
+}
+
+entity "Personal" {
+    * idPersonal: int
+    * documentoIdentidad: String
+    * apellidos: String
+    * nombres: String
+    * telefono: String
+    * correo: String
+    * condicion: String // Ej: autoridad, director, profesor, técnico
+    * nombreUsuario: String
+    * claveAcceso: String
+    * idRol: int // Clave foránea a la tabla Rol
+}
+
+entity "Rol" {
+    * idRol: int
+    * nombreRol: String
+}
+
+entity "Horario" {
+    * idHorario: int
+    * idGrupo: int // Clave foránea a la tabla Grupo
+    * idAula: int // Clave foránea a la tabla Aula
+    * documentoDocente: String
+    * dia: String
+    * horaInicio: Time
+    * horaFin: Time
+}
+
+Personal ||--o{ Horario : "enseñado por/asociado con"
+Aula ||--o{ Horario : "asignado a"
+Personal }|--o{ Rol : "tiene"
+Asignatura }|--o{ Grupo : "tiene"
+Edificio }|--o{ Aula : "contiene"
+Grupo }|--o{ Horario : "tiene"
+@enduml

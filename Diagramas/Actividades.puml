@@ -1,0 +1,19 @@
+@startuml
+start
+:Login como director;
+:Seleccionar opción de gestión de horarios;
+repeat
+  if (¿Datos completos?) then (sí)
+    :Generar borrador de horario;
+    if (¿Validar y publicar horario?) then (sí)
+      :Publicar horario;
+      stop
+    else (no)
+      :Solicitar información adicional;
+    endif
+  else (no)
+    :Solicitar información adicional;
+  endif
+repeat while (no)
+stop
+@enduml

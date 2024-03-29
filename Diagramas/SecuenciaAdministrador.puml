@@ -1,0 +1,22 @@
+@startuml
+actor "Director/Profesional" as D
+participant "Interfaz de Administrador" as IA
+participant "Sistema de Gestión" as SG
+participant "Base de Datos" as BD
+
+D -> IA: Iniciar Sesión
+IA -> SG: Validar Credenciales
+SG -> BD: Consultar Usuario
+BD -> SG: Confirmar Acceso
+SG -> IA: Acceso Concedido
+D -> IA: Seleccionar Gestión de Usuarios
+IA -> SG: Solicitar Datos de Usuario
+SG -> BD: Consultar Usuarios
+BD -> SG: Lista de Usuarios
+SG -> IA: Mostrar Usuarios
+D -> IA: Modificar/Eliminar Usuario
+IA -> SG: Actualizar Usuario
+SG -> BD: Actualizar Base de Datos
+BD -> SG: Confirmación
+SG -> IA: Mostrar Confirmación
+@enduml

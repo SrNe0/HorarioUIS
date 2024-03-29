@@ -1,0 +1,17 @@
+@startuml
+actor Profesor as P
+participant "Interfaz de Usuario" as IU
+participant "Sistema de Gestión" as SG
+participant "Base de Datos" as BD
+
+P -> IU: Iniciar Sesión
+IU -> SG: Validar Credenciales
+SG -> BD: Consultar Usuario
+BD -> SG: Confirmar Acceso
+SG -> IU: Acceso Concedido
+P -> IU: Seleccionar Consulta de Horarios
+IU -> SG: Solicitar Horario de Profesor
+SG -> BD: Consultar Horario
+BD -> SG: Horario de Profesor
+SG -> IU: Mostrar Horario
+@enduml
