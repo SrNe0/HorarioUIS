@@ -2,7 +2,7 @@ package uis.horariouis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import uis.horariouis.model.Personal;
+import uis.horariouis.model.Profesor;
 import uis.horariouis.service.PersonalService;
 
 import java.util.List;
@@ -16,18 +16,18 @@ public class PersonalController {
     private PersonalService personalService;
 
     @GetMapping("/")
-    public List<Personal> getAllPersonal() {
+    public List<Profesor> getAllPersonal() {
         return personalService.getAllPersonal();
     }
 
     @GetMapping("/{id}")
-    public Optional<Personal> getPersonalById(@PathVariable Long id) {
+    public Optional<Profesor> getPersonalById(@PathVariable Long id) {
         return personalService.getPersonalById(id);
     }
 
     @PostMapping("/")
-    public Personal saveOrUpdatePersonal(@RequestBody Personal personal) {
-        return personalService.saveOrUpdatePersonal(personal);
+    public Profesor saveOrUpdatePersonal(@RequestBody Profesor profesor) {
+        return personalService.saveOrUpdatePersonal(profesor);
     }
 
     @DeleteMapping("/{id}")

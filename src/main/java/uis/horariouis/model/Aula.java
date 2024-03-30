@@ -40,12 +40,4 @@ public class Aula implements Serializable {
     @ManyToOne
     @JoinColumn(name = "idEdificio", referencedColumnName = "idEdificio")
     private Edificio edificio;
-
-    public Long getIdAula() {
-        return idAula;
-    }
-
-    public void setIdAula(Long idAula) {
-        this.idAula = idAula;
-    }
 }

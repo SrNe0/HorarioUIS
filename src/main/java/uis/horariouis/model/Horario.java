@@ -3,49 +3,64 @@ package uis.horariouis.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Time;
 
 @Data
 @Entity
-@Table(name = "horario")
+@Table(name = "Horario")
 public class Horario implements Serializable {
-
     @Serial
-    private static final long serialVersionUID = -987654321L;
+    private static final long serialVersionUID = -1234567890L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idHorario;
 
-    @NotNull
+    @NotNull(message = "El ID del profesor es requerido")
+    @ManyToOne
+    @JoinColumn(name = "idProfesor", referencedColumnName = "idUsuario")
+    private Profesor profesor;
+
+    @NotNull(message = "El ID del grupo es requerido")
     @ManyToOne
     @JoinColumn(name = "idGrupo", referencedColumnName = "idGrupo")
     private Grupo grupo;
 
-    @NotNull
+    @NotNull(message = "El ID del aula es requerido")
     @ManyToOne
     @JoinColumn(name = "idAula", referencedColumnName = "idAula")
     private Aula aula;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "idPersonal", referencedColumnName = "idPersonal")
-    private Personal personal;
+    @NotBlank(message = "El día es requerido")
+    private String dia;
 
-    @NotNull
-    @Column(name = "fecha")
-    private Date fecha;
-
-    @NotNull
-    @Column(name = "horaInicio")
+    @NotNull(message = "La hora de inicio es requerida")
     private Time horaInicio;
 
-    @NotNull
-    @Column(name = "horaFin")
+    @NotNull(message = "La hora de fin es requerida")
     private Time horaFin;
-}
 
+    // Constructor vacío
+    public Horario() {
+    }
+
+    // Constructor con todos los campos
+    public Horario(Long idHorario, Profesor profesor, Grupo grupo, Aula aula, String dia, Time horaInicio, Time horaFin) {
+        this.idHorario = idHorario;
+        this.profesor = profesor;
+        this.grupo = grupo;
+        this.aula = aula;
+        this.dia = dia;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+    }
+
+
+
+    // Getters y setters
+    // getIdHorario(), setIdHorario(), getProfesor(), setProfesor(), getGrupo(), setGrupo(), getAula(), setAula(), getDia(), setDia(), getHoraInicio(), setHoraInicio(), getHoraFin(), setHoraFin(), etc.
+}

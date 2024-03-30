@@ -40,7 +40,7 @@ public class HorarioService {
     public Horario updateHorario(Long id, Horario newHorarioData) {
         return horarioRepository.findById(id)
                 .map(horario -> {
-                    horario.setFecha(newHorarioData.getFecha());
+                    horario.setDia(newHorarioData.getDia());
                     horario.setHoraInicio(newHorarioData.getHoraInicio());
                     horario.setHoraFin(newHorarioData.getHoraFin());
                     // Actualiza otros campos si es necesario
