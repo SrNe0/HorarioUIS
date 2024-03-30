@@ -11,7 +11,6 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Data
 @Entity
-@Table(name = "Profesor")
 public class Profesor extends Usuario implements Serializable {
     @Serial
     private static final long serialVersionUID = -1234567890L;

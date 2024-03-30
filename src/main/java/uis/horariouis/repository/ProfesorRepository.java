@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import uis.horariouis.model.Profesor;
 
 @Repository
-public interface PersonalRepository extends JpaRepository<Profesor, Long> {
-    // Aquí puedes agregar métodos personalizados si necesitas realizar consultas específicas
+public interface ProfesorRepository extends JpaRepository<Profesor, Long> {
+    // Aquí puedes agregar métodos de consulta adicionales si los necesitas
 }
-

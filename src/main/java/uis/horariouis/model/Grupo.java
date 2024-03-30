@@ -28,5 +28,22 @@ public class Grupo {
     @NotBlank(message = "El nombre del grupo es requerido")
     @Column(name = "nombregrupo")
     private String nombreGrupo;
+
+    @Column(name = "cupo")
+    private int cupo;
+    // Constructor vacío
+    public Grupo() {
+    }
+
+    // Constructor con todos los campos
+    public Grupo(String nombreGrupo, int cupo, Asignatura asignatura) {
+        this.nombreGrupo = nombreGrupo;
+        this.cupo = cupo;
+        this.asignatura = asignatura;
+    }
+
+    // Getters y setters
+    // getIdGrupo(), setIdGrupo(), getNombreGrupo(), setNombreGrupo(), getCupo(), setCupo(), getAsignatura(), setAsignatura(), etc.
+
 }
 
