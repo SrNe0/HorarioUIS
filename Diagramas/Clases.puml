@@ -1,24 +1,197 @@
 @startuml
+class Usuario {
+    - idUsuario: int
+    - nombreUsuario: String
+    - contrasena: String
+    * idRol: int
+    + Usuario()
+    + Usuario(idUsuario: int, nombreUsuario: String, contrasena: String, idRol: int)
+    + getIdUsuario(): int
+    + setIdUsuario(idUsuario: int): void
+    + getNombreUsuario(): String
+    + setNombreUsuario(nombreUsuario: String): void
+    + getContrasena(): String
+    + setContrasena(contrasena: String): void
+    + getIdRol(): int
+    + setIdRol(idRol: int): void
+}
+
+class Rol {
+    - idRol: int
+    - nombreRol: String
+    + Rol()
+    + Rol(idRol: int, nombreRol: String)
+    + getIdRol(): int
+    + setIdRol(idRol: int): void
+    + getNombreRol(): String
+    + setNombreRol(nombreRol: String): void
+}
+
+class Accion {
+    - idAccion: int
+    - nombreAccion: String
+    + Accion()
+    + Accion(idAccion: int, nombreAccion: String)
+    + getIdAccion(): int
+    + setIdAccion(idAccion: int): void
+    + getNombreAccion(): String
+    + setNombreAccion(nombreAccion: String): void
+}
+
+class RolAccion {
+    - idRolAccion: int
+    * idRol: int
+    * idAccion: int
+    + RolAccion()
+    + RolAccion(idRolAccion: int, idRol: int, idAccion: int)
+    + getIdRolAccion(): int
+    + setIdRolAccion(idRolAccion: int): void
+    + getIdRol(): int
+    + setIdRol(idRol: int): void
+    + getIdAccion(): int
+    + setIdAccion(idAccion: int): void
+}
+
+class Profesor {
+    - idProfesor: int
+    - idUsuario: int
+    - documentoIdentidad: String
+    - apellidos: String
+    - nombres: String
+    - telefono: String
+    - correo: String
+    + Profesor()
+    + Profesor(idProfesor: int, idUsuario: int, documentoIdentidad: String, apellidos: String, nombres: String, telefono: String, correo: String)
+    + getIdProfesor(): int
+    + setIdProfesor(idProfesor: int): void
+    + getIdUsuario(): int
+    + setIdUsuario(idUsuario: int): void
+    + getDocumentoIdentidad(): String
+    + setDocumentoIdentidad(documentoIdentidad: String): void
+    + getApellidos(): String
+    + setApellidos(apellidos: String): void
+    + getNombres(): String
+    + setNombres(nombres: String): void
+    + getTelefono(): String
+    + setTelefono(telefono: String): void
+    + getCorreo(): String
+    + setCorreo(correo: String): void
+}
+
 class Asignatura {
     - idAsignatura: int
     - codigo: String
     - nombre: String
     - horasTeoria: int
     - horasPractica: int
-    + obtenerInformacion(): String
+    + Asignatura()
+    + Asignatura(idAsignatura: int, codigo: String, nombre: String, horasTeoria: int, horasPractica: int)
+    + getIdAsignatura(): int
+    + setIdAsignatura(idAsignatura: int): void
+    + getCodigo(): String
+    + setCodigo(codigo: String): void
+    + getNombre(): String
+    + setNombre(nombre: String): void
+    + getHorasTeoria(): int
+    + setHorasTeoria(horasTeoria: int): void
+    + getHorasPractica(): int
+    + setHorasPractica(horasPractica: int): void
+}
+
+class Dictado {
+    - idDictado: int
+    * idProfesor: int
+    * idAsignatura: int
+    + Dictado()
+    + Dictado(idDictado: int, idProfesor: int, idAsignatura: int)
+    + getIdDictado(): int
+    + setIdDictado(idDictado: int): void
+    + getIdProfesor(): int
+    + setIdProfesor(idProfesor: int): void
+    + getIdAsignatura(): int
+    + setIdAsignatura(idAsignatura: int): void
 }
 
 class Grupo {
     - idGrupo: int
-    - asignatura: Asignatura
+    * idAsignatura: int
     - nombreGrupo: String
-    + obtenerInformacion(): String
+    + Grupo()
+    + Grupo(idGrupo: int, idAsignatura: int, nombreGrupo: String)
+    + getIdGrupo(): int
+    + setIdGrupo(idGrupo: int): void
+    + getIdAsignatura(): int
+    + setIdAsignatura(idAsignatura: int): void
+    + getNombreGrupo(): String
+    + setNombreGrupo(nombreGrupo: String): void
+}
+
+class DisponibilidadHoraria {
+    - idDisponibilidad: int
+    * dia: String
+    * horaInicio: Time
+    * horaFin: Time
+    + DisponibilidadHoraria()
+    + DisponibilidadHoraria(idDisponibilidad: int, dia: String, horaInicio: Time, horaFin: Time)
+    + getIdDisponibilidad(): int
+    + setIdDisponibilidad(idDisponibilidad: int): void
+    + getDia(): String
+    + setDia(dia: String): void
+    + getHoraInicio(): Time
+    + setHoraInicio(horaInicio: Time): void
+    + getHoraFin(): Time
+    + setHoraFin(horaFin: Time): void
+}
+
+class HorarioProfesor {
+    - idHorarioProfesor: int
+    * idProfesor: int
+    * idDisponibilidad: int
+    + HorarioProfesor()
+    + HorarioProfesor(idHorarioProfesor: int, idProfesor: int, idDisponibilidad: int)
+    + getIdHorarioProfesor(): int
+    + setIdHorarioProfesor(idHorarioProfesor: int): void
+    + getIdProfesor(): int
+    + setIdProfesor(idProfesor: int): void
+    + getIdDisponibilidad(): int
+    + setIdDisponibilidad(idDisponibilidad: int): void
+}
+
+class Horario {
+    - idHorario: int
+    * idProfesor: int
+    * idGrupo: int
+    * idAula: int
+    - dia: String
+    - horaInicio: Time
+    - horaFin: Time
+    + Horario()
+    + Horario(idHorario: int, idProfesor: int, idGrupo: int, idAula: int, dia: String, horaInicio: Time, horaFin: Time)
+    + getIdHorario(): int
+    + setIdHorario(idHorario: int): void
+    + getIdProfesor(): int
+    + setIdProfesor(idProfesor: int): void
+    + getIdGrupo(): int
+    + setIdGrupo(idGrupo: int): void
+    + getIdAula(): int
+    + setIdAula(idAula: int): void
+    + getDia(): String
+    + setDia(dia: String): void
+    + getHoraInicio(): Time
+    + setHoraInicio(horaInicio: Time): void
+    + getHoraFin(): Time
+    + setHoraFin(horaFin: Time): void
 }
 
 class Edificio {
     - idEdificio: int
     - nombre: String
-    + obtenerInformacion(): String
+    + Edificio()
+    + Edificio(idEdificio: int, nombre: String)
+    + getIdEdificio(): int
+    + setIdEdificio(idEdificio: int): void
+    + getNombre(): String
+    + setNombre(nombre: String): void
 }
 
 class Aula {
@@ -26,54 +199,36 @@ class Aula {
     - codigo: int
     - descripcion: String
     - capacidad: int
-    - edificio: Edificio
-    + obtenerInformacion(): String
+    - computadores: boolean
+    * idEdificio: int
+    + Aula()
+    + Aula(idAula: int, codigo: int, descripcion: String, capacidad: int, computadores: boolean, idEdificio: int)
+    + getIdAula(): int
+    + setIdAula(idAula: int): void
+    + getCodigo(): int
+    + setCodigo(codigo: int): void
+    + getDescripcion(): String
+    + setDescripcion(descripcion: String): void
+    + getCapacidad(): int
+    + setCapacidad(capacidad: int): void
+    + isComputadores(): boolean
+    + setComputadores(computadores: boolean): void
+    + getIdEdificio(): int
+    + setIdEdificio(idEdificio: int): void
 }
 
-class Personal {
-    - idPersonal: int
-    - documentoIdentidad: String
-    - apellidos: String
-    - nombres: String
-    - telefono: String
-    - correo: String
-    - condicion: String
-    - nombreUsuario: String
-    - claveAcceso: String
-    - rol: Rol
-    + obtenerInformacion(): String
-}
+Usuario <|-- Profesor
+Usuario --|{ Rol
 
-class Rol {
-    - idRol: int
-    - nombreRol: String
-    + obtenerInformacion(): String
-}
-
-class Horario {
-    - idHorario: int
-    - grupo: Grupo
-    - aula: Aula
-    - documentoDocente: String
-    - dia: String
-    - horaInicio: Time
-    - horaFin: Time
-    + obtenerInformacion(): String
-}
-
-Asignatura "1" *-- "1..*" Grupo
-Grupo "1" *-- "1" Horario
-Edificio "1" *-- "1..*" Aula
-Personal "1" *-- "1" Rol
-Personal "1" *-- "0..*" Horario
-Aula "1" *-- "0..*" Horario
-
-Asignatura : +obtenerInformacion(): String
-Grupo : +obtenerInformacion(): String
-Edificio : +obtenerInformacion(): String
-Aula : +obtenerInformacion(): String
-Personal : +obtenerInformacion(): String
-Rol : +obtenerInformacion(): String
-Horario : +obtenerInformacion(): String
-
+Rol --|{ RolAccion
+RolAccion --|{ Accion
+Profesor --|{ Dictado
+Asignatura --|{ Dictado
+Profesor --|{ Horario
+Grupo --|{ Horario
+Aula --|{ Horario
+Edificio --|{ Aula
+HorarioProfesor --|{ DisponibilidadHoraria
+Profesor -- HorarioProfesor
+Asignatura -- Grupo
 @enduml

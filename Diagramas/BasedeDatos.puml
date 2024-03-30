@@ -1,4 +1,37 @@
 @startuml
+entity "Usuario" {
+    * idUsuario: int
+    * nombreUsuario: String
+    * contrasena: String
+    * idRol: int // Clave foránea a la tabla Rol
+}
+
+entity "Rol" {
+    * idRol: int
+    * nombreRol: String
+}
+
+entity "Accion" {
+    * idAccion: int
+    * nombreAccion: String
+}
+
+entity "RolAccion" {
+    * idRolAccion: int
+    * idRol: int // Clave foránea a la tabla Rol
+    * idAccion: int // Clave foránea a la tabla Accion
+}
+
+entity "Profesor" {
+    * idProfesor: int
+    * idUsuario: int // Clave foránea a la tabla Usuario
+    * documentoIdentidad: String
+    * apellidos: String
+    * nombres: String
+    * telefono: String
+    * correo: String
+}
+
 entity "Asignatura" {
     * idAsignatura: int
     * codigo: String
@@ -7,10 +40,39 @@ entity "Asignatura" {
     * horasPractica: int
 }
 
+entity "Dictado" {
+    * idDictado: int
+    * idProfesor: int // Clave foránea a la tabla Profesor
+    * idAsignatura: int // Clave foránea a la tabla Asignatura
+}
+
 entity "Grupo" {
     * idGrupo: int
     * idAsignatura: int // Clave foránea a la tabla Asignatura
     * nombreGrupo: String
+}
+
+entity "DisponibilidadHoraria" {
+    * idDisponibilidad: int
+    * dia: String
+    * horaInicio: Time
+    * horaFin: Time
+}
+
+entity "HorarioProfesor" {
+    * idHorarioProfesor: int
+    * idProfesor: int // Clave foránea a la tabla Profesor
+    * idDisponibilidad: int // Clave foránea a la tabla DisponibilidadHoraria
+}
+
+entity "Horario" {
+    * idHorario: int
+    * idProfesor: int // Clave foránea a la tabla Profesor
+    * idGrupo: int // Clave foránea a la tabla Grupo
+    * idAula: int // Clave foránea a la tabla Aula
+    * dia: String
+    * horaInicio: Time
+    * horaFin: Time
 }
 
 entity "Edificio" {
@@ -23,41 +85,24 @@ entity "Aula" {
     * codigo: int
     * descripcion: String
     * capacidad: int
-    * idEdificio: String // Clave foránea a la tabla Edificio
+    * computadores: boolean
+    * idEdificio: int // Clave foránea a la tabla Edificio
 }
 
-entity "Personal" {
-    * idPersonal: int
-    * documentoIdentidad: String
-    * apellidos: String
-    * nombres: String
-    * telefono: String
-    * correo: String
-    * condicion: String // Ej: autoridad, director, profesor, técnico
-    * nombreUsuario: String
-    * claveAcceso: String
-    * idRol: int // Clave foránea a la tabla Rol
-}
-
-entity "Rol" {
-    * idRol: int
-    * nombreRol: String
-}
-
-entity "Horario" {
-    * idHorario: int
-    * idGrupo: int // Clave foránea a la tabla Grupo
-    * idAula: int // Clave foránea a la tabla Aula
-    * documentoDocente: String
-    * dia: String
-    * horaInicio: Time
-    * horaFin: Time
-}
-
-Personal ||--o{ Horario : "enseñado por/asociado con"
-Aula ||--o{ Horario : "asignado a"
-Personal }|--o{ Rol : "tiene"
-Asignatura }|--o{ Grupo : "tiene"
-Edificio }|--o{ Aula : "contiene"
+Usuario }|--o{ Rol : "tiene"
+Usuario }|--o{ Profesor : "es"
+Profesor }|--o{ Dictado : "dicta"
+Asignatura }|--o{ Dictado : "es dictada por"
+Profesor }|--o{ Horario : "enseña"
 Grupo }|--o{ Horario : "tiene"
+Aula }|--o{ Horario : "ocurre en"
+Edificio }|--o{ Aula : "contiene"
+Asignatura }|--o{ Grupo : "tiene"
+Rol }|--o{ RolAccion : "tiene"
+Accion }|-- RolAccion
+
+Profesor }|--o{ HorarioProfesor : "tiene"
+
+HorarioProfesor }|--o{ DisponibilidadHoraria : "tiene"
+
 @enduml
