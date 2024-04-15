@@ -1,12 +1,15 @@
 package uis.horariouis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
 import uis.horariouis.service.EdificioService;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/edificios")
@@ -21,13 +24,26 @@ public class EdificioController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Edificio> getEdificioById(@PathVariable Long id) {
-        return edificioService.getEdificioById(id);
+    public ResponseEntity<Edificio> getEdificioById(@PathVariable Long id) {
+        return edificioService.getEdificioById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/")
-    public Edificio saveOrUpdateEdificio(@RequestBody Edificio edificio) {
-        return edificioService.saveOrUpdateEdificio(edificio);
+    public ResponseEntity<Edificio> createEdificio(@RequestBody Edificio edificio) {
+        Edificio newEdificio = edificioService.createEdificio(edificio);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newEdificio);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Edificio> updateEdificio(@PathVariable Long id, @RequestBody Edificio edificio) {
+        try {
+            Edificio updatedEdificio = edificioService.updateEdificio(id, edificio);
+            return ResponseEntity.ok(updatedEdificio);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

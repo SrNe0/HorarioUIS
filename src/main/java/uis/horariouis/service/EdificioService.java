@@ -2,6 +2,7 @@ package uis.horariouis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
 import uis.horariouis.repository.EdificioRepository;
 
@@ -22,10 +23,19 @@ public class EdificioService {
         return edificioRepository.findById(id);
     }
 
-    public Edificio saveOrUpdateEdificio(Edificio edificio) {
-        return edificioRepository.save(edificio);
+    // Método para crear un nuevo edificio
+    public Edificio createEdificio(Edificio edificio) {
+        return edificioRepository.save(edificio);  // Guarda un nuevo edificio
     }
 
+    // Método para actualizar un edificio existente
+    public Edificio updateEdificio(Long id, Edificio edificio) {
+        return edificioRepository.findById(id).map(existingEdificio -> {
+            existingEdificio.setNombre(edificio.getNombre());
+            // Aquí se pueden agregar más campos para actualizar
+            return edificioRepository.save(existingEdificio);
+        }).orElseThrow(() -> new ResourceNotFoundException("Edificio not found with id: " + id));
+    }
     public void deleteEdificio(Long id) {
         edificioRepository.deleteById(id);
     }

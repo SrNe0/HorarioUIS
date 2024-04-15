@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uis.horariouis.dto.GrupoDTO;
+import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Grupo;
 import uis.horariouis.service.GrupoService;
 
@@ -28,11 +29,6 @@ public class GrupoController {
         return grupoService.getGrupoById(id);
     }
 
-    @PostMapping("/")
-    public Grupo saveOrUpdateGrupo(@RequestBody Grupo grupo) {
-        return grupoService.saveOrUpdateGrupo(grupo);
-    }
-
     @DeleteMapping("/{id}")
     public void deleteGrupo(@PathVariable Long id) {
         grupoService.deleteGrupo(id);
@@ -45,5 +41,16 @@ public class GrupoController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(grupo);
     }
-}
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Grupo> updateGrupo(@PathVariable Long id, @RequestBody GrupoDTO grupoDTO) {
+        try {
+            Grupo updatedGrupo = grupoService.updateGrupo(id, grupoDTO);
+            return ResponseEntity.ok(updatedGrupo);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+}
