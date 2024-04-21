@@ -6,9 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
+import uis.horariouis.service.CsvService;
 import uis.horariouis.service.EdificioService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
+
 
 
 @RestController
@@ -17,6 +21,9 @@ public class EdificioController {
 
     @Autowired
     private EdificioService edificioService;
+    @Autowired
+    private CsvService csvService;
+
 
     @GetMapping("/")
     public List<Edificio> getAllEdificios() {
@@ -49,5 +56,26 @@ public class EdificioController {
     @DeleteMapping("/{id}")
     public void deleteEdificio(@PathVariable Long id) {
         edificioService.deleteEdificio(id);
+    }
+
+    @PostMapping("/import-csv")
+    public ResponseEntity<String> importEdificiosFromCsv(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío");
+        }
+        try {
+            csvService.importEdificiosFromCsv(file);
+            return ResponseEntity.ok("Archivo cargado con éxito");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el archivo: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/export-csv")
+    public void exportEdificiosToCsv(HttpServletResponse response) {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=edificios.csv");
+        csvService.exportEdificiosToCsv(response);
     }
 }
