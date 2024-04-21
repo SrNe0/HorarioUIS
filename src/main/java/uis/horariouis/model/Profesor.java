@@ -1,19 +1,16 @@
 package uis.horariouis.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serial;
-import java.io.Serializable;
 
-@EqualsAndHashCode(callSuper = false)
 @Data
 @Entity
-public class Profesor extends Usuario implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -1234567890L;
+@Table(name = "profesor")
+public class Profesor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idProfesor;
 
     @NotBlank(message = "El documento de identidad es requerido")
     private String documentoIdentidad;
@@ -30,19 +27,10 @@ public class Profesor extends Usuario implements Serializable {
     @NotBlank(message = "El correo electrónico es requerido")
     private String correo;
 
-    // Constructor vacío
-    public Profesor() {
-    }
+    // Referencia opcional a Usuario si es necesario para la lógica de negocio
+    @OneToOne
+    @JoinColumn(name = "idUsuario", referencedColumnName = "idUsuario")
+    private Usuario usuario;
 
-    // Constructor con todos los campos
-    public Profesor(String documentoIdentidad, String apellidos, String nombres, String telefono, String correo) {
-        this.documentoIdentidad = documentoIdentidad;
-        this.apellidos = apellidos;
-        this.nombres = nombres;
-        this.telefono = telefono;
-        this.correo = correo;
-    }
-
-    // Getters y setters adicionales si es necesario
-    // getDocumentoIdentidad(), setDocumentoIdentidad(), etc.
+    // Constructor, getters y setters
 }
