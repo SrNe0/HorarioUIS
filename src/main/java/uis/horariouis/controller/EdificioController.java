@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
-import uis.horariouis.service.CsvService;
+import uis.horariouis.service.CsvServiceEdificio;
 import uis.horariouis.service.EdificioService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +22,7 @@ public class EdificioController {
     @Autowired
     private EdificioService edificioService;
     @Autowired
-    private CsvService csvService;
+    private CsvServiceEdificio csvServiceEdificio;
 
 
     @GetMapping("/")
@@ -64,7 +64,7 @@ public class EdificioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío");
         }
         try {
-            csvService.importEdificiosFromCsv(file);
+            csvServiceEdificio.importEdificiosFromCsv(file);
             return ResponseEntity.ok("Archivo cargado con éxito");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el archivo: " + e.getMessage());
@@ -76,6 +76,6 @@ public class EdificioController {
     public void exportEdificiosToCsv(HttpServletResponse response) {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=edificios.csv");
-        csvService.exportEdificiosToCsv(response);
+        csvServiceEdificio.exportEdificiosToCsv(response);
     }
 }
