@@ -7,7 +7,6 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uis.horariouis.model.Asignatura;
 import uis.horariouis.repository.AsignaturaRepository;
 import org.slf4j.Logger;

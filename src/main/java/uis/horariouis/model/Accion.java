@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @Table(name = "Accion")
 public class Accion implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1234567890L;
 
     @Id
