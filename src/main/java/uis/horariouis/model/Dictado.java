@@ -33,13 +33,6 @@ public class Dictado implements Serializable {
     public Dictado() {
     }
 
-    // Constructor con todos los campos
-    public Dictado(Long idDictado, Profesor profesor, Asignatura asignatura) {
-        this.idDictado = idDictado;
-        this.profesor = profesor;
-        this.asignatura = asignatura;
-    }
-
     // Getters y setters
     // getIdDictado(), setIdDictado(), getProfesor(), setProfesor(), getAsignatura(), setAsignatura(), etc.
 }

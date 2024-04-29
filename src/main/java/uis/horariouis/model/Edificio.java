@@ -21,7 +21,7 @@ public class Edificio implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idedificio")
     @CsvBindByName(column = "ID")
-    private int idEdificio;
+    private Long idEdificio;
 
     @NotBlank(message = "El nombre del edificio es requerido")
     @Column(name = "nombre")

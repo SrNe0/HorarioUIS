@@ -27,14 +27,10 @@ public class AulaService {
         return aulaRepository.findById(id);
     }
 
-    public Aula saveOrUpdateAula(Aula aula) {
-        return aulaRepository.save(aula);
-    }
-
     public boolean deleteAula(Long id) {
         if (aulaRepository.existsById(id)) {  // Verifica si la aula existe
             aulaRepository.deleteById(id);  // Elimina la aula
-            return true;  // Devuelve true si la aula fue eliminada
+            return true;  // Devuelve true si el aula fue eliminada
         } else {
             return false;  // Devuelve false si la aula no existía
         }
@@ -67,7 +63,7 @@ public class AulaService {
                 throw new RuntimeException("Edificio con nombre " + aulaDTO.getNombreEdificio() + " no encontrado.");
             }
 
-            // Actualiza los campos de la aula
+            // Actualiza los campos del aula
             aula.setCodigo(aulaDTO.getCodigo());
             aula.setDescripcion(aulaDTO.getDescripcion());
             aula.setCapacidad(aulaDTO.getCapacidad());

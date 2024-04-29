@@ -2,7 +2,6 @@ package uis.horariouis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uis.horariouis.exception.HorarioSolapadoException;
 import uis.horariouis.model.Horario;
 import uis.horariouis.repository.HorarioRepository;
 

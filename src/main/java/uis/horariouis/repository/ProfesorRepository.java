@@ -6,6 +6,5 @@ import uis.horariouis.model.Profesor;
 
 @Repository
 public interface ProfesorRepository extends JpaRepository<Profesor, Long> {
-    Profesor findByDocumentoIdentidad(String documentoIdentidad);
     // Aquí puedes agregar métodos de consulta adicionales si los necesitas
 }
