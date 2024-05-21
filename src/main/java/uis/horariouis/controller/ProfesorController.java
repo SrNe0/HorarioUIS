@@ -22,7 +22,7 @@ import java.util.List;
 
 // Anotación que define esta clase como un controlador REST y mapea las solicitudes a la ruta base para profesores.
 @RestController
-@RequestMapping("/apip/profesores")
+@RequestMapping("/api/profesores")
 @Tag(name = "Profesores", description = "API para la gestión de profesores")
 
 public class ProfesorController {
