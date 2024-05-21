@@ -22,6 +22,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'echo "SSH connection successful"'
 
-      - name: Deploy to server
+      - name: Deploy to server v1
         run: |
           ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deploy.sh'
