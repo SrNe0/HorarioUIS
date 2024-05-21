@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -41,4 +42,7 @@ public class Asignatura implements Serializable {
     @CsvBindByName(column = "Horas Práctica")
     private Integer horasPractica;
 
+    // Relación OneToMany con Grupo
+
+    // Constructores, Getters y Setters adicionales
 }

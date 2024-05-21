@@ -2,11 +2,16 @@ package uis.horariouis.model;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -123456789L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;

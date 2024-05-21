@@ -1,70 +1,115 @@
 package uis.horariouis.controller;
 
-// Importaciones de Spring para manejo de inyección de dependencias y respuestas HTTP.
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-// Importaciones para manejar las solicitudes HTTP y mapeo de rutas.
 import org.springframework.web.bind.annotation.*;
-// Importaciones de los modelos de datos y transferencia (DTO) usados en el controlador.
+import org.springframework.web.multipart.MultipartFile;
 import uis.horariouis.dto.AulaDTO;
 import uis.horariouis.model.Aula;
-// Importación del servicio que contiene la lógica de negocio para la entidad Aula.
 import uis.horariouis.service.AulaService;
+import uis.horariouis.service.CsvServiceAula;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-// Anotación que define la clase como un controlador REST y mapea las solicitudes a la ruta base para aulas.
 @RestController
 @RequestMapping("/api/aulas")
+@Tag(name = "Aulas", description = "API para la gestión de aulas")
 public class AulaController {
 
-    // Inyección del servicio AulaService, que proporciona los métodos para operar sobre la entidad Aula.
     @Autowired
     private AulaService aulaService;
+    @Autowired
+    private CsvServiceAula csvServiceAula;
 
-    // Método para crear un aula, mapeado a POST en la ruta específica "/create".
-    // Recibe un AulaDTO y crea una instancia de Aula.
-    @PostMapping("/create")
+    @Operation(summary = "Crear un aula",
+            description = "Crea un nuevo aula a partir de los datos proporcionados en el DTO.")
+    @ApiResponse(responseCode = "201", description = "Aula creada exitosamente",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Aula.class))})
+    @PostMapping("/")
     public ResponseEntity<Aula> createAula(@RequestBody AulaDTO aulaDTO) {
         Aula aulaCreada = aulaService.createOrUpdateAula(aulaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(aulaCreada);  // Retorna el aula creada con estado HTTP 201.
+        return ResponseEntity.status(HttpStatus.CREATED).body(aulaCreada);
     }
 
-    // Método para obtener todas las aulas, mapeado a GET en la ruta base.
-    // Retorna una lista de todas las aulas disponibles.
+    @Operation(summary = "Obtener todas las aulas",
+            description = "Obtiene una lista de todas las aulas disponibles.")
     @GetMapping
     public List<Aula> getAllAulas() {
         return aulaService.getAllAulas();
     }
 
-    // Método para obtener una aula específica por su ID, mapeado a GET con un parámetro de ruta.
-    // Utiliza el servicio para encontrar el aula y retorna una respuesta según si se encuentra o no.
+    @Operation(summary = "Obtener un aula por su ID",
+            description = "Obtiene un aula específica por su ID.")
+    @ApiResponse(responseCode = "200", description = "Aula encontrada",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Aula.class))})
+    @ApiResponse(responseCode = "404", description = "Aula no encontrada")
     @GetMapping("/{id}")
     public ResponseEntity<Aula> getAulaById(@PathVariable Long id) {
         return aulaService.getAulaById(id)
-                .map(ResponseEntity::ok)  // Si se encuentra el aula, retorna 200 OK con el aula.
-                .orElse(ResponseEntity.notFound().build());  // Si no se encuentra, retorna 404 Not Found.
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Método para actualizar una aula, mapeado a PUT en la ruta con el ID de aula.
-    // Recibe un AulaDTO como datos nuevos para actualizar el aula existente.
+    @Operation(summary = "Actualizar un aula existente",
+            description = "Actualiza un aula existente por su ID utilizando los datos proporcionados en el DTO.")
+    @ApiResponse(responseCode = "200", description = "Aula actualizada exitosamente",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Aula.class))})
+    @ApiResponse(responseCode = "404", description = "Aula no encontrada")
     @PutMapping("/{id}")
     public ResponseEntity<Aula> updateAula(@PathVariable Long id, @RequestBody AulaDTO aulaDTO) {
         return aulaService.updateAula(id, aulaDTO)
-                .map(aulaActualizada -> ResponseEntity.ok().body(aulaActualizada))  // Retorna el aula actualizada con 200 OK.
-                .orElse(ResponseEntity.notFound().build());  // Si el aula no existe, retorna 404 Not Found.
+                .map(aulaActualizada -> ResponseEntity.ok().body(aulaActualizada))
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Método para eliminar una aula por su ID, mapeado a DELETE en la ruta con el ID de aula.
-    // Verifica si el aula fue eliminada y retorna una respuesta acorde.
+    @Operation(summary = "Eliminar un aula por su ID",
+            description = "Elimina un aula existente por su ID.")
+    @ApiResponse(responseCode = "204", description = "Aula eliminada exitosamente")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAula(@PathVariable Long id) {
         boolean deleted = aulaService.deleteAula(id);
         if (deleted) {
-            return ResponseEntity.ok().build();  // Devuelve 200 OK si el aula fue eliminada exitosamente.
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();  // Devuelve 404 Not Found si el aula no se encuentra para eliminar.
+            return ResponseEntity.notFound().build();
         }
+    }
+
+    @Operation(summary = "Importar aulas desde archivo CSV")
+    @PostMapping("/import-csv")
+    public ResponseEntity<String> importGruposFromCsv(
+            @RequestParam("file")
+            @Parameter(description = "Archivo CSV que contiene las aulas a importar.", required = true,
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(type = "string", format = "binary", description = "Archivo CSV")))
+            MultipartFile file
+    ) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío");
+        }
+        try {
+            csvServiceAula.importAulasFromCsv(file);
+            return ResponseEntity.ok("Archivo cargado con éxito");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el archivo: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Exportar aulas a un archivo CSV",
+            description = "Exporta aulas a un archivo CSV.")
+    @GetMapping("/export-csv")
+    public void exportGruposToCsv(HttpServletResponse response) {
+        csvServiceAula.exportAulasToCsv(response);
     }
 }

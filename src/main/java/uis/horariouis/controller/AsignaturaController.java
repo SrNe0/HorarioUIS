@@ -1,82 +1,112 @@
-// Define el paquete donde se encuentra el controlador.
 package uis.horariouis.controller;
 
-// Importaciones necesarias para la funcionalidad del controlador.
-import org.springframework.beans.factory.annotation.Autowired; // Permite la inyección automática de dependencias.
-import org.springframework.http.HttpStatus; // Contiene los códigos de estado HTTP para respuestas.
-import org.springframework.http.ResponseEntity; // Permite manejar respuestas HTTP con cuerpo y estado.
-import org.springframework.web.bind.annotation.*; // Contiene anotaciones para mapear solicitudes HTTP a métodos.
-import org.springframework.web.multipart.MultipartFile; // Para manejo de archivos subidos en solicitudes HTTP.
-import uis.horariouis.exception.ResourceNotFoundException; // Excepción personalizada para recursos no encontrados.
-import uis.horariouis.model.Asignatura; // Modelo de datos para la entidad Asignatura.
-import uis.horariouis.model.ErrorResponse; // Modelo para respuestas de error personalizadas.
-import uis.horariouis.service.AsignaturaService; // Servicio que contiene la lógica de negocio para Asignaturas.
-import uis.horariouis.service.CsvServiceAsignatura; // Servicio para importar/exportar datos de Asignatura en formato CSV.
-import javax.servlet.http.HttpServletResponse; // Utilizado para configurar la respuesta HTTP directamente.
-import javax.validation.Valid; // Asegura que los objetos recibidos en los métodos están validados.
-import java.util.Collections; // Utilidades para manejar colecciones, como crear mapas inmutables.
-import java.util.List; // Utilizado para manejar listas de objetos, como listas de Asignaturas.
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import uis.horariouis.exception.ResourceNotFoundException;
+import uis.horariouis.model.Asignatura;
+import uis.horariouis.model.ErrorResponse;
+import uis.horariouis.service.AsignaturaService;
+import uis.horariouis.service.CsvServiceAsignatura;
 
-// Anotación que define esta clase como un controlador REST, mapeado a "/api/asignaturas".
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/asignaturas")
+@Tag(name = "Asignaturas", description = "API para la gestión de asignaturas")
 public class AsignaturaController {
 
-    // Servicios inyectados que manejan la lógica de negocio.
     @Autowired
     private AsignaturaService asignaturaService;
     @Autowired
     private CsvServiceAsignatura csvServiceAsignatura;
 
-    // Método para obtener todas las asignaturas, retorna una lista de asignaturas.
+
+    @Operation(summary = "Obtener todas las asignaturas", description = "Devuelve una lista de todas las asignaturas disponibles.")
+    @ApiResponse(responseCode = "200", description = "Lista de asignaturas obtenida correctamente",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Asignatura.class)))
     @GetMapping
     public List<Asignatura> getAllAsignaturas() {
         return asignaturaService.findAll();
     }
 
-    // Método para obtener una asignatura por su ID, devuelve una entidad Asignatura si se encuentra.
+    @Operation(summary = "Obtener una asignatura por ID", description = "Devuelve una asignatura específica por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Asignatura encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Asignatura.class))),
+            @ApiResponse(responseCode = "404", description = "Asignatura no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<Asignatura> getAsignaturaById(@PathVariable Long id) {
+    public ResponseEntity<Asignatura> getAsignaturaById(@Parameter(description = "ID de la asignatura a buscar", required = true) @PathVariable Long id) {
         Asignatura asignatura = asignaturaService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id: " + id));
         return ResponseEntity.ok(asignatura);
     }
 
-    // Método para crear una nueva asignatura, valida el objeto Asignatura recibido y lo guarda.
-    @PostMapping
-    public ResponseEntity<?> createAsignatura(@Valid @RequestBody Asignatura asignatura) {
-        try {
-            Asignatura nuevaAsignatura = asignaturaService.save(asignatura);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignatura);
-        } catch (IllegalArgumentException ex) {
-            ErrorResponse errorResponse = new ErrorResponse("Validation error", HttpStatus.BAD_REQUEST.value());
-            errorResponse.setDetails(Collections.singletonMap("message", ex.getMessage()));
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+    @Operation(summary = "Crear una nueva asignatura", description = "Crea una nueva asignatura con los datos proporcionados.")
+    @ApiResponse(responseCode = "201", description = "Asignatura creada correctamente",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Asignatura.class)))
+    @PostMapping("/")
+    public ResponseEntity<Asignatura> createAsignatura(@Valid @RequestBody Asignatura asignatura) {
+        Asignatura nuevaAsignatura = asignaturaService.save(asignatura);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignatura);
     }
 
-    // Método para actualizar una asignatura existente, identificada por su ID.
+    @Operation(summary = "Actualizar una asignatura existente", description = "Actualiza los datos de una asignatura existente basada en su ID, se tiene que agregar todos los datos " +
+            "incluidos los que no se van a editar.")
+    @ApiResponse(responseCode = "200", description = "Asignatura actualizada correctamente",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Asignatura.class)))
     @PutMapping("/{id}")
     public ResponseEntity<Asignatura> updateAsignatura(@PathVariable Long id, @Valid @RequestBody Asignatura asignatura) {
         Asignatura asignaturaActualizada = asignaturaService.update(id, asignatura);
         return ResponseEntity.ok(asignaturaActualizada);
     }
 
-    // Método para eliminar una asignatura por su ID, maneja la excepción si no se encuentra la asignatura.
+    @Operation(summary = "Eliminar una asignatura por ID", description = "Elimina una asignatura basada en su ID.")
+    @ApiResponse(responseCode = "204", description = "Asignatura eliminada correctamente")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAsignatura(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAsignatura(@Parameter(description = "ID de la asignatura a eliminar", required = true) @PathVariable Long id) {
         try {
             asignaturaService.deleteById(id);
             return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            // Puedes registrar el error con más detalle o enviar un mensaje personalizado
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    // Método para importar asignaturas desde un archivo CSV, válida que el archivo no esté vacío.
+
+    @Operation(summary = "Importar asignaturas desde un archivo CSV", description = "Permite la carga de un archivo CSV para importar asignaturas.")
+    @ApiResponse(responseCode = "200", description = "Archivo importado correctamente")
+    @ApiResponse(responseCode = "400", description = "Archivo está vacío")
+    @ApiResponse(responseCode = "500", description = "Error al procesar el archivo")
     @PostMapping("/import-csv")
-    public ResponseEntity<String> importEdificiosFromCsv(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> importAsignaturasFromCsv(
+            @RequestParam("file")
+            @Parameter(description = "Archivo CSV que contiene las asignaturas a importar.", required = true,
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(type = "string", format = "binary", description = "Archivo CSV")))
+            MultipartFile file
+    ) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío");
         }
@@ -88,11 +118,12 @@ public class AsignaturaController {
         }
     }
 
-    // Método para exportar asignaturas a un archivo CSV, configura la respuesta para descargar un archivo.
+    @Operation(summary = "Exportar asignaturas a un archivo CSV", description = "Exporta asignaturas a un archivo CSV.")
+    @ApiResponse(responseCode = "200", description = "Archivo exportado correctamente")
     @GetMapping("/export-csv")
-    public void exportEdificiosToCsv(HttpServletResponse response) {
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=edificios.csv");
+    public void exportAsignaturasToCsv(HttpServletResponse response) {
+        response.setContentType("application/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"asignaturas.csv\"");
         csvServiceAsignatura.exportAsignaturasToCsv(response);
     }
 }

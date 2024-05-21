@@ -1,5 +1,6 @@
 package uis.horariouis.model;
 
+import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,18 +18,22 @@ public class Grupo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @CsvBindByName(column = "IDGRUPO")
     @Column(name = "idgrupo")
-    private int idGrupo;
+    private Long idGrupo;
 
     @NotNull(message = "La asignatura es requerida")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idasignatura", referencedColumnName = "idasignatura")
+    @CsvBindByName(column = "ASIGNATURA")
     private Asignatura asignatura;
 
     @NotBlank(message = "El nombre del grupo es requerido")
+    @CsvBindByName(column = "NOMBREGRUPO")
     @Column(name = "nombregrupo")
     private String nombreGrupo;
 
+    @CsvBindByName(column = "CUPO")
     @Column(name = "cupo")
     private int cupo;
     // Constructor vacío

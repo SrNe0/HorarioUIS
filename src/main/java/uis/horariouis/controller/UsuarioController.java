@@ -1,5 +1,12 @@
 package uis.horariouis.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 // Importaciones necesarias de Spring Framework y otras dependencias.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,45 +21,56 @@ import java.util.List;
 
 // Marca esta clase como un controlador REST.
 @RestController
-// Define la ruta base para todos los endpoints en este controlador.
 @RequestMapping("/api/usuarios")
+@Tag(name = "Usuarios", description = "APIs para la gestión de usuarios")
 public class UsuarioController {
 
-    // Inyección de la dependencia del servicio de usuario.
     @Autowired
     private UsuarioService usuarioService;
 
-    // Endpoint para obtener todos los usuarios, mapeado a una petición GET.
+    @Operation(summary = "Obtener todos los usuarios", description = "Retorna una lista de todos los usuarios registrados.")
+    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida correctamente",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Usuario.class)))
     @GetMapping
     public List<Usuario> getAllUsuarios() {
-        // Devuelve la lista de todos los usuarios.
         return usuarioService.getAllUsuarios();
     }
 
-    // Endpoint para obtener un usuario por su ID, mapeado a GET con un parámetro de ruta.
+    @Operation(summary = "Obtener un usuario por ID", description = "Retorna un usuario específico por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Usuario.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
-        // Intenta obtener el usuario por su ID y maneja el caso en que no se encuentre.
+    public ResponseEntity<Usuario> getUsuarioById(@Parameter(description = "ID del usuario que se busca", required = true) @PathVariable Long id) {
         Usuario usuario = usuarioService.getUsuarioById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario not found with id: " + id));
         return ResponseEntity.ok(usuario);
     }
 
-    // Endpoint para crear un nuevo usuario, mapeado a POST.
+    @Operation(summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario con los datos proporcionados.")
+    @ApiResponse(responseCode = "201", description = "Usuario creado correctamente")
     @PostMapping
     public ResponseEntity<?> createUsuario(@Valid @RequestBody Usuario usuario) {
-        // Crea el nuevo usuario y devuelve una respuesta con el usuario creado y código 201 Created.
         Usuario nuevoUsuario = usuarioService.saveUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    // Endpoint para actualizar un usuario existente, mapeado a PUT con un parámetro de ruta.
+    @Operation(summary = "Actualizar un usuario existente", description = "Actualiza los datos de un usuario existente basado en su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Usuario.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @Valid @RequestBody Usuario usuario) {
-        // Intenta actualizar el usuario por su ID y maneja el caso en que no se encuentre.
+    public ResponseEntity<Usuario> updateUsuario(@Parameter(description = "ID del usuario que se actualizará", required = true) @PathVariable Long id,
+                                                 @Valid @RequestBody Usuario usuario) {
         Usuario usuarioActualizado = usuarioService.getUsuarioById(id)
                 .map(user -> {
-                    // Actualiza los campos del usuario con los valores proporcionados.
                     user.setNombreUsuario(usuario.getNombreUsuario());
                     user.setContrasena(usuario.getContrasena());
                     user.setRol(usuario.getRol());
@@ -62,10 +80,10 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioActualizado);
     }
 
-    // Endpoint para eliminar un usuario por su ID, mapeado a DELETE.
+    @Operation(summary = "Eliminar un usuario", description = "Elimina un usuario basado en su ID.")
+    @ApiResponse(responseCode = "204", description = "Usuario eliminado correctamente")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUsuario(@PathVariable Long id) {
-        // Elimina el usuario por su ID y devuelve una respuesta adecuada.
+    public ResponseEntity<?> deleteUsuario(@Parameter(description = "ID del usuario que será eliminado", required = true) @PathVariable Long id) {
         usuarioService.deleteUsuarioById(id);
         return ResponseEntity.noContent().build();
     }

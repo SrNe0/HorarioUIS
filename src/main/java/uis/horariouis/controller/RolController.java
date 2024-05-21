@@ -1,4 +1,10 @@
 package uis.horariouis.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 // Importación de las clases necesarias de Spring Framework y de otras dependencias.
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,55 +17,71 @@ import java.util.List;
 
 // Anotación para marcar esta clase como un controlador REST.
 @RestController
-// Ruta base para todos los endpoints en este controlador.
 @RequestMapping("/api/roles")
+@Tag(name = "Roles", description = "API para la gestión de roles")
 public class RolController {
 
-    // Inyección de la dependencia del servicio de roles.
     @Autowired
     private RolService rolService;
 
-    // Endpoint para obtener todos los roles, mapeado a una petición GET.
+    @Operation(summary = "Obtener todos los roles", description = "Devuelve una lista de todos los roles disponibles.")
+    @ApiResponse(responseCode = "200", description = "Lista de roles encontrada",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Rol.class)))
     @GetMapping("/")
     public List<Rol> getAllRoles() {
-        // Devuelve la lista de todos los roles.
         return rolService.getAllRoles();
     }
 
-    // Endpoint para obtener un rol por su ID, mapeado a GET con un parámetro de ruta.
+    @Operation(summary = "Obtener un rol por ID", description = "Devuelve un rol específico por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Rol.class))),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Rol> getRolById(@PathVariable Long id) {
-        // Intenta obtener el rol por su ID y maneja el caso en que no se encuentre.
         return rolService.getRolById(id)
-                .map(ResponseEntity::ok)  // Si se encuentra, devuelve el rol con código 200 OK.
-                .orElse(ResponseEntity.notFound().build());  // Si no se encuentra, devuelve 404 Not Found.
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Endpoint para crear un nuevo rol, mapeado a POST.
+    @Operation(summary = "Crear un nuevo rol", description = "Crea un nuevo rol con la información proporcionada.")
+    @ApiResponse(responseCode = "200", description = "Rol creado correctamente",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Rol.class)))
     @PostMapping("/")
     public ResponseEntity<Rol> createRol(@RequestBody Rol rol) {
-        // Crea el nuevo rol y devuelve una respuesta con el rol creado y código 200 OK.
         Rol newRol = rolService.createRol(rol);
         return ResponseEntity.ok(newRol);
     }
 
-    // Endpoint para actualizar un rol existente, mapeado a PUT con un parámetro de ruta.
+    @Operation(summary = "Actualizar un rol existente", description = "Actualiza la información de un rol existente basándose en su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol actualizado correctamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Rol.class))),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Rol> updateRol(@PathVariable Long id, @RequestBody Rol rol) {
-        // Intenta actualizar el rol por su ID y maneja el caso en que no se encuentre.
         return rolService.updateRol(id, rol)
-                .map(ResponseEntity::ok)  // Si se actualiza correctamente, devuelve el rol actualizado con código 200 OK.
-                .orElse(ResponseEntity.notFound().build());  // Si no se encuentra, devuelve 404 Not Found.
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Endpoint para eliminar un rol por su ID, mapeado a DELETE.
+    @Operation(summary = "Eliminar un rol", description = "Elimina un rol basándose en su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRol(@PathVariable Long id) {
-        // Intenta eliminar el rol por su ID y devuelve una respuesta adecuada.
         if (rolService.deleteRol(id)) {
-            return ResponseEntity.ok().build();  // Si se elimina correctamente, devuelve 200 OK.
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();  // Si no se encuentra, devuelve 404 Not Found.
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -35,23 +35,19 @@ public class AsignaturaService {
         return asignaturaRepository.save(asignatura);
     }
 
-    public Asignatura update(Long id, Asignatura asignatura) {
-        // Verificar si la asignatura existe
-        Optional<Asignatura> optionalAsignatura = asignaturaRepository.findById(id);
-        if (optionalAsignatura.isPresent()) {
-            Asignatura asignaturaExistente = optionalAsignatura.get();
-            // Actualizar los campos de la asignatura existente
-            asignaturaExistente.setCodigo(asignatura.getCodigo());
-            asignaturaExistente.setNombre(asignatura.getNombre());
-            asignaturaExistente.setHorasTeoria(asignatura.getHorasTeoria());
-            asignaturaExistente.setHorasPractica(asignatura.getHorasPractica());
-
-            // Guardar la asignatura actualizada
-            return asignaturaRepository.save(asignaturaExistente);
-        } else {
-            throw new ResourceNotFoundException("Asignatura not found with id: " + id);
-        }
+    public Asignatura update(Long id, Asignatura asignaturaDetails) {
+        // Utilizando map para actualizar los datos y orElseThrow para manejar la excepción
+        return asignaturaRepository.findById(id)
+                .map(asignaturaExistente -> {
+                    asignaturaExistente.setCodigo(asignaturaDetails.getCodigo());
+                    asignaturaExistente.setNombre(asignaturaDetails.getNombre());
+                    asignaturaExistente.setHorasTeoria(asignaturaDetails.getHorasTeoria());
+                    asignaturaExistente.setHorasPractica(asignaturaDetails.getHorasPractica());
+                    return asignaturaRepository.save(asignaturaExistente);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id: " + id));
     }
+
 
 
     public void deleteById(Long id) {

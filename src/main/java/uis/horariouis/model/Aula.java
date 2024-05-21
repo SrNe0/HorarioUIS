@@ -1,5 +1,6 @@
 package uis.horariouis.model;
 
+import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,24 +21,29 @@ public class Aula implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @CsvBindByName(column = "IDAULA")
     @Column(name = "idAula")
     private Long idAula;
 
     @NotNull
     @Size(min = 1, max = 10)
+    @CsvBindByName(column = "CODIGO")
     @Column(name = "codigo", unique = true)
     private String codigo;
 
     @NotBlank
     @Size(min = 1, max = 100)
+    @CsvBindByName(column = "DESCRIPCION")
     @Column(name = "descripcion")
     private String descripcion;
 
     @Min(1)
+    @CsvBindByName(column = "CAPACIDAD")
     @Column(name = "capacidad")
     private int capacidad;
 
     @ManyToOne
     @JoinColumn(name = "idEdificio", referencedColumnName = "idEdificio")
+    @CsvBindByName(column = "EDIFICIO")
     private Edificio edificio;
 }

@@ -1,72 +1,89 @@
 package uis.horariouis.controller;
 
-// Importaciones de Spring para manejar la inyección de dependencias y respuestas HTTP.
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-// Importaciones para manejar las solicitudes HTTP y anotaciones de mapeo en el controlador.
 import org.springframework.web.bind.annotation.*;
-// Importaciones de clases de excepción personalizadas y el modelo de datos 'Edificio'.
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
-// Importaciones de servicios relacionados con la gestión de edificios y la importación/exportación de datos desde/hacia archivos CSV.
 import uis.horariouis.service.CsvServiceEdificio;
 import uis.horariouis.service.EdificioService;
-// Importaciones para manejar archivos MultipartFile y la respuesta HTTP de tipo HttpServletResponse.
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
-// Anotación que define esta clase como un controlador REST y mapea las solicitudes a la ruta base para edificios.
 @RestController
 @RequestMapping("/api/edificios")
+@Tag(name = "Edificios", description = "API para la gestión de edificios")
 public class EdificioController {
 
-    // Inyección automática del servicio de 'EdificioService' y 'CsvServiceEdificio' por Spring para desacoplar la creación y gestión de dependencias.
     @Autowired
     private EdificioService edificioService;
     @Autowired
     private CsvServiceEdificio csvServiceEdificio;
 
-    // Método que maneja las solicitudes GET para obtener todos los edificios disponibles.
-    @GetMapping("/")
+    @Operation(summary = "Obtener todos los edificios",
+            description = "Obtiene una lista de todos los edificios disponibles.")
+    @GetMapping("")
     public List<Edificio> getAllEdificios() {
         return edificioService.getAllEdificios();
     }
 
-    // Método que maneja las solicitudes GET para obtener un edificio específico por su ID.
+    @Operation(summary = "Obtener un edificio por su ID",
+            description = "Obtiene un edificio específico por su ID.")
+    @ApiResponse(responseCode = "200", description = "Edificio encontrado",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Edificio.class))})
+    @ApiResponse(responseCode = "404", description = "Edificio no encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<Edificio> getEdificioById(@PathVariable Long id) {
         return edificioService.getEdificioById(id)
-                .map(ResponseEntity::ok)  // Si se encuentra, retorna 200 OK con el edificio.
-                .orElse(ResponseEntity.notFound().build());  // Si no se encuentra, retorna 404 Not Found.
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Método que maneja las solicitudes POST para crear un nuevo edificio.
+    @Operation(summary = "Crear un edificio",
+            description = "Crea un nuevo edificio a partir de los datos proporcionados.")
+    @ApiResponse(responseCode = "201", description = "Edificio creado exitosamente",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Edificio.class))})
     @PostMapping("/")
     public ResponseEntity<Edificio> createEdificio(@RequestBody Edificio edificio) {
         Edificio newEdificio = edificioService.createEdificio(edificio);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newEdificio);  // Retorna el edificio creado con estado HTTP 201.
+        return ResponseEntity.status(HttpStatus.CREATED).body(newEdificio);
     }
 
-    // Método que maneja las solicitudes PUT para actualizar un edificio existente por su ID.
+    @Operation(summary = "Actualizar un edificio existente",
+            description = "Actualiza un edificio existente por su ID utilizando los datos proporcionados.")
+    @ApiResponse(responseCode = "200", description = "Edificio actualizado exitosamente",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Edificio.class))})
+    @ApiResponse(responseCode = "404", description = "Edificio no encontrado")
     @PutMapping("/{id}")
     public ResponseEntity<Edificio> updateEdificio(@PathVariable Long id, @RequestBody Edificio edificio) {
         try {
             Edificio updatedEdificio = edificioService.updateEdificio(id, edificio);
-            return ResponseEntity.ok(updatedEdificio);  // Retorna el edificio actualizado con 200 OK.
+            return ResponseEntity.ok(updatedEdificio);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();  // Si no se encuentra el edificio, retorna 404 Not Found.
+            return ResponseEntity.notFound().build();
         }
     }
 
-    // Método que maneja las solicitudes DELETE para eliminar un edificio por su ID.
+    @Operation(summary = "Eliminar un edificio por su ID",
+            description = "Elimina un edificio existente por su ID.")
+    @ApiResponse(responseCode = "204", description = "Edificio eliminado exitosamente")
     @DeleteMapping("/{id}")
     public void deleteEdificio(@PathVariable Long id) {
         edificioService.deleteEdificio(id);
     }
 
-    // Método que maneja las solicitudes POST para importar edificios desde un archivo CSV.
+    @Operation(summary = "Importar edificios desde un archivo CSV")
     @PostMapping("/import-csv")
     public ResponseEntity<String> importEdificiosFromCsv(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -74,13 +91,14 @@ public class EdificioController {
         }
         try {
             csvServiceEdificio.importEdificiosFromCsv(file);
-            return ResponseEntity.ok("Archivo cargado con éxito");  // Retorna un mensaje de éxito si la importación fue exitosa.
+            return ResponseEntity.ok("Archivo cargado con éxito");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el archivo: " + e.getMessage());
         }
     }
 
-    // Método que maneja las solicitudes GET para exportar edificios a un archivo CSV.
+    @Operation(summary = "Exportar edificios a un archivo CSV",
+            description = "Exporta edificios a un archivo CSV.")
     @GetMapping("/export-csv")
     public void exportEdificiosToCsv(HttpServletResponse response) {
         response.setContentType("text/csv");

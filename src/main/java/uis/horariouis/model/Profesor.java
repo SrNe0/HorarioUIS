@@ -3,11 +3,16 @@ package uis.horariouis.model;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "profesor")
-public class Profesor {
+public class Profesor implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -123456789L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProfesor;
@@ -15,11 +20,20 @@ public class Profesor {
     @NotBlank(message = "El documento de identidad es requerido")
     private String documentoIdentidad;
 
-    @NotBlank(message = "Los apellidos son requeridos")
-    private String apellidos;
+    @NotBlank(message = "El primer apellido es requerido")
+    @Column(name = "apellido1")
+    private String apellido1;
 
-    @NotBlank(message = "Los nombres son requeridos")
-    private String nombres;
+    @NotBlank(message = "El segundo apellido es requerido")
+    @Column(name = "apellido2")
+    private String apellido2;
+
+    @NotBlank(message = "El primer nombre es requerido")
+    @Column(name = "nombre1")
+    private String nombre1;
+
+    @Column(name = "nombre2")
+    private String nombre2;
 
     @NotBlank(message = "El número de teléfono es requerido")
     private String telefono;
