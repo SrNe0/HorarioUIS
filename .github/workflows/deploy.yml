@@ -18,11 +18,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-     - name: Test SSH connection
+      - name: Test SSH connection
         run: |
           ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'echo "SSH connection successful"'
 
-
-      - name: Deploy to server v1.1.1
+      - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deploy.sh'
