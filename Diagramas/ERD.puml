@@ -1,0 +1,106 @@
+@startuml
+
+class Rol {
+    +Long idRol
+    +String nombreRol
+}
+
+class Accion {
+    +Long idAccion
+    +String nombreAccion
+}
+
+class Usuario {
+    +Long idUsuario
+    +String nombreUsuario
+    +String contraseña
+    +Rol rol
+}
+
+class RolAccion {
+    +Long idRolAccion
+    +Long idRol
+    +Long idAccion
+}
+
+class Profesor {
+    +Long idProfesor
+    +String nombre1
+    +String apellido1
+    +String correo
+    +String telefono
+    +Usuario usuario
+}
+
+class Asignatura {
+    +Long idAsignatura
+    +String nombre
+    +String codigo
+    +Integer horasTeoria
+    +Integer horasPractica
+}
+
+class Edificio {
+    +Long idEdificio
+    +String nombre
+}
+
+class Aula {
+    +Long idAula
+    +String descripcion
+    +Long idEdificio
+    +Integer capacidad
+    +String codigo
+    +Edificio edificio
+}
+
+class Grupo {
+    +Long idGrupo
+    +String nombreGrupo
+    +Integer cupo
+    +Asignatura asignatura
+}
+
+class DisponibilidadHoraria {
+    +Long idDisponibilidadHoraria
+    +String dia
+    +Time horaInicio
+    +Time horaFin
+    +Profesor profesor
+}
+
+class HorarioProfesor {
+    +Long idHorarioProfesor
+    +Profesor profesor
+    +DisponibilidadHoraria disponibilidadHoraria
+}
+
+class Dictado {
+    +Long idDictado
+    +Asignatura asignatura
+    +Profesor profesor
+}
+
+class Horario {
+    +Long idHorario
+    +Time horaInicio
+    +Time horaFin
+    +Aula aula
+    +Grupo grupo
+    +Profesor profesor
+}
+
+Rol --o{ RolAccion : roles
+Accion --o{ RolAccion : acciones
+Usuario "1" --{ Profesor : usuario
+Profesor "1" --o{ DisponibilidadHoraria : profesor
+Profesor "1" --o{ Dictado : profesor
+Profesor "1" --o{ Horario : profesor
+DisponibilidadHoraria "1" --o{ HorarioProfesor : disponibilidadHoraria
+Asignatura "1" --o{ Grupo : asignatura
+Grupo "1" --o{ Horario : grupo
+Edificio "1" --o{ Aula : edificio
+Aula "1" --o{ Horario : aula
+Usuario "1" --o{ Rol : rol
+
+@enduml
