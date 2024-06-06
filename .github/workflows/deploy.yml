@@ -28,6 +28,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'echo "SSH connection successful"'
 
-      - name: Deploy to server
+      - name: Deploy Backend to server
         run: |
-          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deploy.sh'
+          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deployB.sh'
+
+      - name: Deploy Frontend to server
+        run: |
+          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deployF.sh'
