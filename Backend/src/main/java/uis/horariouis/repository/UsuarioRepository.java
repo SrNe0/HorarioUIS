@@ -7,4 +7,5 @@ import uis.horariouis.model.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // Aquí puedes agregar métodos de consulta adicionales si los necesitas
+    Usuario findByNombreUsuario(String nombreUsuario);
 }

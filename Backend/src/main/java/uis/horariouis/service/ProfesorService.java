@@ -1,6 +1,7 @@
 package uis.horariouis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import uis.horariouis.model.Profesor;
 import uis.horariouis.model.Rol;
@@ -18,12 +19,14 @@ public class ProfesorService {
     private final ProfesorRepository profesorRepository;
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public ProfesorService(ProfesorRepository profesorRepository, UsuarioRepository usuarioRepository, RolRepository rolRepository) {
+    public ProfesorService(ProfesorRepository profesorRepository, UsuarioRepository usuarioRepository, RolRepository rolRepository, BCryptPasswordEncoder passwordEncoder) {
         this.profesorRepository = profesorRepository;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Profesor> getAllProfesores() {
@@ -46,7 +49,7 @@ public class ProfesorService {
         // Crear el usuario asociado al profesor
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(nombreUsuario);
-        usuario.setContrasena(contrasena);
+        usuario.setContrasena(passwordEncoder.encode(contrasena)); // Encriptar la contraseña
         usuario.setRol(rol);
         usuarioRepository.save(usuario);
 
@@ -72,4 +75,3 @@ public class ProfesorService {
         profesorRepository.deleteById(id);
     }
 }
-
