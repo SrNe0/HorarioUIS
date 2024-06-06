@@ -1,0 +1,286 @@
+@import url('https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css');
+
+*{
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-family: "Lexend", "Merriweather Sans", sans-serif;
+    font-style: normal;
+}
+
+body{
+    background-color: #e8e7fc;
+    background: repeating-conic-gradient(from 45deg, rgba(232, 231, 252, 0.363) 0deg 45deg, transparent 0deg 175deg);
+    background-size: 15px 15px; 
+}
+
+.mcard{
+    padding: 20px;
+    background-color: #fefff69c;
+    border-radius: 20px;
+}
+
+.p-inp{
+    padding: 14px;
+}
+
+.wmw{
+    width: 100vw;
+    height: 82.7vh;
+}
+
+.wim{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bgcl-bl{
+    background-color: #161256;
+}
+
+.bgcl-grn{
+    background-color: #91BC31;
+}
+
+.bgcl-grn-op{
+    background-color: #90bc31af;
+}
+
+.bgcl-gy{
+    background-color: #fefff69c;
+}
+
+.txt-sm{
+    font-size: xx-large;
+}
+
+.m-h1{
+    margin: 0.65em 2.5em ;
+}
+
+.opacity-65{
+    opacity: 0.65;
+}
+
+.opacity-85{
+    opacity: 0.85;
+}
+
+.mask1{
+    filter: blur(3px);
+
+}
+
+.ft-200{
+    font-weight: 200;
+}
+
+.ft-300{
+    font-weight: 300;
+}
+
+.ft-400{
+    font-weight: 400;
+}
+
+.ft-500{
+    font-weight: 500;
+}
+
+.ft-600{
+    font-weight: 600;
+}
+
+.ft-700{
+    font-weight: 700;
+}
+
+
+.ft-cl-bl{
+    color: #161256;
+}
+
+.ft-cl-gr{
+    color: #91BC31;
+}
+
+.w-mcard{
+    width: 650px;
+}
+
+.btn-mstyle{
+    background-color: #161256;
+    color: #faf9ff;
+    transition: 0.5s;
+    padding-top: 5px;
+}
+
+.btn-mstyle:hover{
+    background-color: #1414EB;
+    color: #faf9ff;
+    padding-bottom: 10px;
+    transition: 0.6s;
+    transform: scale(1.1);
+}
+
+.btn-mgr{
+    margin: 2px 0px;
+    background-color: #91BC31;
+    color: #faf9ff;
+    border-color: #faf9ff;
+    border-width: 3px;
+    transition: 0.6s;
+}
+
+.btn-mgr:hover{
+    background-color: #677C30;
+    color: #faf9ff;
+    border-color: #91BC31;
+    margin: 5px 0px;
+    padding: 12px 0px;
+    transform: scale(1.050);
+    transition: .5s;
+}
+
+/* .btn-mgr:hover{
+    background-color: #faffee;
+    color: #677C30;
+    border-color: #677C30;
+    padding: 15px;
+    transition: .5s;
+} */
+
+.btn-mdg{
+    background-color: #DA261D;
+    color: #faf9ff;
+    padding: 10px 20px;
+    transition: .6s;
+}
+
+.btn-mdg:hover{
+    background-color: #ffe2e0;
+    color: #DA261D;
+    border-color: #DA261D;
+    margin: 5px;
+    padding: 15px 25px;
+    transition: .5s;
+}
+
+.border-grn{
+    border-color: #677C30;
+}
+
+.border-radius{
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: 10px;
+    border: 1px solid #677C30;
+}
+
+.border-radius th ,tr{
+    text-align: center;
+}
+
+.mtable{
+    background-color: #fffffc;
+    --border: 3.5px solid #677C30;
+    border-radius: 20px; 
+    border-spacing: 0;
+    border-collapse: separate;
+    border: var(--border);
+    overflow: hidden;
+}
+
+.mtable th, td, tr{
+    padding: 10px 20px;
+}
+
+.border-radius th:not(:last-child),
+.border-radius td:not(:last-child){
+    border-right: var(--border);
+}
+
+.border-radius>thead>tr:not(:last-child)>th,
+.border-radius>thead>tr:not(:last-child)>td,
+.border-radius>tbody>tr:not(:last-child)>th,
+.border-radius>tbody>tr:not(:last-child)>td,
+.border-radius>tfoot>tr:not(:last-child)>th,
+.border-radius>tfoot>tr:not(:last-child)>td,
+.border-radius>tr:not(:last-child)>td,
+.border-radius>tr:not(:last-child)>th,
+.border-radius>thead:not(:last-child),
+.border-radius>tbody:not(:last-child),
+.border-radius>tfoot:not(:last-child){
+    border-bottom: var(--border)
+}
+
+.mbtn-circle{
+    width: 80px; 
+    height: 80px; 
+    font-size: 45px; 
+    right: 60px; 
+    bottom: 60px; 
+    border-radius: 25px;
+}
+
+.cl-wh{
+    color: #fffffd;
+}
+
+.cl-rd{
+    color: #DA261D;
+}
+
+.cl-grn{
+    color: #677C30;
+}
+
+.cl-lbl{
+    color: #1414EB;
+}
+
+.w-3k{
+    width: 3000px;
+    margin-top: 12px;
+}
+
+.w-1k{
+    max-width: 2000px;
+}
+
+.w-10{
+    width: 10%;
+}
+
+.w-95{
+    width: 95%;
+}
+
+.w-92{
+    width: 92%;
+}
+
+.w-85{
+    width: 85%;
+}
+
+.onClickstyle{
+    cursor: pointer;
+}
+
+.fi-br-arrow-left{
+    transition: 0.5s;
+    font-size: 60px; 
+    color: #666666;
+}
+
+.fi-br-arrow-left:hover{
+    font-size: 70px; 
+    transition: 0.5s;
+    color: #161256;
+}
+
+.fs-ms{
+    font-size: 22px;
+}

@@ -1,0 +1,26 @@
+<div class="d-flex w-100 justify-content-center">
+    <div class="onClickstyle flex-shrink-1" [routerLink]="['/usuario/servicios']"><i class="fi fi-br-arrow-left"></i></div>
+    <h1 class="cl-grn w-100 text-center" style="margin-bottom: 40px;">Gestion de Usuarios</h1>
+</div>
+
+<table class="mtable w-100 align-self-center border-radius">
+    <thead>
+      <tr class="bgcl-grn">
+        <th class="ft-400 cl-wh fs-ms w-auto">Nombre</th>
+        <th class="ft-400 cl-wh fs-ms w-auto">Contraseña</th>
+        <th class="ft-400 cl-wh fs-ms w-auto">Rol</th>
+        <th class="ft-400 cl-wh fs-ms w-10" colspan="2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="text-center" *ngFor="let item of data">
+            <td class="ft-300 fs-ms">{{item.nombreUsuario}}</td>
+            <td class="ft-300 fs-ms">{{item.contrasena}}</td>
+            <td class="ft-300 fs-ms">{{item.rol.nombreRol}}</td>
+            <th><i class="fi fi-br-edit cl-lbl onClickstyle"></i></th>
+            <th><i class="fi fi-br-trash cl-rd onClickstyle" (click)="deleteDataUserId(url,item.idUsuario)"></i></th> 
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-mstyle d-flex align-items-center justify-content-center position-fixed" style="width: 80px; height: 80px; font-size: 45px; right: 60px; bottom: 60px; border-radius: 25px;">+</button> 

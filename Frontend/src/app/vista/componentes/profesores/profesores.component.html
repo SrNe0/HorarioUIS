@@ -1,0 +1,30 @@
+<div class="d-flex w-100 justify-content-center">
+    <div class="onClickstyle flex-shrink-1" [routerLink]="['/usuario/servicios']"><i class="fi fi-br-arrow-left"></i></div>
+    <h1 class="cl-grn w-100 text-center" style="margin-bottom: 40px;">Profesores</h1>
+</div>
+
+<table class="mtable w-100 align-self-center border-radius ">
+    <thead>
+        <tr class="bgcl-grn text-center">
+            <th class="ft-400 cl-wh fs-ms w-auto">Nombres</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Apellidos</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Documento</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Teléfono</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Correo</th>
+            <th class="ft-400 cl-wh fs-ms w-10" colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of data">
+            <th class="ft-300 fs-ms">{{item.nombre1}} {{item.nombre2}}</th>
+            <th class="ft-300 fs-ms">{{item.apellido1}} {{item.apellido2}}</th>
+            <th class="ft-300 fs-ms">{{item.documentoIdentidad}}</th>
+            <th class="ft-300 fs-ms">{{item.telefono}}</th>
+            <th class="ft-300 fs-ms">{{item.correo}}</th>
+            <th><i class="fi fi-br-edit cl-lbl onClickstyle"></i></th>
+            <th><i class="fi fi-br-trash cl-rd onClickstyle"></i></th>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-mstyle d-flex align-items-center justify-content-center position-fixed" style="width: 80px; height: 80px; font-size: 45px; right: 60px; bottom: 60px; border-radius: 25px;">+</button> 

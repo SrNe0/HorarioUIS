@@ -1,0 +1,11 @@
+<div class="d-flex w-100 justify-content-center">
+    <div class="d-flex mt-5 mb-5 p-2 justify-content-center" [ngClass]="{'w-92 p-2': currentRoute === '/usuario/horario', 'container w-75': currentRoute !== '/usuario/horario'}">
+    
+        <div class="card bgcl-gy" [ngClass]="{'w-75': currentRoute === '/usuario/servicios', 'w-100 p-2': currentRoute !== '/usuario/servicios'}">
+            
+            <div class="card-body mx-3 d-flex flex-column justify-content-center">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

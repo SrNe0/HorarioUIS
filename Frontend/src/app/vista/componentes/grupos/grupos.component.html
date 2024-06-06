@@ -1,0 +1,26 @@
+<div class="d-flex w-100 justify-content-center">
+    <div class="onClickstyle flex-shrink-1" [routerLink]="['/usuario/servicios']"><i class="fi fi-br-arrow-left"></i></div>
+    <h1 class="cl-grn w-100 text-center" style="margin-bottom: 40px;">Grupos</h1>
+</div>
+
+<table class="mtable w-100 align-self-center border-radius">
+    <thead>
+        <tr class="bgcl-grn text-center">
+            <th class="ft-400 cl-wh fs-ms w-auto">Nombre del grupo</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Asignatura</th>
+            <th class="ft-400 cl-wh fs-ms w-auto">Cupos</th>
+            <th class="ft-400 cl-wh fs-ms w-10" colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of data">
+            <th class="ft-300 fs-ms">{{item.nombreGrupo}}</th>
+            <th class="ft-300 fs-ms">{{item.asignatura.nombre}}</th>
+            <th class="ft-300 fs-ms">{{item.cupo}}</th>
+            <th><i class="fi fi-br-edit cl-lbl onClickstyle"></i></th>
+            <th><i class="fi fi-br-trash cl-rd onClickstyle"></i></th>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-mstyle d-flex align-items-center justify-content-center position-fixed" style="width: 80px; height: 80px; font-size: 45px; right: 60px; bottom: 60px; border-radius: 25px;">+</button>   
