@@ -30,6 +30,7 @@ public class HorarioManagerService {
 
     private static final Logger logger = Logger.getLogger(HorarioManagerService.class.getName());
 
+    // Método para asignar horarios a todos los grupos
     @Transactional
     public List<Horario> asignarHorarios() {
         List<Grupo> grupos = grupoRepository.findAll();
@@ -38,16 +39,18 @@ public class HorarioManagerService {
 
         for (Grupo grupo : grupos) {
             try {
+                // Asigna horarios a cada grupo
                 asignarHorarioAGrupo(grupo, aulas, horarios);
             } catch (HorarioException e) {
                 logger.warning(e.getMessage());
             }
         }
 
-        horarioRepository.saveAll(horarios);
+        horarioRepository.saveAll(horarios); // Guarda todos los horarios en el repositorio
         return horarios;
     }
 
+    // Método para asignar horarios a un grupo específico
     private void asignarHorarioAGrupo(Grupo grupo, List<Aula> aulas, List<Horario> horarios) throws HorarioException {
         List<Dictado> dictados = dictadoRepository.findByAsignatura(grupo.getAsignatura());
         if (dictados == null || dictados.isEmpty()) {
@@ -73,6 +76,7 @@ public class HorarioManagerService {
         }
     }
 
+    // Método para asignar un bloque de horas a un grupo
     private boolean asignarBloqueDeHoras(Grupo grupo, List<Aula> aulas, List<Horario> horarios, Profesor profesor, List<DisponibilidadHoraria> disponibilidad, int horas) {
         List<String> diasSemana = Arrays.asList("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
 
@@ -101,6 +105,7 @@ public class HorarioManagerService {
         return false;
     }
 
+    // Método para crear un objeto Horario
     private Horario crearHorario(Profesor profesor, Grupo grupo, Aula aula, DisponibilidadHoraria slot) {
         Horario horario = new Horario();
         horario.setProfesor(profesor);
@@ -112,6 +117,7 @@ public class HorarioManagerService {
         return horario;
     }
 
+    // Método para obtener la disponibilidad horaria de un profesor
     private List<DisponibilidadHoraria> obtenerDisponibilidadProfesor(Profesor profesor) {
         List<HorarioProfesor> horariosProfesor = horarioProfesorRepository.findByProfesor(profesor);
         return horariosProfesor.stream()
@@ -121,6 +127,7 @@ public class HorarioManagerService {
                 .collect(Collectors.toList());
     }
 
+    // Método para obtener slots consecutivos de disponibilidad
     private List<DisponibilidadHoraria> obtenerSlotsConsecutivos(List<DisponibilidadHoraria> disponibilidad, int horasNecesarias) {
         List<DisponibilidadHoraria> slotsConsecutivos = new ArrayList<>();
         int horasConsecutivas = 0;
@@ -146,6 +153,7 @@ public class HorarioManagerService {
         return horasConsecutivas == horasNecesarias ? slotsConsecutivos : new ArrayList<>();
     }
 
+    // Método para obtener una aula disponible
     private Aula obtenerAulaDisponible(List<Aula> aulas, List<Horario> horarios, Grupo grupo, List<DisponibilidadHoraria> slotsConsecutivos) {
         for (Aula aula : aulas) {
             boolean isAulaDisponible = true;
@@ -166,7 +174,7 @@ public class HorarioManagerService {
         return null;
     }
 
-    // Custom exception for handling scheduling errors
+    // Excepción personalizada para manejar errores de asignación de horarios
     public static class HorarioException extends Exception {
         public HorarioException(String message) {
             super(message);
