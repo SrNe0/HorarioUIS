@@ -13,7 +13,6 @@ import uis.horariouis.service.CsvServiceAsignatura;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,6 @@ public class AsignaturaController {
     @Autowired
     private CsvServiceAsignatura csvServiceAsignatura;
 
-
     @Operation(summary = "Obtener todas las asignaturas", description = "Devuelve una lista de todas las asignaturas disponibles.")
     @ApiResponse(responseCode = "200", description = "Lista de asignaturas obtenida correctamente",
             content = @Content(mediaType = "application/json",
@@ -49,6 +47,9 @@ public class AsignaturaController {
             @ApiResponse(responseCode = "200", description = "Asignatura encontrada",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Asignatura.class))),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Asignatura no encontrada",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
@@ -61,9 +62,14 @@ public class AsignaturaController {
     }
 
     @Operation(summary = "Crear una nueva asignatura", description = "Crea una nueva asignatura con los datos proporcionados.")
-    @ApiResponse(responseCode = "201", description = "Asignatura creada correctamente",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Asignatura.class)))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Asignatura creada correctamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Asignatura.class))),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/")
     public ResponseEntity<Asignatura> createAsignatura(@Valid @RequestBody Asignatura asignatura) {
         Asignatura nuevaAsignatura = asignaturaService.save(asignatura);
@@ -72,9 +78,17 @@ public class AsignaturaController {
 
     @Operation(summary = "Actualizar una asignatura existente", description = "Actualiza los datos de una asignatura existente basada en su ID, se tiene que agregar todos los datos " +
             "incluidos los que no se van a editar.")
-    @ApiResponse(responseCode = "200", description = "Asignatura actualizada correctamente",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Asignatura.class)))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Asignatura actualizada correctamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Asignatura.class))),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Asignatura no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Asignatura> updateAsignatura(@PathVariable Long id, @Valid @RequestBody Asignatura asignatura) {
         Asignatura asignaturaActualizada = asignaturaService.update(id, asignatura);
@@ -82,23 +96,31 @@ public class AsignaturaController {
     }
 
     @Operation(summary = "Eliminar una asignatura por ID", description = "Elimina una asignatura basada en su ID.")
-    @ApiResponse(responseCode = "204", description = "Asignatura eliminada correctamente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Asignatura eliminada correctamente"),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Asignatura no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAsignatura(@Parameter(description = "ID de la asignatura a eliminar", required = true) @PathVariable Long id) {
         try {
             asignaturaService.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            // Puedes registrar el error con más detalle o enviar un mensaje personalizado
             return ResponseEntity.internalServerError().build();
         }
     }
 
-
     @Operation(summary = "Importar asignaturas desde un archivo CSV", description = "Permite la carga de un archivo CSV para importar asignaturas.")
-    @ApiResponse(responseCode = "200", description = "Archivo importado correctamente")
-    @ApiResponse(responseCode = "400", description = "Archivo está vacío")
-    @ApiResponse(responseCode = "500", description = "Error al procesar el archivo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Archivo importado correctamente"),
+            @ApiResponse(responseCode = "400", description = "El archivo está vacío"),
+            @ApiResponse(responseCode = "500", description = "Error al procesar el archivo")
+    })
     @PostMapping("/import-csv")
     public ResponseEntity<String> importAsignaturasFromCsv(
             @RequestParam("file")

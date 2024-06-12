@@ -1,68 +1,113 @@
 package uis.horariouis.controller;
 
-// Importaciones de Spring para manejar la inyección de dependencias.
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-// Importaciones de Spring para manejar respuestas HTTP y códigos de estado.
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-// Importaciones para manejar las solicitudes HTTP y anotaciones de mapeo en el controlador.
 import org.springframework.web.bind.annotation.*;
-// Importación de una excepción personalizada para manejar casos donde el recurso solicitado no se encuentra.
 import uis.horariouis.exception.ResourceNotFoundException;
-// Importación del modelo de datos 'Dictado' que se utiliza en este controlador.
 import uis.horariouis.model.Dictado;
-// Importación del servicio que encapsula la lógica de negocio para las operaciones relacionadas con 'Dictado'.
+import uis.horariouis.model.ErrorResponse;
 import uis.horariouis.service.DictadoService;
-// Importación para validar objetos en las solicitudes HTTP antes de procesarlos.
+
 import javax.validation.Valid;
 import java.util.List;
 
-// Anotación que define esta clase como un controlador REST y mapea las solicitudes a la ruta base para dictados.
 @RestController
 @RequestMapping("/api/dictados")
+@Tag(name = "Dictados", description = "API para la gestión de dictados, recibe la una materia y un profesor (para quitar" +
+        "relacion muchos a mcuhos))")
 public class DictadoController {
 
-    // Inyección automática del servicio de 'Dictado' por Spring para desacoplar la creación y gestión de dependencias.
     @Autowired
     private DictadoService dictadoService;
 
-    // Método que maneja las solicitudes GET para obtener todos los dictados disponibles.
-    // Retorna una lista de objetos 'Dictado'.
+    @Operation(summary = "Obtener todos los dictados", description = "Devuelve una lista de todos los dictados disponibles.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de dictados obtenida correctamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Dictado.class))}),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping
     public List<Dictado> getAllDictados() {
         return dictadoService.getAllDictados();
     }
 
-    // Método que maneja las solicitudes GET para obtener un dictado específico por su ID.
-    // Utiliza 'PathVariable' para capturar el ID del dictado desde la URL.
+    @Operation(summary = "Obtener un dictado por su ID", description = "Devuelve un dictado específico por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dictado encontrado",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Dictado.class))}),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Dictado no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<Dictado> getDictadoById(@PathVariable Long id) {
+    public ResponseEntity<Dictado> getDictadoById(@Parameter(description = "ID del dictado a buscar", required = true) @PathVariable Long id) {
         Dictado dictado = dictadoService.getDictadoById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dictado not found with id: " + id));
-        return ResponseEntity.ok(dictado);  // Si se encuentra el dictado, retorna 200 OK con el dictado.
+        return ResponseEntity.ok(dictado);
     }
 
-    // Método que maneja las solicitudes POST para crear un nuevo dictado.
-    // 'RequestBody' captura el objeto 'Dictado' enviado en la solicitud, y 'Valid' asegura que el objeto cumpla con las validaciones definidas.
+    @Operation(summary = "Crear un nuevo dictado", description = "Crea un nuevo dictado con los datos proporcionados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Dictado creado correctamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Dictado.class))}),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping
-    public ResponseEntity<?> createDictado(@Valid @RequestBody Dictado dictado) {
+    public ResponseEntity<Dictado> createDictado(@Valid @RequestBody Dictado dictado) {
         Dictado nuevoDictado = dictadoService.saveDictado(dictado);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoDictado);  // Retorna el dictado creado con estado HTTP 201.
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoDictado);
     }
 
-    // Método que maneja las solicitudes PUT para actualizar un dictado existente por su ID.
-    // Combina 'PathVariable' y 'RequestBody' para obtener el ID del dictado y los nuevos datos respectivamente.
+    @Operation(summary = "Actualizar un dictado existente", description = "Actualiza un dictado existente con los datos proporcionados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dictado actualizado correctamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Dictado.class))}),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Dictado no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Dictado> updateDictado(@PathVariable Long id, @Valid @RequestBody Dictado dictado) {
+    public ResponseEntity<Dictado> updateDictado(@Parameter(description = "ID del dictado a actualizar", required = true) @PathVariable Long id,
+                                                 @Valid @RequestBody Dictado dictado) {
         Dictado dictadoActualizado = dictadoService.saveDictado(dictado);
-        return ResponseEntity.ok(dictadoActualizado);  // Retorna el dictado actualizado con 200 OK.
+        return ResponseEntity.ok(dictadoActualizado);
     }
 
-    // Método que maneja las solicitudes DELETE para eliminar un dictado por su ID.
-    // Utiliza 'PathVariable' para capturar el ID del dictado desde la URL.
+    @Operation(summary = "Eliminar un dictado por su ID", description = "Elimina un dictado existente por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Dictado eliminado correctamente"),
+            @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Dictado no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDictado(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDictado(@Parameter(description = "ID del dictado a eliminar", required = true) @PathVariable Long id) {
         dictadoService.deleteDictadoById(id);
-        return ResponseEntity.noContent().build();  // Devuelve 204 No Content si el dictado fue eliminado exitosamente.
+        return ResponseEntity.noContent().build();
     }
 }

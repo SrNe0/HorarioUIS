@@ -16,9 +16,13 @@ public class CustomUserDetails implements UserDetails {
         this.usuario = usuario;
     }
 
+    public Long getId() {
+        return usuario.getIdUsuario();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(usuario.getRol().getNombreRol()));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombreRol()));
     }
 
     @Override
