@@ -1,0 +1,15 @@
+.content{
+
+    height: 90%;
+    display: flex;
+    border-radius: 15px;
+    background-color: #fefff6ad;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    padding: 35px 30px;
+    margin: 40px 5px 0px 30px;
+}
+
+.content-body{
+    display: flex;
+    justify-content: center;
+}
