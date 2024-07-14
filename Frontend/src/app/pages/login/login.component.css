@@ -1,0 +1,102 @@
+.mcontainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.content{
+    width: 35%;
+    justify-content: center;
+    margin-top: 120px;
+}
+
+.content-body{
+    background-color: #fefff69c;
+    display: flex;
+    flex-direction: column;
+    padding: 50px 5px;
+    justify-content: center;
+    border-radius: 20px;
+}
+
+.bg-img{
+    overflow: hidden;
+    width: 100%;
+    height: 86vh;
+}
+
+.bg-img img{
+    filter: blur(4px);
+}
+
+.tl-ft-s{
+    font-size: 2.77rem;
+    text-align: center;
+}
+
+.data-grup {
+    display: flex;
+    align-self: center;
+    width: 80%;
+    align-items: center;
+}
+
+.data-grup input {
+    width: 100%;
+    background-color: transparent;
+    padding: 5px;
+    border: none;
+    border-bottom: 3px solid #1B1B3B;
+    transition: transform 0.6s, color 0.8s, border-bottom 0.8s background-color 0.8s;
+}
+
+.data-grup input:hover, .data-grup label:hover{
+    color: #91BC31;
+    border: none;
+    border-bottom: 3px solid #91BC31;
+    transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
+}
+
+.data-grup input:hover ~ label{
+    color: #91BC31;
+    transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
+}
+
+.data-grup label {
+    margin-left: 5px;
+    position: absolute;
+    pointer-events: none;
+    transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
+}
+
+.data-grup input:focus {
+    outline: none;
+    border: none;
+    border-bottom: 3px solid #566d22;
+    background-color: #90bc3133;
+    transition: transform 0.6s, color 0.8s, border-bottom 0.8s, background-color 0.8s;
+}
+
+.data-grup input:focus ~ label{
+    color: #566d22;
+    transition: transform 0.6s, color 0.8s;
+}
+
+.data-grup input:focus ~ label,
+.data-grup input:not(:placeholder-shown) ~ label,
+.data-grup input:not(:empty) ~ label {
+    transform: translateY(-30px);
+}
+
+.my-btn{
+    width: 35%;
+    padding: 15px 30px;
+    background-color: #161256;
+    color: #F8F8F8;
+    transition: background-color 0.8s;
+}
+
+.my-btn:hover{
+    background-color: #2216c5;
+    transition: background-color 0.8s;
+}
