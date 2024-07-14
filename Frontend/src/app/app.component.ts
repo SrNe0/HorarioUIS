@@ -19,5 +19,5 @@ import { filter } from 'rxjs';
   styleUrl: './app.component.css'
 })
 export class AppComponent{
-  
+  title ="Frontend"
 }
