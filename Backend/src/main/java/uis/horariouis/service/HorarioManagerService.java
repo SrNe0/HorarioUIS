@@ -55,25 +55,33 @@ public class HorarioManagerService {
         List<Dictado> dictados = dictadoRepository.findByAsignatura(grupo.getAsignatura());
         if (dictados == null || dictados.isEmpty()) {
             throw new HorarioException("No se encontró dictado para la asignatura " + grupo.getAsignatura().getNombre());
+        } else{
+
+            Dictado dictado = dictados.get(0); // Tomamos el primer dictado si hay múltiples
+            Profesor profesor = dictado.getProfesor();
+            List<DisponibilidadHoraria> disponibilidad = obtenerDisponibilidadProfesor(profesor);
+
+            //[WARNING] - PROBLEMA DE DEFICINION DE LAS REGLAS DE JUEGO PARA LA VARIABLE HORAS TOTALES
+
+            //Las horas totales no se sabe si se asignan como una suma de horas teoricas y practicas, o si se dan en aulas diferentes
+            //y si se debe especificar un salon especial para ciertas asignaturas
+
+            int horasTotales = grupo.getAsignatura().getHorasTeoria() + grupo.getAsignatura().getHorasPractica();
+
+            // Dividir horas en dos bloques, sumando 1 hora al segundo bloque si es impar
+            int horasBloque1 = horasTotales / 2;
+            int horasBloque2 = horasTotales - horasBloque1;
+
+            if (!asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque1)) {
+                throw new HorarioException("No se pudo asignar el primer bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
+            }
+
+            if (!asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque2)) {
+                throw new HorarioException("No se pudo asignar el segundo bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
+            }
         }
 
-        Dictado dictado = dictados.get(0); // Tomamos el primer dictado si hay múltiples
-        Profesor profesor = dictado.getProfesor();
-        List<DisponibilidadHoraria> disponibilidad = obtenerDisponibilidadProfesor(profesor);
 
-        int horasTotales = grupo.getAsignatura().getHorasTeoria() + grupo.getAsignatura().getHorasPractica();
-
-        // Dividir horas en dos bloques, sumando 1 hora al segundo bloque si es impar
-        int horasBloque1 = horasTotales / 2;
-        int horasBloque2 = horasTotales - horasBloque1;
-
-        if (!asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque1)) {
-            throw new HorarioException("No se pudo asignar el primer bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
-        }
-
-        if (!asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque2)) {
-            throw new HorarioException("No se pudo asignar el segundo bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
-        }
     }
 
     // Método para asignar un bloque de horas a un grupo

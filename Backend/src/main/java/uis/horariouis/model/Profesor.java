@@ -24,7 +24,7 @@ public class Profesor implements Serializable {
     @Column(name = "apellido1")
     private String apellido1;
 
-    @NotBlank(message = "El segundo apellido es requerido")
+
     @Column(name = "apellido2")
     private String apellido2;
 

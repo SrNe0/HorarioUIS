@@ -16,7 +16,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CsvServiceProfesor {
@@ -36,13 +38,26 @@ public class CsvServiceProfesor {
             while ((nextRecord = csvReader.readNext()) != null) {
                 try {
                     Profesor profesor = parseProfesor(nextRecord);
-                    profesores.add(profesor);
-                    log.info("Profesor procesado: {}", profesor.getNombre1() + " " + profesor.getApellido1());
+                    // Verificar si el profesor ya existe
+                    Optional<Profesor> existingProfesor = profesorRepository.findByDocumentoIdentidad(profesor.getDocumentoIdentidad());
+                    if (existingProfesor.isPresent()) {
+                        // Actualizar registro existente
+                        Profesor existing = existingProfesor.get();
+                        updateProfesor(existing, profesor);
+                        profesorRepository.save(existing);
+                        log.info("Profesor actualizado: {}", profesor.getNombre1() + " " + profesor.getApellido1());
+                    } else {
+                        // Agregar nuevo registro
+                        profesores.add(profesor);
+                        log.info("Profesor agregado: {}", profesor.getNombre1() + " " + profesor.getApellido1());
+                    }
                 } catch (IllegalArgumentException e) {
-                    log.error("Error al parsear el profesor: {}", e.getMessage());
+                    log.error("Error al parsear el profesor: {}. Datos: {}", e.getMessage(), Arrays.toString(nextRecord));
                 }
             }
-            profesorRepository.saveAll(profesores);
+            if (!profesores.isEmpty()) {
+                profesorRepository.saveAll(profesores);
+            }
             log.info("Todos los profesores han sido guardados.");
         } catch (Exception e) {
             log.error("Error al procesar el archivo CSV", e);
@@ -51,22 +66,30 @@ public class CsvServiceProfesor {
     }
 
     private Profesor parseProfesor(String[] csvData) {
-        if (csvData.length < 7 || csvData[1].isEmpty() || csvData[2].isEmpty() ||
-                csvData[3].isEmpty() || csvData[4].isEmpty() || csvData[5].isEmpty() || csvData[6].isEmpty()) {
-            throw new IllegalArgumentException("Datos incompletos o inválidos para el profesor.");
-        }
         Profesor profesor = new Profesor();
-        profesor.setDocumentoIdentidad(csvData[0]);
-        profesor.setApellido1(csvData[1]);
-        profesor.setApellido2(csvData[2]);
-        profesor.setNombre1(csvData[3]);
-        profesor.setNombre2(csvData[4]);
-        profesor.setTelefono(csvData[5]);
-        profesor.setCorreo(csvData[6]);
 
-        // La generación automática del usuario y la contraseña podría realizarse aqui
+        profesor.setDocumentoIdentidad(csvData.length > 0 ? csvData[0] : "");
+        profesor.setApellido1(csvData.length > 1 ? csvData[1] : "");
+        profesor.setApellido2(csvData.length > 2 ? csvData[2] : "");
+        profesor.setNombre1(csvData.length > 3 ? csvData[3] : "");
+        profesor.setNombre2(csvData.length > 4 ? csvData[4] : "");
+        profesor.setTelefono(csvData.length > 5 ? csvData[5] : "");
+        profesor.setCorreo(csvData.length > 6 ? csvData[6] : "");
+
+        // La generación automática del usuario y la contraseña podría realizarse aquí
         profesor.setUsuario(profesorService.createProfesor(profesor).getUsuario());
+
         return profesor;
+    }
+
+    private void updateProfesor(Profesor existing, Profesor updated) {
+        existing.setApellido1(updated.getApellido1());
+        existing.setApellido2(updated.getApellido2());
+        existing.setNombre1(updated.getNombre1());
+        existing.setNombre2(updated.getNombre2());
+        existing.setTelefono(updated.getTelefono());
+        existing.setCorreo(updated.getCorreo());
+        // Actualiza otros campos necesarios
     }
 
     public void exportProfesoresToCsv(HttpServletResponse response) {
