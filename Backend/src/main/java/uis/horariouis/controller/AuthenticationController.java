@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import uis.horariouis.security.CustomUserDetailsService;
 import uis.horariouis.security.JwtUtil;
 import uis.horariouis.model.AuthenticationRequest;
+import uis.horariouis.model.AuthenticationResponse;
 import uis.horariouis.model.Usuario;
 import uis.horariouis.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @CrossOrigin
@@ -42,7 +45,7 @@ public class AuthenticationController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/authenticate")
-    public String createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             logger.info("Attempting to authenticate user: {}", authenticationRequest.getUsername());
             authenticationManager.authenticate(
@@ -56,19 +59,27 @@ public class AuthenticationController {
                 usuario.setContrasena(passwordEncoder.encode(authenticationRequest.getPassword()));
                 usuarioService.saveUsuario(usuario);
                 // Intente autenticar de nuevo con la contraseña actualizada
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-                );
+                try {
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                    );
+                } catch (BadCredentialsException ex) {
+                    logger.error("Invalid credentials for user: {}", authenticationRequest.getUsername());
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+                }
             } else {
                 logger.error("Invalid credentials for user: {}", authenticationRequest.getUsername());
-                throw new Exception("INVALID_CREDENTIALS", e);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
+        } catch (Exception e) {
+            logger.error("Authentication error for user: {}", authenticationRequest.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during authentication");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
         logger.info("Generated JWT for user: {}", authenticationRequest.getUsername());
 
-        return jwt;
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }
