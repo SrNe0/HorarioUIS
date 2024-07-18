@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uis.horariouis.dto.AulaDTO;
 import uis.horariouis.model.Aula;
+import uis.horariouis.model.Edificio;
 import uis.horariouis.repository.AulaRepository;
+import uis.horariouis.repository.EdificioRepository;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CsvServiceAula {
@@ -24,9 +28,9 @@ public class CsvServiceAula {
 
     @Autowired
     private AulaRepository aulaRepository;
-    @Autowired
-    private AulaService aulaService;
 
+    @Autowired
+    private EdificioRepository edificioRepository;
 
     public void importAulasFromCsv(MultipartFile file) {
         log.info("Iniciando importación de archivo CSV para Aulas");
@@ -44,7 +48,7 @@ public class CsvServiceAula {
                 }
             }
             for (AulaDTO aulaDTO : aulaDTOList) {
-                aulaService.createOrUpdateAula(aulaDTO);
+                saveOrUpdateAula(aulaDTO);
             }
             log.info("Todas las aulas han sido guardadas.");
         } catch (Exception e) {
@@ -52,6 +56,7 @@ public class CsvServiceAula {
             throw new RuntimeException("Error al procesar el archivo CSV: " + e.getMessage());
         }
     }
+
     private AulaDTO parseAula(String[] csvData) {
         if (csvData.length < 4 || csvData[0].isEmpty() || csvData[1].isEmpty()) {
             throw new IllegalArgumentException("Datos incompletos o inválidos para el aula.");
@@ -63,6 +68,32 @@ public class CsvServiceAula {
         aulaDTO.setNombreEdificio(csvData[3]);
         return aulaDTO;
     }
+
+    private void saveOrUpdateAula(AulaDTO aulaDTO) {
+        Edificio edificio = edificioRepository.findByNombre(aulaDTO.getNombreEdificio());
+        if (edificio == null) {
+            log.error("Edificio no encontrado: {}", aulaDTO.getNombreEdificio());
+            return;
+        }
+        Optional<Aula> existingAulaOpt = aulaRepository.findByCodigoAndEdificio(aulaDTO.getCodigo(), edificio);
+        if (existingAulaOpt.isPresent()) {
+            Aula existingAula = existingAulaOpt.get();
+            existingAula.setDescripcion(aulaDTO.getDescripcion());
+            existingAula.setCapacidad(aulaDTO.getCapacidad());
+            existingAula.setEdificio(edificio);
+            aulaRepository.save(existingAula);
+            log.info("Aula actualizada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());
+        } else {
+            Aula newAula = new Aula();
+            newAula.setCodigo(aulaDTO.getCodigo());
+            newAula.setDescripcion(aulaDTO.getDescripcion());
+            newAula.setCapacidad(aulaDTO.getCapacidad());
+            newAula.setEdificio(edificio);
+            aulaRepository.save(newAula);
+            log.info("Aula creada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());
+        }
+    }
+
     public void exportAulasToCsv(HttpServletResponse response) {
         try {
             response.setContentType("text/csv");
@@ -94,10 +125,9 @@ public class CsvServiceAula {
         return List.of(
                 String.valueOf(aula.getIdAula()),
                 aula.getCodigo(),
-                String.valueOf(aula.getEdificio()), // Aquí asumimos que Aula tiene una relación con Edificio
+                aula.getEdificio().getNombre(), // Usamos el nombre del edificio aquí
                 aula.getDescripcion(),
                 String.valueOf(aula.getCapacidad())
         );
     }
-
 }

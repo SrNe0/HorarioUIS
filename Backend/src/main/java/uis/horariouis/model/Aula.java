@@ -28,7 +28,7 @@ public class Aula implements Serializable {
     @NotNull
     @Size(min = 1, max = 10)
     @CsvBindByName(column = "CODIGO")
-    @Column(name = "codigo", unique = true)
+    @Column(name = "codigo")
     private String codigo;
 
     @NotBlank

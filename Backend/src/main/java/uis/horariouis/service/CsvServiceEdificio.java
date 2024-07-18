@@ -22,27 +22,28 @@ public class CsvServiceEdificio {
     private static final Logger log = LoggerFactory.getLogger(CsvServiceEdificio.class);
 
     @Autowired
-    private EdificioService EdificioService;
+    private EdificioService edificioService;
     @Autowired
-    private EdificioRepository EdificioRepository;
-
+    private EdificioRepository edificioRepository;
 
     public void importEdificiosFromCsv(MultipartFile file) {
         log.info("Iniciando importación de archivo CSV");
         List<Edificio> edificios = new ArrayList<>();
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();  // Skip the header
+            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();  // Omite el encabezado
             String[] nextRecord;
+            int lineNumber = 1;
             while ((nextRecord = csvReader.readNext()) != null) {
+                lineNumber++;
                 try {
-                    Edificio edificio = parseEdificio(nextRecord);
+                    Edificio edificio = parseEdificio(nextRecord, lineNumber);
                     edificios.add(edificio);
                     log.info("Edificio procesado: {}", edificio.getNombre());
                 } catch (IllegalArgumentException e) {
-                    log.error("Error al parsear el edificio: {}", e.getMessage());
+                    log.error("Error al parsear el edificio en la línea {}: {}", lineNumber, e.getMessage());
                 }
             }
-            EdificioRepository.saveAll(edificios);  // Bulk insert
+            edificioRepository.saveAll(edificios);  // Inserción en bloque
             log.info("Todos los edificios han sido guardados.");
         } catch (Exception e) {
             log.error("Error al procesar el archivo CSV", e);
@@ -50,14 +51,15 @@ public class CsvServiceEdificio {
         }
     }
 
-    private Edificio parseEdificio(String[] csvData) {
-        if (csvData.length < 2 || csvData[1].isEmpty()) {
-            throw new IllegalArgumentException("Datos incompletos o inválidos para el edificio.");
+    private Edificio parseEdificio(String[] csvData, int lineNumber) {
+        if (csvData.length < 1 || csvData[0].isEmpty()) {
+            throw new IllegalArgumentException("Datos incompletos o inválidos para el edificio en la línea " + lineNumber);
         }
         Edificio edificio = new Edificio();
-        edificio.setNombre(csvData[1]); // Asumiendo que el nombre es la segunda columna
+        edificio.setNombre(csvData[0]); // Asumiendo que el nombre es la primera columna
         return edificio;
     }
+
     public void exportEdificiosToCsv(HttpServletResponse response) {
         try {
             response.setContentType("text/csv");
@@ -66,7 +68,7 @@ public class CsvServiceEdificio {
             StatefulBeanToCsv<Edificio> beanToCsv = new StatefulBeanToCsvBuilder<Edificio>(writer)
                     .withApplyQuotesToAll(false)  // Configura si quieres aplicar comillas a todos los campos
                     .build();
-            List<Edificio> edificios = EdificioService.getAllEdificios();  // Asume que este método ya existe
+            List<Edificio> edificios = edificioService.getAllEdificios();  // Asume que este método ya existe
             beanToCsv.write(edificios);
             writer.close();
         } catch (Exception e) {
@@ -74,5 +76,4 @@ public class CsvServiceEdificio {
             throw new RuntimeException("Error al exportar los datos a CSV: " + e.getMessage());
         }
     }
-
 }
