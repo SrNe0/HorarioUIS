@@ -1,4 +1,5 @@
-
+--Eliminar la base de datos preexistente
+DROP DATABASE IF EXISTS horario_uis;
 
 -- Crear la base de datos 'horario_uis'
 CREATE DATABASE IF NOT EXISTS horario_uis;
