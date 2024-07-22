@@ -69,7 +69,7 @@ public class HorarioManagerService {
 
             //[WARNING] - PROBLEMA DE DEFINICION DE LAS REGLAS DE JUEGO PARA LA VARIABLE HORAS TOTALES
 
-            //Las horas totales no se sabe si se asignan como una suma de horas teoricas y practicas, o si se dan en aulas diferentes
+            //Las horas totales no se sabe si se asignan como una suma de horas teóricas y prácticas, o si se dan en aulas diferentes
             //y si se debe especificar un salon especial para ciertas asignaturas
             // Calcula las horas totales a asignar (teoría + práctica)
             int horasTotales = grupo.getAsignatura().getHorasTeoria() + grupo.getAsignatura().getHorasPractica();
