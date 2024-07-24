@@ -1,7 +1,7 @@
 <main class="w-100 p-1 d-flex justify-content-center flex-column align-items-center">
     <h1 class="align-self-center">{{title}}</h1>
-    <div class="mt-2 w-100 ">
-        <table>
+    <div class="mt-2 w-100 d-flex justify-content-center">
+        <table [class.w-50]="title === 'Edificios'">
             <thead>
                 <tr>
                     @for (item of columns; track $index) {
@@ -24,11 +24,11 @@
         </table>
     </div>
     <div class="pagination">
-        <button (click)="goToPage(1)" [disabled]="currentPage === 1">Primero</button>
-        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+        <button class="clickCl" (click)="goToPage(1)" [disabled]="currentPage === 1">Primero</button>
+        <button class="clickCl ms-4 me-2" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
         <span>Página {{currentPage}} de {{totalPages}}</span>
-        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
-        <button (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">Último</button>
+        <button class="clickCl me-4 ms-2" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages || dataEmpty">Siguiente</button>
+        <button class="clickCl" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages || dataEmpty">Último</button>
     </div>
 </main>
 

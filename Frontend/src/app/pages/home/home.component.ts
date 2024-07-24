@@ -18,4 +18,11 @@ import { Router, RouterLink, RouterLinkActive} from '@angular/router';
 export class HomeComponent{
   
   constructor(private router:Router){}
+
+  onClickLogout(){
+    localStorage.removeItem('token_user')
+    this.router.navigate(['/login'])
+  }
+
+
 }

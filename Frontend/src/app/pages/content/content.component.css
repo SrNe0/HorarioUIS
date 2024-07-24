@@ -9,6 +9,7 @@
 .content{
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     border-radius: 15px;
     background-color: #fefff6ad;
     border: 2px solid rgba(0, 0, 0, 0.12);

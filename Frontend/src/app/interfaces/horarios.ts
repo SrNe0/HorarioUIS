@@ -62,13 +62,13 @@ export interface Rol {
 
 
 export class HorariosResponse{
-    idHorario =  0;
-    profesor =   '';
-    grupo =      '';
-    aula =       '';
-    dia =        '';
-    horaInicio = '';
-    horaFin =    '';
+    idHorario =     0;
+    nombreDocente = '';
+    grupo =         '';
+    aula =          '';
+    dia =           '';
+    horaInicio =    '';
+    horaFin =       '';
 }
 
 export class AulaResponse {

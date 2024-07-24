@@ -25,7 +25,6 @@ export class UsuariosComponent {
   
     this.service.getData(this.url).subscribe(data => {
       this.dataUsuarios = data;
-      console.log(this.dataUsuarios)
     })
   }
 

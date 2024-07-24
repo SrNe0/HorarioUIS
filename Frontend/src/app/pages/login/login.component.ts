@@ -28,7 +28,7 @@ export class LoginComponent {
       try {
         const response = await firstValueFrom(this.services.authenticateLogin(this.formulario.value));
         if (!response.error) {
-          console.log('Login successful', response);
+          console.log('Login successful');
           localStorage.setItem('token_user', response.jwt)
           this.router.navigate(['/home']);
         }

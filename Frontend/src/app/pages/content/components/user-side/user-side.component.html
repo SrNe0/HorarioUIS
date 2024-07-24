@@ -1,1 +1,12 @@
-<p>user-side works!</p>
+<main class="w-100 d-flex flex-column h-100 align-items-center">
+    <div><i class="fi fi-sr-user"></i> <h2></h2></div>
+    <nav class="menu w-100">
+        <ul>
+          <li><a [routerLink]="['/home']">Inicio</a></li>
+          <li><a [routerLink]="['/usuario/horario']">Horarios</a></li>
+          <li><a [routerLink]="['/usuario/usuarios']">Usuarios</a></li>
+          <li><a [routerLink]="['/usuario/reportes']">Reportes</a></li>
+        </ul>
+    </nav>
+    <button class="btn btn-mgr w-100">Crear</button>
+</main>

@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import { Acciones } from '../../interfaces/acciones';
+import { Horarios } from '../../interfaces/horarios';
+import { isEmpty } from 'rxjs';
 
 @Component({
   selector: 'app-tablas',
@@ -9,9 +11,12 @@ import { Acciones } from '../../interfaces/acciones';
   styleUrl: './tablas.component.css'
 })
 export class TablasComponent implements OnInit{
+
   title:string = '';
   columns:string[] = [];
   dataSource:any = [];
+  dataEmpty:boolean = false;
+  
 
   @Input() set titulo(title: any){
     this.title = title;
@@ -23,6 +28,7 @@ export class TablasComponent implements OnInit{
 
   @Input() set data(data: any) {
     this.dataSource = data;
+    this.dataEmpty = Object.keys(this.dataSource).length === 0;
     this.currentPage = 1; 
     this.updatePaginatedData(); 
   }
@@ -40,6 +46,8 @@ export class TablasComponent implements OnInit{
       if (typeof data[item] === 'object'){
         if (item === 'usuario'){
           return data[item]['nombreUsuario']
+        }else if (item === 'rol') {
+          return data[item]['nombreRol']
         }else{
           return data[item]['nombre']
         }}else{
