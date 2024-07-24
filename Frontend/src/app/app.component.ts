@@ -2,7 +2,8 @@ import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
-import { filter } from 'rxjs';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 
 
 @Component({
@@ -13,7 +14,9 @@ import { filter } from 'rxjs';
     RouterLink, 
     RouterLinkActive, 
     HeaderComponent,
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

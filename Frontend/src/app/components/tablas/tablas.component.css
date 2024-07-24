@@ -1,0 +1,51 @@
+table {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+  
+table th, table td {
+    text-align: center; 
+    vertical-align: middle; 
+    border: 2px solid #809b3d; 
+    padding: 8px; 
+}
+  
+thead th {
+    background-color: #91BC31;
+    color: #fff;
+}
+  
+tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+}
+  
+tbody tr:nth-of-type(even) {
+    background-color: #90bc3175;
+}
+
+.text-bck {
+    color: black;
+}
+
+.pagination {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    background-color: #91BC31;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.pagination button[disabled] {
+    background-color: #b7db68;
+    cursor: not-allowed;
+}

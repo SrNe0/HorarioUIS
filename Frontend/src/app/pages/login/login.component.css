@@ -12,11 +12,14 @@
 
 .content-body{
     background-color: #fefff69c;
+    padding: 50px 5px;
+    border-radius: 20px;
+}
+
+.content-body form{
     display: flex;
     flex-direction: column;
-    padding: 50px 5px;
     justify-content: center;
-    border-radius: 20px;
 }
 
 .bg-img{

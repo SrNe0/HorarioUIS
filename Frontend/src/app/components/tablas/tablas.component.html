@@ -1,0 +1,34 @@
+<main class="w-100 p-1 d-flex justify-content-center flex-column align-items-center">
+    <h1 class="align-self-center">{{title}}</h1>
+    <div class="mt-2 w-100 ">
+        <table>
+            <thead>
+                <tr>
+                    @for (item of columns; track $index) {
+                        <th class="px-3 ft-700 text-cb" [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
+                    }
+                    <th colspan="2" class="px-3 ft-700 text-cb w-10">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (data of paginatedData; track $index) {
+                  <tr>
+                    @for (item of columns; track $index) {
+                      <td>{{ getNestedProperty(item, data) }}</td>
+                    }
+                    <td class="px-3"><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
+                    <td class="px-3"><a class="clickCl text-decoration-none text-bck" (click)="onAction('Borrar', data)"><i class="fi fi-br-trash"></i></a></td>
+                  </tr>
+                }
+              </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+        <button (click)="goToPage(1)" [disabled]="currentPage === 1">Primero</button>
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{currentPage}} de {{totalPages}}</span>
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
+        <button (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">Último</button>
+    </div>
+</main>
+

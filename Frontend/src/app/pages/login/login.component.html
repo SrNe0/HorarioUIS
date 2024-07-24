@@ -5,19 +5,21 @@
 <div class="mcontainer position-relative">
     <div class="content">
         <div class="content-body">
-            <h2 class="ft-500 tl-ft-s ft-cl-dkblue mt-3">Inicio de <span class="ft-cl-green">Sesión</span></h2>
+            <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+                <h2 class="ft-500 tl-ft-s ft-cl-dkblue mt-3">Inicio de <span class="ft-cl-green">Sesión</span></h2>
 
-            <div class="data-grup my-5">
-                <input type="text" id="user" class="text" placeholder="">
-                <label for="user" class="ft-500">Ingrese su usuario</label>
-            </div>
-
-            <div class="data-grup mb-5">
-                <input type="password" id="user" class="text" placeholder="">
-                <label for="password" class="ft-500">Ingrese su contraseña</label>
-            </div>
-
-            <div class="d-flex justify-content-center mt-4"><button class="btn my-btn" [routerLink]="['/home']">Ingresar</button></div>
+                <div class="data-grup my-5">
+                    <input type="text" id="username" class="text" placeholder="" formControlName="username">
+                    <label for="username" class="ft-500">Ingrese su usuario</label>
+                </div>
+    
+                <div class="data-grup mb-5">
+                    <input type="password" id="userpassword" class="text" placeholder="" formControlName="password">
+                    <label for="userpassword" class="ft-500">Ingrese su contraseña</label>
+                </div>
+    
+                <div class="d-flex justify-content-center mt-4"><button type="submit" value="Enviar" class="btn my-btn">Ingresar</button></div>
+            </form>
         </div>
     </div>
 </div>

@@ -116,3 +116,23 @@
 .w-45{
     width: 45%;
 }
+
+.w-15{
+    width: 15%;
+}
+
+.w-10{
+    width: 10%;
+}
+
+.w-5{
+    width: 5%;
+}
+
+.clickCl{
+    cursor: pointer;
+}
+
+.text-cb{
+    font-size: 19px;
+}

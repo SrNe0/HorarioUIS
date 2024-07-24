@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GetionUsuariosComponent } from './getion-usuarios.component';
+import { UsuariosComponent } from './usuarios.component';
 
 describe('GetionUsuariosComponent', () => {
-  let component: GetionUsuariosComponent;
-  let fixture: ComponentFixture<GetionUsuariosComponent>;
+  let component: UsuariosComponent;
+  let fixture: ComponentFixture<UsuariosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GetionUsuariosComponent]
+      imports: [UsuariosComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(GetionUsuariosComponent);
+    fixture = TestBed.createComponent(UsuariosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
