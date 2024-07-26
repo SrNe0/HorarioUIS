@@ -1,0 +1,21 @@
+codigo,descripcion,capacidad,nombreEdificio,tiene_computadores
+A101,Aula con asientos cómodos,50,Edificio C,False
+B201,Aula amplia con proyector,40,Edificio D,False
+C301,Sala de conferencias,30,Edificio E,False
+D401,Aula para clases teóricas,60,Edificio F,False
+AULA404,Laboratorio de computación,32,Edificio F,True
+AULA970,Aula equipada para videoconferencias,49,Edificio H,True
+AULA549,Aula amplia con proyector,42,Edificio H,True
+AULA789,Laboratorio de química,32,Edificio F,False
+AULA941,Sala de conferencias,41,Edificio E,False
+AULA719,Aula amplia con proyector,22,Edificio E,False
+AULA378,Laboratorio de química,20,Edificio H,False
+AULA898,Aula equipada para videoconferencias,35,Edificio I,True
+AULA484,Laboratorio de química,33,Edificio J,False
+AULA412,Sala de conferencias,38,Edificio G,False
+AULA813,Aula amplia con proyector,32,Edificio F,True
+AULA776,Laboratorio de química,47,Edificio I,False
+AULA447,Aula para clases teóricas,39,Edificio I,False
+AULA207,Aula para clases teóricas,48,Edificio J,False
+AULA604,Aula con sistema de sonido,45,Edificio H,False
+AULA378,Aula con asientos cómodos,38,Edificio F,False
