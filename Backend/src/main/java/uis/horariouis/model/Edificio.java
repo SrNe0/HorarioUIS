@@ -19,7 +19,6 @@ public class Edificio implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idedificio")
     @CsvBindByName(column = "ID")
     private Long idEdificio;
 
@@ -27,5 +26,5 @@ public class Edificio implements Serializable {
     @Column(name = "nombre")
     @CsvBindByName(column = "Nombre")
     private String nombre;
-
 }
+
