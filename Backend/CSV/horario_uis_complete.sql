@@ -119,7 +119,7 @@ DROP TABLE IF EXISTS `edificio`;
 CREATE TABLE `edificio` (
   `id_edificio` bigint NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`idedificio`)
+  PRIMARY KEY (`id_edificio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
