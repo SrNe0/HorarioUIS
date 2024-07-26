@@ -1,0 +1,19 @@
+Codigo,Nombre,Horas Teoría,Horas Práctica,necesita_computadores
+22948,Fundamentos de Programación,5,0,True
+22951,Programación Orientada a Objetos,5,0,True
+22954,Matemáticas Discretas,4,0,False
+22955,Estructura de datos y análisis de algoritmos,4,0,True
+22958,Autómatas y lenguajes formales,4,0,True
+22959,Base de Datos I,4,0,True
+22960,Base de Datos II,4,0,True
+22961,Sistemas Digitales,4,0,False
+22965,Redes de Computadores I,4,0,True
+22966,Arquitectura de Computadores,4,0,False
+22967,Programación en la Web,4,0,True
+22968,Sistemas de Información,4,0,False
+22969,Ingeniería del Software I,4,0,False
+22970,Redes de Computadores II,4,0,True
+22971,Inteligencia Artificial I,4,0,True
+22972,Sistemas Operacionales,5,0,True
+22973,Ingeniería del Software II,4,0,False
+22974,Simulación Digital,4,0,True

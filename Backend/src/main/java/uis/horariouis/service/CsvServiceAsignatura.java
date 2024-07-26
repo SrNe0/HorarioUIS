@@ -31,7 +31,7 @@ public class CsvServiceAsignatura {
         log.info("Iniciando importación de archivo CSV para Asignaturas");
         List<Asignatura> asignaturas = new ArrayList<>();
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(0).build();
+            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();  // Assuming the first line is header
             String[] nextRecord;
             while ((nextRecord = csvReader.readNext()) != null) {
                 try {
@@ -51,7 +51,7 @@ public class CsvServiceAsignatura {
     }
 
     private Asignatura parseAsignatura(String[] csvData) {
-        if (csvData.length < 3 || csvData[0].isEmpty() || csvData[1].isEmpty()) {
+        if (csvData.length < 5 || csvData[0].isEmpty() || csvData[1].isEmpty()) {
             throw new IllegalArgumentException("Datos incompletos o inválidos para la asignatura.");
         }
         Asignatura asignatura = new Asignatura();
@@ -59,6 +59,7 @@ public class CsvServiceAsignatura {
         asignatura.setNombre(csvData[1]);
         asignatura.setHorasTeoria(Integer.parseInt(csvData[2]));
         asignatura.setHorasPractica(Integer.parseInt(csvData[3]));
+        asignatura.setNecesitaComputadores(Boolean.parseBoolean(csvData[4]));
         return asignatura;
     }
 

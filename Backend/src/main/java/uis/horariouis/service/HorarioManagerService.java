@@ -67,24 +67,24 @@ public class HorarioManagerService {
             // Obtiene la disponibilidad horaria del profesor
             List<DisponibilidadHoraria> disponibilidad = obtenerDisponibilidadProfesor(profesor);
 
-            //[WARNING] - PROBLEMA DE DEFINICION DE LAS REGLAS DE JUEGO PARA LA VARIABLE HORAS TOTALES
-
-            //Las horas totales no se sabe si se asignan como una suma de horas teóricas y prácticas, o si se dan en aulas diferentes
-            //y si se debe especificar un salon especial para ciertas asignaturas
             // Calcula las horas totales a asignar (teoría + práctica)
-            int horasTotales = grupo.getAsignatura().getHorasTeoria() + grupo.getAsignatura().getHorasPractica();
-            // Divide las horas totales en dos bloques
-            int horasBloque1 = horasTotales / 2;
-            int horasBloque2 = horasTotales - horasBloque1;
+            int horasTeoria = grupo.getAsignatura().getHorasTeoria();
+            int horasPractica = grupo.getAsignatura().getHorasPractica();
+            int horasTotales = horasTeoria + horasPractica;
+            // Define la carga máxima por día
+            int cargaMaximaPorDia = 3;
+            int horasRestantes = horasTotales;
 
-            // Intenta asignar el primer bloque de horas
-            if (asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque1)) {
-                throw new HorarioException("No se pudo asignar el primer bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
-            }
+            // Intenta asignar las horas en bloques, respetando la carga máxima por día
+            while (horasRestantes > 0) {
+                int horasABloquear = Math.min(cargaMaximaPorDia, horasRestantes);
 
-            // Intenta asignar el segundo bloque de horas
-            if (asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasBloque2)) {
-                throw new HorarioException("No se pudo asignar el segundo bloque de horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
+                // Cambio: Distribuir las horas a lo largo de la semana sin superar la carga máxima diaria
+                if (!asignarBloqueDeHoras(grupo, aulas, horarios, profesor, disponibilidad, horasABloquear)) {
+                    throw new HorarioException("No se pudo asignar un bloque de " + horasABloquear + " horas para el grupo " + grupo.getNombreGrupo() + " de la asignatura " + grupo.getAsignatura().getNombre());
+                }
+
+                horasRestantes -= horasABloquear;
             }
         }
     }
@@ -109,18 +109,28 @@ public class HorarioManagerService {
                 Aula aulaDisponible = obtenerAulaDisponible(aulas, horarios, grupo, slotsConsecutivos);
 
                 if (aulaDisponible != null) {
+                    // Verifica que no se excedan las 3 horas diarias para el grupo
+                    if (!verificarHorasDiarias(grupo, horarios, dia, horas)) {
+                        continue; // Si excede, pasa al siguiente día
+                    }
+
                     // Si hay un aula disponible, crea horarios para cada slot y los agrega a la lista de horarios
                     for (DisponibilidadHoraria slot : slotsConsecutivos) {
-                        Horario horario = crearHorario(profesor, grupo, aulaDisponible, slot);
-                        horarios.add(horario);
-                        disponibilidad.remove(slot); // Remueve también de la disponibilidad original
+                        // Verifica que no haya solapamiento de horarios para el profesor
+                        if (verificarSolapamientoProfesor(profesor, horarios, slot)) {
+                            Horario horario = crearHorario(profesor, grupo, aulaDisponible, slot);
+                            horarios.add(horario);
+                            disponibilidad.remove(slot); // Remueve también de la disponibilidad original
+                        } else {
+                            return false; // Si hay solapamiento, retorna false
+                        }
                     }
-                    return false; // Retorna true si se pudo asignar el bloque de horas
+                    return true; // Retorna true si se pudo asignar el bloque de horas
                 }
             }
         }
 
-        return true; // Retorna false si no se pudo asignar el bloque de horas
+        return false; // Retorna false si no se pudo asignar el bloque de horas
     }
 
     // Método para crear un objeto Horario
@@ -197,6 +207,30 @@ public class HorarioManagerService {
             }
         }
         return null; // Retorna null si no se encuentra un aula disponible
+    }
+
+    // Verifica que un grupo no tenga más de 3 horas diarias asignadas
+    private boolean verificarHorasDiarias(Grupo grupo, List<Horario> horarios, String dia, int horas) {
+        int horasDiarias = horarios.stream()
+                .filter(horario -> horario.getGrupo().equals(grupo) && horario.getDia().equals(dia))
+                .mapToInt(horario -> calcularDuracion(horario.getHoraInicio(), horario.getHoraFin()))
+                .sum();
+        return (horasDiarias + horas) <= 3;
+    }
+
+    // Calcula la duración entre dos horarios en horas
+    private int calcularDuracion(Date horaInicio, Date horaFin) {
+        long diff = horaFin.getTime() - horaInicio.getTime();
+        return (int) (diff / (1000 * 60 * 60));
+    }
+
+    // Verifica que no haya solapamiento de horarios para un profesor
+    private boolean verificarSolapamientoProfesor(Profesor profesor, List<Horario> horarios, DisponibilidadHoraria slot) {
+        return horarios.stream().noneMatch(horario ->
+                horario.getProfesor().equals(profesor) &&
+                        horario.getDia().equals(slot.getDia()) &&
+                        horario.getHoraInicio().equals(slot.getHoraInicio())
+        );
     }
 
     // Excepción personalizada para manejar errores de asignación de horarios

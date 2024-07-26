@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -41,6 +40,10 @@ public class Asignatura implements Serializable {
     @Positive(message = "Las horas de práctica deben ser un número positivo")
     @CsvBindByName(column = "Horas Práctica")
     private Integer horasPractica;
+
+    @NotNull(message = "La necesidad de computadores es requerida")
+    @CsvBindByName(column = "Necesita Computadores")
+    private Boolean necesitaComputadores;
 
     // Relación OneToMany con Grupo
 

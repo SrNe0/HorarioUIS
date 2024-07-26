@@ -49,6 +49,7 @@ CREATE TABLE `asignatura` (
   `horas_practica` int DEFAULT NULL,
   `horas_teoria` int DEFAULT NULL,
   `nombre` varchar(255) DEFAULT NULL,
+  `necesita_computadores` BOOLEAN DEFAULT NULL,
   PRIMARY KEY (`id_asignatura`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -62,13 +63,14 @@ DROP TABLE IF EXISTS `aula`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aula` (
   `id_aula` bigint NOT NULL AUTO_INCREMENT,
-  `capacidad` int DEFAULT NULL,
   `codigo` varchar(255) DEFAULT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
+  `capacidad` int DEFAULT NULL,
+  `tiene_computadores` BOOLEAN DEFAULT NULL,
   `id_edificio` bigint DEFAULT NULL,
   PRIMARY KEY (`id_aula`),
-  KEY `FKgvg5a2mgjvya8xwgio1s35956` (`id_edificio`),
-  CONSTRAINT `FKgvg5a2mgjvya8xwgio1s35956` FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`idedificio`)
+  KEY `id_edificio` (`id_edificio`),
+  CONSTRAINT `aula_ibfk_1` FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`id_edificio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -86,7 +88,7 @@ CREATE TABLE `dictado` (
   PRIMARY KEY (`id_dictado`),
   KEY `FKh2j3v6crvvr2g04l1jt7re7b5` (`id_asignatura`),
   KEY `FKa6000vkfcwj44in2nbwpked2t` (`id_profesor`),
-  CONSTRAINT `FKa6000vkfcwj44in2nbwpked2t` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_usuario`),
+  CONSTRAINT `FKa6000vkfcwj44in2nbwpked2t` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
   CONSTRAINT `FKh2j3v6crvvr2g04l1jt7re7b5` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`id_asignatura`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -158,7 +160,7 @@ CREATE TABLE `horario` (
   KEY `FK74io69d6km297uuf1s9mt9bej` (`id_aula`),
   KEY `FKdodah75vq84c8cdcjhs4fgo0p` (`id_grupo`),
   KEY `FK1alm3vwaj7x1qx9avlgdeaqgv` (`id_profesor`),
-  CONSTRAINT `FK1alm3vwaj7x1qx9avlgdeaqgv` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_usuario`),
+  CONSTRAINT `FK1alm3vwaj7x1qx9avlgdeaqgv` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
   CONSTRAINT `FK74io69d6km297uuf1s9mt9bej` FOREIGN KEY (`id_aula`) REFERENCES `aula` (`id_aula`),
   CONSTRAINT `FKdodah75vq84c8cdcjhs4fgo0p` FOREIGN KEY (`id_grupo`) REFERENCES `grupo` (`idgrupo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -179,7 +181,7 @@ CREATE TABLE `horario_profesor` (
   KEY `FKgpe5h9iq1km8h8eyxmrj1tdnl` (`id_disponibilidad`),
   KEY `FKh4yt7fegch93tj94tg8sk9yrn` (`id_profesor`),
   CONSTRAINT `FKgpe5h9iq1km8h8eyxmrj1tdnl` FOREIGN KEY (`id_disponibilidad`) REFERENCES `disponibilidad_horaria` (`id_disponibilidad`),
-  CONSTRAINT `FKh4yt7fegch93tj94tg8sk9yrn` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_usuario`)
+  CONSTRAINT `FKh4yt7fegch93tj94tg8sk9yrn` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

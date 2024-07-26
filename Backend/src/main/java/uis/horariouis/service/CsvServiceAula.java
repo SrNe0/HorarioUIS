@@ -58,7 +58,7 @@ public class CsvServiceAula {
     }
 
     private AulaDTO parseAula(String[] csvData) {
-        if (csvData.length < 4 || csvData[0].isEmpty() || csvData[1].isEmpty()) {
+        if (csvData.length < 5 || csvData[0].isEmpty() || csvData[1].isEmpty()) {
             throw new IllegalArgumentException("Datos incompletos o inválidos para el aula.");
         }
         AulaDTO aulaDTO = new AulaDTO();
@@ -66,6 +66,7 @@ public class CsvServiceAula {
         aulaDTO.setDescripcion(csvData[1]);
         aulaDTO.setCapacidad(Integer.parseInt(csvData[2]));
         aulaDTO.setNombreEdificio(csvData[3]);
+        aulaDTO.setTieneComputadores(Boolean.parseBoolean(csvData[4]));
         return aulaDTO;
     }
 
@@ -80,6 +81,7 @@ public class CsvServiceAula {
             Aula existingAula = existingAulaOpt.get();
             existingAula.setDescripcion(aulaDTO.getDescripcion());
             existingAula.setCapacidad(aulaDTO.getCapacidad());
+            existingAula.setTieneComputadores(aulaDTO.isTieneComputadores());
             existingAula.setEdificio(edificio);
             aulaRepository.save(existingAula);
             log.info("Aula actualizada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());
@@ -88,6 +90,7 @@ public class CsvServiceAula {
             newAula.setCodigo(aulaDTO.getCodigo());
             newAula.setDescripcion(aulaDTO.getDescripcion());
             newAula.setCapacidad(aulaDTO.getCapacidad());
+            newAula.setTieneComputadores(aulaDTO.isTieneComputadores());
             newAula.setEdificio(edificio);
             aulaRepository.save(newAula);
             log.info("Aula creada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());
@@ -104,7 +107,7 @@ public class CsvServiceAula {
             List<Aula> aulas = aulaRepository.findAll();
 
             // Especificar el orden de las columnas
-            String[] header = {"idAula", "codigo", "edificio", "descripcion", "capacidad"};
+            String[] header = {"idAula", "codigo", "edificio", "descripcion", "capacidad", "tieneComputadores"};
 
             // Escribir el encabezado al archivo CSV
             writer.println(String.join(",", header));
@@ -127,7 +130,8 @@ public class CsvServiceAula {
                 aula.getCodigo(),
                 aula.getEdificio().getNombre(), // Usamos el nombre del edificio aquí
                 aula.getDescripcion(),
-                String.valueOf(aula.getCapacidad())
+                String.valueOf(aula.getCapacidad()),
+                String.valueOf(aula.getTieneComputadores())
         );
     }
 }

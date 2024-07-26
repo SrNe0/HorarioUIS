@@ -20,7 +20,7 @@ public class HorarioProfesor implements Serializable {
 
     @NotNull(message = "El ID del profesor es requerido")
     @ManyToOne
-    @JoinColumn(name = "idProfesor", referencedColumnName = "idUsuario")
+    @JoinColumn(name = "idProfesor", referencedColumnName = "idProfesor")
     private Profesor profesor;
 
     @NotNull(message = "El ID de la disponibilidad horaria es requerido")

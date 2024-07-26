@@ -42,6 +42,11 @@ public class Aula implements Serializable {
     @Column(name = "capacidad")
     private int capacidad;
 
+    @NotNull(message = "La disponibilidad de computadores es requerida")
+    @CsvBindByName(column = "Tiene Computadores")
+    @Column(name = "tieneComputadores")
+    private Boolean tieneComputadores;
+
     @ManyToOne
     @JoinColumn(name = "idEdificio", referencedColumnName = "idEdificio")
     @CsvBindByName(column = "EDIFICIO")
