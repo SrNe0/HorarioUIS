@@ -2,153 +2,271 @@
 DROP DATABASE IF EXISTS horario_uis;
 
 -- Crear la base de datos 'horario_uis'
-CREATE DATABASE IF NOT EXISTS horario_uis;
+CREATE DATABASE IF NOT EXISTS horario_uis CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE horario_uis;
 
--- Tabla `rol`
-DROP TABLE IF EXISTS `rol`;
-CREATE TABLE `rol` (
-  `id_rol` BIGINT NOT NULL AUTO_INCREMENT,
-  `nombre_rol` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`id_rol`),
-  UNIQUE (`nombre_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+-- MySQL dump 10.13  Distrib 8.0.37, for Linux (x86_64)
+--
+-- Host: localhost    Database: horario_uis
+-- ------------------------------------------------------
+-- Server version	8.0.37-0ubuntu0.20.04.3
 
--- Tabla `usuario`
-DROP TABLE IF EXISTS `usuario`;
-CREATE TABLE `usuario` (
-  `id_usuario` BIGINT NOT NULL AUTO_INCREMENT,
-  `contrasena` VARCHAR(255) NOT NULL,
-  `nombre_usuario` VARCHAR(255) NOT NULL,
-  `id_rol` BIGINT DEFAULT NULL,
-  PRIMARY KEY (`id_usuario`),
-  FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Tabla `edificio`
-DROP TABLE IF EXISTS `edificio`;
-CREATE TABLE `edificio` (
-  `id_edificio` BIGINT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`id_edificio`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+--
+-- Table structure for table `accion`
+--
 
--- Tabla `accion`
 DROP TABLE IF EXISTS `accion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `accion` (
-  `id_accion` BIGINT NOT NULL AUTO_INCREMENT,
-  `nombre_accion` VARCHAR(255) DEFAULT NULL,
+  `id_accion` bigint NOT NULL AUTO_INCREMENT,
+  `nombre_accion` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_accion`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `asignatura`
+--
+-- Table structure for table `asignatura`
+--
+
 DROP TABLE IF EXISTS `asignatura`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `asignatura` (
-  `id_asignatura` BIGINT NOT NULL AUTO_INCREMENT,
-  `codigo` VARCHAR(255) DEFAULT NULL,
-  `horas_practica` INT DEFAULT NULL,
-  `horas_teoria` INT DEFAULT NULL,
-  `necesita_computadores` BIT(1) DEFAULT NULL,
-  `nombre` VARCHAR(255) DEFAULT NULL,
+  `id_asignatura` bigint NOT NULL AUTO_INCREMENT,
+  `codigo` varchar(255) DEFAULT NULL,
+  `horas_practica` int DEFAULT NULL,
+  `horas_teoria` int DEFAULT NULL,
+  `necesita_computadores` bit(1) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_asignatura`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `aula`
+--
+-- Table structure for table `aula`
+--
+
 DROP TABLE IF EXISTS `aula`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aula` (
-  `id_aula` BIGINT NOT NULL AUTO_INCREMENT,
-  `capacidad` INT DEFAULT NULL,
-  `codigo` VARCHAR(255) DEFAULT NULL,
-  `descripcion` VARCHAR(255) DEFAULT NULL,
-  `tiene_computadores` BIT(1) DEFAULT NULL,
-  `id_edificio` BIGINT DEFAULT NULL,
+  `id_aula` bigint NOT NULL AUTO_INCREMENT,
+  `capacidad` int DEFAULT NULL,
+  `codigo` varchar(255) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `tiene_computadores` bit(1) DEFAULT NULL,
+  `id_edificio` bigint DEFAULT NULL,
   PRIMARY KEY (`id_aula`),
-  FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`id_edificio`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FKgvg5a2mgjvya8xwgio1s35956` (`id_edificio`),
+  CONSTRAINT `FKgvg5a2mgjvya8xwgio1s35956` FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`id_edificio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `profesor`
-DROP TABLE IF EXISTS `profesor`;
-CREATE TABLE `profesor` (
-  `id_profesor` BIGINT NOT NULL AUTO_INCREMENT,
-  `apellido1` VARCHAR(255) DEFAULT NULL,
-  `apellido2` VARCHAR(255) DEFAULT NULL,
-  `correo` VARCHAR(255) DEFAULT NULL,
-  `documento_identidad` VARCHAR(255) DEFAULT NULL,
-  `nombre1` VARCHAR(255) DEFAULT NULL,
-  `nombre2` VARCHAR(255) DEFAULT NULL,
-  `telefono` VARCHAR(255) DEFAULT NULL,
-  `id_usuario` BIGINT DEFAULT NULL,
-  PRIMARY KEY (`id_profesor`),
-  FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+--
+-- Table structure for table `dictado`
+--
 
--- Tabla `dictado`
 DROP TABLE IF EXISTS `dictado`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dictado` (
-  `id_dictado` BIGINT NOT NULL AUTO_INCREMENT,
-  `id_asignatura` BIGINT DEFAULT NULL,
-  `id_profesor` BIGINT DEFAULT NULL,
+  `id_dictado` bigint NOT NULL AUTO_INCREMENT,
+  `id_asignatura` bigint DEFAULT NULL,
+  `id_profesor` bigint DEFAULT NULL,
   PRIMARY KEY (`id_dictado`),
-  FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`id_asignatura`),
-  FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FKh2j3v6crvvr2g04l1jt7re7b5` (`id_asignatura`),
+  KEY `FKa6000vkfcwj44in2nbwpked2t` (`id_profesor`),
+  CONSTRAINT `FKa6000vkfcwj44in2nbwpked2t` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
+  CONSTRAINT `FKh2j3v6crvvr2g04l1jt7re7b5` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`id_asignatura`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `disponibilidad_horaria`
+--
+-- Table structure for table `disponibilidad_horaria`
+--
+
 DROP TABLE IF EXISTS `disponibilidad_horaria`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `disponibilidad_horaria` (
-  `id_disponibilidad` BIGINT NOT NULL AUTO_INCREMENT,
-  `dia` VARCHAR(255) DEFAULT NULL,
-  `hora_fin` TIME DEFAULT NULL,
-  `hora_inicio` TIME DEFAULT NULL,
+  `id_disponibilidad` bigint NOT NULL AUTO_INCREMENT,
+  `dia` varchar(255) DEFAULT NULL,
+  `hora_fin` time DEFAULT NULL,
+  `hora_inicio` time DEFAULT NULL,
   PRIMARY KEY (`id_disponibilidad`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `grupo`
+--
+-- Table structure for table `edificio`
+--
+
+DROP TABLE IF EXISTS `edificio`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `edificio` (
+  `id_edificio` bigint NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_edificio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `grupo`
+--
+
 DROP TABLE IF EXISTS `grupo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `grupo` (
-  `idgrupo` BIGINT NOT NULL AUTO_INCREMENT,
-  `cupo` INT DEFAULT NULL,
-  `nombregrupo` VARCHAR(255) DEFAULT NULL,
-  `idasignatura` BIGINT DEFAULT NULL,
+  `idgrupo` bigint NOT NULL AUTO_INCREMENT,
+  `cupo` int DEFAULT NULL,
+  `nombregrupo` varchar(255) DEFAULT NULL,
+  `idasignatura` bigint DEFAULT NULL,
   PRIMARY KEY (`idgrupo`),
-  FOREIGN KEY (`idasignatura`) REFERENCES `asignatura` (`id_asignatura`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FKexsnelyd41sfqwjxwiq5c8go5` (`idasignatura`),
+  CONSTRAINT `FKexsnelyd41sfqwjxwiq5c8go5` FOREIGN KEY (`idasignatura`) REFERENCES `asignatura` (`id_asignatura`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `horario`
+--
+-- Table structure for table `horario`
+--
+
 DROP TABLE IF EXISTS `horario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `horario` (
-  `id_horario` BIGINT NOT NULL AUTO_INCREMENT,
-  `dia` VARCHAR(255) DEFAULT NULL,
-  `hora_fin` TIME DEFAULT NULL,
-  `hora_inicio` TIME DEFAULT NULL,
-  `id_aula` BIGINT DEFAULT NULL,
-  `id_grupo` BIGINT DEFAULT NULL,
-  `id_profesor` BIGINT DEFAULT NULL,
+  `id_horario` bigint NOT NULL AUTO_INCREMENT,
+  `dia` varchar(255) DEFAULT NULL,
+  `hora_fin` time DEFAULT NULL,
+  `hora_inicio` time DEFAULT NULL,
+  `id_aula` bigint DEFAULT NULL,
+  `id_grupo` bigint DEFAULT NULL,
+  `id_profesor` bigint DEFAULT NULL,
   PRIMARY KEY (`id_horario`),
-  FOREIGN KEY (`id_aula`) REFERENCES `aula` (`id_aula`),
-  FOREIGN KEY (`id_grupo`) REFERENCES `grupo` (`idgrupo`),
-  FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FK74io69d6km297uuf1s9mt9bej` (`id_aula`),
+  KEY `FKdodah75vq84c8cdcjhs4fgo0p` (`id_grupo`),
+  KEY `FK1alm3vwaj7x1qx9avlgdeaqgv` (`id_profesor`),
+  CONSTRAINT `FK1alm3vwaj7x1qx9avlgdeaqgv` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
+  CONSTRAINT `FK74io69d6km297uuf1s9mt9bej` FOREIGN KEY (`id_aula`) REFERENCES `aula` (`id_aula`),
+  CONSTRAINT `FKdodah75vq84c8cdcjhs4fgo0p` FOREIGN KEY (`id_grupo`) REFERENCES `grupo` (`idgrupo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `horario_profesor`
+--
+-- Table structure for table `horario_profesor`
+--
+
 DROP TABLE IF EXISTS `horario_profesor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `horario_profesor` (
-  `id_horario_profesor` BIGINT NOT NULL AUTO_INCREMENT,
-  `id_disponibilidad` BIGINT DEFAULT NULL,
-  `id_profesor` BIGINT DEFAULT NULL,
+  `id_horario_profesor` bigint NOT NULL AUTO_INCREMENT,
+  `id_disponibilidad` bigint DEFAULT NULL,
+  `id_profesor` bigint DEFAULT NULL,
   PRIMARY KEY (`id_horario_profesor`),
-  FOREIGN KEY (`id_disponibilidad`) REFERENCES `disponibilidad_horaria` (`id_disponibilidad`),
-  FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FKgpe5h9iq1km8h8eyxmrj1tdnl` (`id_disponibilidad`),
+  KEY `FKh4yt7fegch93tj94tg8sk9yrn` (`id_profesor`),
+  CONSTRAINT `FKgpe5h9iq1km8h8eyxmrj1tdnl` FOREIGN KEY (`id_disponibilidad`) REFERENCES `disponibilidad_horaria` (`id_disponibilidad`),
+  CONSTRAINT `FKh4yt7fegch93tj94tg8sk9yrn` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla `rol_accion`
+--
+-- Table structure for table `profesor`
+--
+
+DROP TABLE IF EXISTS `profesor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `profesor` (
+  `id_profesor` bigint NOT NULL AUTO_INCREMENT,
+  `apellido1` varchar(255) DEFAULT NULL,
+  `apellido2` varchar(255) DEFAULT NULL,
+  `correo` varchar(255) DEFAULT NULL,
+  `documento_identidad` varchar(255) DEFAULT NULL,
+  `nombre1` varchar(255) DEFAULT NULL,
+  `nombre2` varchar(255) DEFAULT NULL,
+  `telefono` varchar(255) DEFAULT NULL,
+  `id_usuario` bigint DEFAULT NULL,
+  PRIMARY KEY (`id_profesor`),
+  KEY `FKbyhq45hsgy32alfydfpypqctp` (`id_usuario`),
+  CONSTRAINT `FKbyhq45hsgy32alfydfpypqctp` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rol`
+--
+
+DROP TABLE IF EXISTS `rol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rol` (
+  `id_rol` bigint NOT NULL AUTO_INCREMENT,
+  `nombre_rol` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_rol`),
+  UNIQUE KEY `UK_l0qdsam7tunbtmxcmeeyfcifk` (`nombre_rol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rol_accion`
+--
+
 DROP TABLE IF EXISTS `rol_accion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rol_accion` (
-  `id_rol_accion` BIGINT NOT NULL AUTO_INCREMENT,
-  `id_accion` BIGINT DEFAULT NULL,
-  `id_rol` BIGINT DEFAULT NULL,
+  `id_rol_accion` bigint NOT NULL AUTO_INCREMENT,
+  `id_accion` bigint DEFAULT NULL,
+  `id_rol` bigint DEFAULT NULL,
   PRIMARY KEY (`id_rol_accion`),
-  FOREIGN KEY (`id_accion`) REFERENCES `accion` (`id_accion`),
-  FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+  KEY `FK26nro84udg065l6ity0y2cdyx` (`id_accion`),
+  KEY `FKg8gqouveklytih3mbqrpu0mol` (`id_rol`),
+  CONSTRAINT `FK26nro84udg065l6ity0y2cdyx` FOREIGN KEY (`id_accion`) REFERENCES `accion` (`id_accion`),
+  CONSTRAINT `FKg8gqouveklytih3mbqrpu0mol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuario` (
+  `id_usuario` bigint NOT NULL AUTO_INCREMENT,
+  `contrasena` varchar(255) NOT NULL,
+  `nombre_usuario` varchar(255) NOT NULL,
+  `id_rol` bigint DEFAULT NULL,
+  PRIMARY KEY (`id_usuario`),
+  KEY `FKmyv3138vvci6kaq3y5kt4cntu` (`id_rol`),
+  CONSTRAINT `FKmyv3138vvci6kaq3y5kt4cntu` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-07-29 16:31:00
