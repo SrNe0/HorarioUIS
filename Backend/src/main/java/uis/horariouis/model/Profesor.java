@@ -47,4 +47,16 @@ public class Profesor implements Serializable {
     private Usuario usuario;
 
     // Constructor, getters y setters
+    // Método para obtener el nombre completo
+    public String getNombreCompleto() {
+        StringBuilder nombreCompleto = new StringBuilder(nombre1);
+        if (nombre2 != null && !nombre2.isEmpty()) {
+            nombreCompleto.append(" ").append(nombre2);
+        }
+        nombreCompleto.append(" ").append(apellido1);
+        if (apellido2 != null && !apellido2.isEmpty()) {
+            nombreCompleto.append(" ").append(apellido2);
+        }
+        return nombreCompleto.toString();
+    }
 }

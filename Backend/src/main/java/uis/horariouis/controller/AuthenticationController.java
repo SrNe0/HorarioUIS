@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import uis.horariouis.security.CustomUserDetailsService;
 import uis.horariouis.security.JwtUtil;
 import uis.horariouis.model.AuthenticationRequest;
 import uis.horariouis.model.AuthenticationResponse;
@@ -19,63 +18,60 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
-@RestController
-@CrossOrigin
-@RequestMapping("/api/security")
+@RestController // Marca esta clase como un controlador REST
+@CrossOrigin // Habilita solicitudes CORS (Cross-Origin Resource Sharing)
+@RequestMapping("/api/security") // Define la ruta base para todas las solicitudes en este controlador
 public class AuthenticationController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class); // Logger para registrar mensajes
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager; // Gestor de autenticación de Spring
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtil jwtUtil; // Utilidad para manejar operaciones con JWT
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService; // Servicio para cargar detalles del usuario
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private UsuarioService usuarioService; // Servicio para manejar operaciones con usuarios
 
     @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder; // Codificador de contraseñas
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             logger.info("Attempting to authenticate user: {}", authenticationRequest.getUsername());
+
+            // Cargar el usuario desde la base de datos
+            Usuario usuario = usuarioService.findByNombreUsuario(authenticationRequest.getUsername());
+            if (usuario == null) {
+                logger.error("User not found: {}", authenticationRequest.getUsername());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+
+            // Verificar si la contraseña proporcionada coincide con la encriptada
+            if (!passwordEncoder.matches(authenticationRequest.getPassword(), usuario.getContrasena())) {
+                logger.error("Invalid password for user: {}", authenticationRequest.getUsername());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+
+            // Intentar autenticar al usuario con las credenciales proporcionadas
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
+
         } catch (BadCredentialsException e) {
-            // Si la autenticación falla, verifique si la contraseña está encriptada
-            Usuario usuario = customUserDetailsService.loadUsuarioByUsername(authenticationRequest.getUsername());
-            if (usuario != null && !passwordEncoder.matches(authenticationRequest.getPassword(), usuario.getContrasena())) {
-                logger.info("Password not encrypted, updating password for user: {}", authenticationRequest.getUsername());
-                usuario.setContrasena(passwordEncoder.encode(authenticationRequest.getPassword()));
-                usuarioService.saveUsuario(usuario);
-                // Intente autenticar de nuevo con la contraseña actualizada
-                try {
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-                    );
-                } catch (BadCredentialsException ex) {
-                    logger.error("Invalid credentials for user: {}", authenticationRequest.getUsername());
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-                }
-            } else {
-                logger.error("Invalid credentials for user: {}", authenticationRequest.getUsername());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-            }
+            logger.error("Authentication failed for user: {} - Bad credentials", authenticationRequest.getUsername());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         } catch (Exception e) {
-            logger.error("Authentication error for user: {}", authenticationRequest.getUsername(), e);
+            logger.error("An error occurred during authentication for user: {}", authenticationRequest.getUsername(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during authentication");
         }
 
+        // Cargar los detalles del usuario y generar el token JWT
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
         logger.info("Generated JWT for user: {}", authenticationRequest.getUsername());
