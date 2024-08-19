@@ -25,6 +25,7 @@ export class ApiService {
   }
   
   public authenticateLogin(formValue: any){
+    console.log(this.dataUrl)
     return this.http.post<any>(`${this.dataUrl}/security/authenticate`, formValue).pipe(
       catchError(this.handleError)
     );
