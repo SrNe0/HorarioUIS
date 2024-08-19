@@ -1,0 +1,45 @@
+.mcontainer{
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    background-color: #00000065;
+    top: 0;
+    left: 0;
+}
+
+.content{
+    width: 80%;
+    background-color: #fafff4;
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: 2px solid #a7a7a7;
+}
+
+.form-body{
+    padding: 25px;
+}
+
+form label{
+    color: #161256;
+}
+
+.form-control{
+    background-color: #ffffff;
+    border: 2px solid #1612562a;
+    border-radius: 8px;
+    padding: 5px 15px;
+    transition: 0.5s;
+}
+
+.form-control:active{
+    background-color: #EFEEFB;
+    transition: 0.5s;
+}
+
+.form-control:focus{
+    color: #000000;
+}
+
+.form-control::placeholder{
+    color: #000000b4;
+}

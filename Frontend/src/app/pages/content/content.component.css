@@ -1,21 +1,10 @@
 .mcontainer{
     width: 100%;
+    min-height: 83.7vh;
     display: flex;
-    height: 86vh;
-    background-color: #f1f1ff;
-    background: radial-gradient(circle, #90bc3131 45%, transparent 25%) 0 0 / 7px 7px;
-}
-
-.content{
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    border-radius: 15px;
-    background-color: #fefff6ad;
-    border: 2px solid rgba(0, 0, 0, 0.12);
-    padding: 25px 30px;
-}
-
-.w-15{
-    width: 15%;
+    flex-direction: row;
+    padding-top: 20px;
+    justify-content: space-between;
+    background-color: #f4f4f9;
+    background: radial-gradient(circle, #90bc313a 45%, transparent 25%) 0 0 / 7px 7px;
 }

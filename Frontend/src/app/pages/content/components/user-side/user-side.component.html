@@ -1,12 +1,19 @@
-<main class="w-100 d-flex flex-column h-100 align-items-center">
-    <div><i class="fi fi-sr-user"></i> <h2></h2></div>
-    <nav class="menu w-100">
-        <ul>
-          <li><a [routerLink]="['/home']">Inicio</a></li>
-          <li><a [routerLink]="['/usuario/horario']">Horarios</a></li>
-          <li><a [routerLink]="['/usuario/usuarios']">Usuarios</a></li>
-          <li><a [routerLink]="['/usuario/reportes']">Reportes</a></li>
-        </ul>
-    </nav>
-    <button class="btn btn-mgr w-100">Crear</button>
+<main class="mcontent align-items-start">
+  <div class="content-body menu-side d-flex">
+    <div class="d-flex align-items-center justify-content-center">
+      <i class="fi fi-sr-arrow-left clickCl" [routerLink]="['/home']"></i>
+    </div>
+    <div class="content d-flex flex-column">
+      <div class="d-flex w-100 justify-content-center mt-3"><i class="fi fi-sr-user"></i></div>
+      <nav class="menu">
+          <ul>
+            <li><a [routerLink]="['/home']">Inicio</a></li>
+            <li><a [routerLink]="['/usuario/horario']">Horarios</a></li>
+            <li><a [routerLink]="['/usuario/usuarios']">Usuarios</a></li>
+            <li><a [routerLink]="['/usuario/reportes']">Reportes</a></li>
+          </ul>
+      </nav>
+      <button class="btn btn-mdg w-100" (click)="onLogout()">Log out</button>
+    </div>
+  </div>
 </main>

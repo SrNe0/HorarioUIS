@@ -1,1 +1,2 @@
-<app-tablas [titulo]="title" [columnas]="columnas" [data]="dataAsignatura"></app-tablas>
+<app-tablas [titulo]="title" [columnas]="columnas" [data]="dataAsignatura" (action)="onAction($event)"></app-tablas>
+<router-outlet></router-outlet>

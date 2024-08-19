@@ -1,27 +1,80 @@
+.mcontent{
+    display: flex;
+    height: 100%;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+}
+
+
+.content-body{
+    width: 100%;
+    height: 100%;
+    padding: 20px 30px;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color: #fefff6ad;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.content-side {
+    -webkit-box-shadow: 9px 10px 9px 3px rgba(176,176,176,1);
+    -moz-box-shadow: 9px 10px 9px 3px rgba(176,176,176,1);
+    box-shadow: 9px 10px 9px 3px rgba(176,176,176,1);
+}
+h1 {
+    font-size: 3em;
+    font-weight: bold;
+    color: #161256;
+}
+
 table {
     width: 100%;
+    border-spacing: 0;
+    background-color: #ffffff00;
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: .6s;
 }
-  
-table th, table td {
-    text-align: center; 
-    vertical-align: middle; 
-    border: 2px solid #809b3d; 
-    padding: 8px; 
+
+th, td {
+    padding: 8px;
+    border: 2px solid #b1b1b1bd;
+    text-align: center;
+    transition: .6s;
 }
-  
-thead th {
+
+th {
     background-color: #91BC31;
-    color: #fff;
+    color: #ffffff;
+    transition: .6s;
 }
-  
-tbody tr:nth-of-type(odd) {
-    background-color: #fff;
+
+tr:nth-child(even) {
+    background-color: #90bc3147;
+    transition: .6s;
 }
-  
-tbody tr:nth-of-type(even) {
-    background-color: #90bc3175;
+
+tr:hover {
+    background-color: #bdbdbd8e;
+    transition: .5s;
+    border: 2px solid #72a624;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-around;
+}
+
+.actions a {
+    color: #161256;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.actions a:hover {
+    color: #91BC31;
 }
 
 .text-bck {
@@ -29,7 +82,6 @@ tbody tr:nth-of-type(even) {
 }
 
 .pagination {
-    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,9 +95,23 @@ tbody tr:nth-of-type(even) {
     color: white;
     cursor: pointer;
     border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+    background-color: #72a624;
 }
 
 .pagination button[disabled] {
     background-color: #b7db68;
     cursor: not-allowed;
+}
+
+.btn{
+    width: 70px; 
+    height: 70px; 
+    font-size: 45px; 
+    right: 130px; 
+    bottom: 60px; 
+    border-radius: 15px;
 }

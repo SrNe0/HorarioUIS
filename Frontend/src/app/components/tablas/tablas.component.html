@@ -1,13 +1,14 @@
-<main class="w-100 p-1 d-flex justify-content-center flex-column align-items-center">
-    <h1 class="align-self-center">{{title}}</h1>
-    <div class="mt-2 w-100 d-flex justify-content-center">
+<main class="mcontent align-items-start">
+  <div class="content-body content-side d-flex align-items-center">
+    <h1 class="mb-3">{{title}}</h1>
+    <div class="w-100 d-flex justify-content-center">
         <table [class.w-50]="title === 'Edificios'">
             <thead>
                 <tr>
                     @for (item of columns; track $index) {
-                        <th class="px-3 ft-700 text-cb" [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
+                        <th class="ft-600 " [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
                     }
-                    <th colspan="2" class="px-3 ft-700 text-cb w-10">Acciones</th>
+                    <th colspan="2" class="ft-600 w-10">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -16,19 +17,23 @@
                     @for (item of columns; track $index) {
                       <td>{{ getNestedProperty(item, data) }}</td>
                     }
-                    <td class="px-3"><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
-                    <td class="px-3"><a class="clickCl text-decoration-none text-bck" (click)="onAction('Borrar', data)"><i class="fi fi-br-trash"></i></a></td>
+                    <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
+                    <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Borrar', data)"><i class="fi fi-br-trash"></i></a></td>
                   </tr>
                 }
               </tbody>
         </table>
     </div>
-    <div class="pagination">
+
+    <div class="pagination mt-3">
         <button class="clickCl" (click)="goToPage(1)" [disabled]="currentPage === 1">Primero</button>
         <button class="clickCl ms-4 me-2" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
         <span>Página {{currentPage}} de {{totalPages}}</span>
         <button class="clickCl me-4 ms-2" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages || dataEmpty">Siguiente</button>
         <button class="clickCl" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages || dataEmpty">Último</button>
     </div>
+
+  </div>
 </main>
 
+<button class="btn btn-mstyle d-flex align-items-center justify-content-center position-fixed" style="padding-bottom: 15px;">+</button>

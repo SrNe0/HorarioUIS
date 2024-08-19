@@ -1,12 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import { Acciones } from '../../interfaces/acciones';
-import { Horarios } from '../../interfaces/horarios';
-import { isEmpty } from 'rxjs';
+import { RouterLink, RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-tablas',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterLink,
+    RouterOutlet
+  ],
   templateUrl: './tablas.component.html',
   styleUrl: './tablas.component.css'
 })
@@ -78,11 +80,9 @@ export class TablasComponent implements OnInit{
     return this.columnMap[column] || column;
   }
 
-
-
-  itemsPerPage: number = 13; // Número de elementos por página
-  currentPage: number = 1; // Página actual
-  paginatedData: any[] = []; // Datos paginados
+  itemsPerPage: number = 10; 
+  currentPage: number = 1; 
+  paginatedData: any[] = []; 
 
   ngOnInit(): void {
     this.updatePaginatedData();
@@ -102,5 +102,4 @@ export class TablasComponent implements OnInit{
   get totalPages(): number {
     return Math.ceil(this.dataSource.length / this.itemsPerPage);
   }
-
 }

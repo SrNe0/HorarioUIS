@@ -1,19 +1,20 @@
 .header{
     width: 100%;
     height: auto;
+    z-index: 1;
+    padding: 20px 0px;
 }
 
 .mcontent{
     display: flex;    
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 
 .title{
-    font-size: 2rem;
-    margin: 30px 120px 15px 120px;
+    font-size: 1.8rem;
 }
 
 .title-h{
-    font-size: 3rem;
+    font-size: 2.5rem;
 }
