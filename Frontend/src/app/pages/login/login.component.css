@@ -1,17 +1,20 @@
-.mcontainer{
+ .mcontainer{
     width: 100%;
     display: flex;
+    height: 83.8vh;
     justify-content: center;
+    position: absolute;
+    z-index: 1;
 }
 
 .content{
     width: 35%;
     justify-content: center;
-    margin-top: 120px;
+    margin: 120px;
 }
 
 .content-body{
-    background-color: #fefff69c;
+    background-color: #f7fbefcc;
     padding: 50px 5px;
     border-radius: 20px;
 }
@@ -25,15 +28,19 @@
 .bg-img{
     overflow: hidden;
     width: 100%;
-    height: 86vh;
+    height: 83.8vh;
+    display: flex;
+    justify-content: center;
 }
 
 .bg-img img{
     filter: blur(4px);
+
+    height: 100%;
 }
 
 .tl-ft-s{
-    font-size: 2.77rem;
+    font-size: 2.5rem;
     text-align: center;
 }
 
@@ -53,8 +60,14 @@
     transition: transform 0.6s, color 0.8s, border-bottom 0.8s background-color 0.8s;
 }
 
+.data-grup label {
+    margin-left: 5px;
+    position: absolute;
+    pointer-events: none;
+}
+
+
 .data-grup input:hover, .data-grup label:hover{
-    color: #91BC31;
     border: none;
     border-bottom: 3px solid #91BC31;
     transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
@@ -65,12 +78,6 @@
     transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
 }
 
-.data-grup label {
-    margin-left: 5px;
-    position: absolute;
-    pointer-events: none;
-    transition: transform 0.6s, color 0.8s, border-bottom 0.8s;
-}
 
 .data-grup input:focus {
     outline: none;
@@ -88,7 +95,7 @@
 .data-grup input:focus ~ label,
 .data-grup input:not(:placeholder-shown) ~ label,
 .data-grup input:not(:empty) ~ label {
-    transform: translateY(-30px);
+    transform: translateY(-35px);
 }
 
 .my-btn{

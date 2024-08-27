@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Router, RouterLink, RouterLinkActive} from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 
 @Component({
@@ -17,12 +18,10 @@ import { Router, RouterLink, RouterLinkActive} from '@angular/router';
 })
 export class HomeComponent{
   
-  constructor(private router:Router){}
+  constructor(private router:Router, private services: ApiService){}
 
-  onClickLogout(){
-    localStorage.removeItem('token_user')
-    this.router.navigate(['/login'])
+  onLogout(){
+    this.services.Logout()
   }
-
 
 }

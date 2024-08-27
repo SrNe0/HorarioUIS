@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/home/home.component';
 import { AsignaturasComponent } from './pages/content/components/asignaturas/asignaturas.component';
 import { AulasComponent } from './pages/content/components/aulas/aulas.component';
 import { EdificiosComponent } from './pages/content/components/edificios/edificios.component';
@@ -10,8 +9,10 @@ import { GruposComponent } from './pages/content/components/grupos/grupos.compon
 import { HorarioComponent } from './pages/content/components/horario/horario.component';
 import { ProfesoresComponent } from './pages/content/components/profesores/profesores.component';
 import { ReportesComponent } from './pages/content/components/reportes/reportes.component';
-import { ContentComponent } from './pages/content/content.component';
 import { loginGuard } from './guards/login.guard';
+import { NewComponent } from './components/new/new.component';
+import { ModifyComponent } from './components/modify/modify.component';
+
 
 export const routes: Routes = [
     {
@@ -22,19 +23,29 @@ export const routes: Routes = [
     {
         path: 'home',
         title: 'Inicio',
-        component: HomeComponent,
+        loadComponent: () => import('./pages/home/home.component').then((c) => c.HomeComponent),
         canActivate: [loginGuard]
     },
     {
         path: 'usuario',
-        component: ContentComponent,
+        loadComponent: () => import('./pages/content/content.component').then((c) => c.ContentComponent),
         canActivate: [loginGuard],
         canActivateChild: [loginGuard],
         children: [
             {
                 path: 'asignaturas',
                 title: 'Asignaturas',
-                component: AsignaturasComponent
+                component: AsignaturasComponent,
+                children:[
+                    {
+                        path: 'new',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'aulas',

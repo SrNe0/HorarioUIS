@@ -32,7 +32,7 @@ export class AulasComponent {
     if (accion.accion == 'Editar') {
       this.editar(accion.fila)
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila.id)
+      this.eliminar(accion.fila)
     }
   }
 
@@ -41,6 +41,7 @@ export class AulasComponent {
   }
 
   eliminar(objeto:any) {
-    console.log('editar', objeto)
+    console.log('eliminando:', objeto.idAula)
+    this.service.deleteDataId(this.url, objeto.idAula)
   }
 }

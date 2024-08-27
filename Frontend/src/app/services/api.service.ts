@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { Observable, catchError, throwError} from 'rxjs';
+import { Router } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root'
@@ -8,12 +10,12 @@ import { Observable, catchError, throwError} from 'rxjs';
 
 export class ApiService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private router:Router, private http:HttpClient) { }
 
-  private dataUrl:string = 'http://100.64.236.62:8080/api'
+  private dataUrl:string = '/api'
 
   public getData(url:string):Observable<any>{
-    return this.http.get<any>(this.dataUrl + url, this.createHeaders())
+    return this.http.get<any>(this.dataUrl + url)
   }
 
   public deleteDataId(url:string, id:number):Observable<{}>{
@@ -23,10 +25,18 @@ export class ApiService {
   }
   
   public authenticateLogin(formValue: any){
+    console.log(this.dataUrl)
     return this.http.post<any>(`${this.dataUrl}/security/authenticate`, formValue).pipe(
       catchError(this.handleError)
     );
   }
+
+  public modifyDataId(url:string, objeto:object):Observable<{}>{
+    const modifyURL = this.dataUrl + url
+    console.log("modificando", objeto)
+    return this.http.put(modifyURL, objeto)
+  }
+
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
@@ -38,19 +48,12 @@ export class ApiService {
     return throwError(() => new Error(errorMessage));
   }
 
-  private createHeaders() {
-    const token = localStorage.getItem('token_user');
-    if (token) {
-      return {
-        headers: new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        })
-      };
-    } else {
-      return {
-        headers: new HttpHeaders()
-      };
-    }
+  isLogged(): boolean {
+    return localStorage.getItem('token_user') ? true : false;
   }
 
+  Logout(){
+    localStorage.removeItem('token_user')
+    this.router.navigate(['/login'])
+  }
 }

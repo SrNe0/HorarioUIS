@@ -1,0 +1,77 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
+
+@Component({
+  selector: 'app-modify',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './modify.component.html',
+  styleUrl: './modify.component.css'
+})
+export class ModifyComponent implements OnInit{
+  constructor(private router:Router, private formB: FormBuilder, private service:ApiService){
+    this.modifyData = this.formB.group({});
+  }
+
+  url?: string;
+
+  modifyData: FormGroup;
+  data: any;
+  columnas: string[] = [];
+
+  ngOnInit(): void {
+    const state = history.state;
+
+    if (state) {
+      this.columnas = state.columns;
+      this.data = state.data;
+      this.url = state.url
+    }
+    this.columnas.forEach(column => {
+      this.modifyData.addControl(column, this.formB.control(this.data[column] || '0', Validators.required))
+    });
+
+  }
+
+  columnMap: { [key: string]: string } = {
+    idAsignatura: 'Id',
+    horasTeoria: 'Horas Teoricas',
+    horasPractica: 'Horas Practicas',
+  };
+
+  getColumnName(column: string): string {
+    return this.columnMap[column] || column;
+  }
+
+  cancelAction(){
+    console.log('Cancelando accion')
+    this.router.navigate(['/usuario' + this.url])
+  }
+
+  sendAction() {
+    const modifyURL = this.url + "/" +this.data[this.columnas[0]]
+    if (this.modifyData.valid) {
+      this.columnas.forEach(column => {
+        if (typeof this.data[column] === 'number'){
+          this.data[column] = parseInt(this.modifyData.get(column)?.value, 10);
+        }else{
+          this.data[column] = this.modifyData.get(column)?.value;
+        }
+      });
+      this.service.modifyDataId(modifyURL, this.data)
+      alert('Datos guardados con éxito');
+      this.router.navigate(['/usuario' + this.url])
+    } else {
+      alert('Por favor completa todos los campos requeridos.');
+    }
+  }
+
+  dataType(data:string): any{
+    return typeof data
+  }
+
+}
+
+  
