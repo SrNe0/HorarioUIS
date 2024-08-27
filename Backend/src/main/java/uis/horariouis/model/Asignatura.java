@@ -2,10 +2,12 @@ package uis.horariouis.model;
 
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -48,4 +50,8 @@ public class Asignatura implements Serializable {
     // Relación OneToMany con Grupo
 
     // Constructores, Getters y Setters adicionales
+    @Getter
+    @OneToMany(mappedBy = "asignatura", cascade = CascadeType.ALL)
+    private List<Dictado> dictados;
+
 }

@@ -10,6 +10,7 @@ import uis.horariouis.repository.EdificioRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AulaService {
@@ -75,6 +76,15 @@ public class AulaService {
             // Retorna un Optional vacío si la aula no existe
             return Optional.empty();
         }
+    }
+
+    public Aula obtenerAulaAleatoria(boolean necesitaComputadores) {
+        List<Aula> aulas = aulaRepository.findAulasByNecesitaComputadores(necesitaComputadores);
+        if (aulas.isEmpty()) {
+            return null; // o manejar el caso en que no haya aulas disponibles
+        }
+        Random random = new Random();
+        return aulas.get(random.nextInt(aulas.size()));
     }
 }
 

@@ -13,6 +13,7 @@ import java.sql.Time;
 @Entity
 @Table(name = "Horario")
 public class Horario implements Serializable {
+
     @Serial
     private static final long serialVersionUID = -1234567890L;
 
@@ -58,8 +59,6 @@ public class Horario implements Serializable {
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
     }
-
-
 
     // Getters y setters
     // getIdHorario(), setIdHorario(), getProfesor(), setProfesor(), getGrupo(), setGrupo(), getAula(), setAula(), getDia(), setDia(), getHoraInicio(), setHoraInicio(), getHoraFin(), setHoraFin(), etc.

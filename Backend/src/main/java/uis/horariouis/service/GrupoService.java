@@ -61,4 +61,13 @@ public class GrupoService {
 
         return grupoRepository.save(grupo);
     }
+
+    public List<Grupo> obtenerGruposSinProfesor() {
+        // Utiliza la consulta definida en el repositorio
+        return grupoRepository.findGruposSinProfesorAsignado();
+    }
+    public List<Grupo> obtenerGruposConProfesor() {
+        // Consulta para obtener los grupos que tienen un profesor asignado a través de dictados
+        return grupoRepository.findGruposConProfesorAsignado();
+    }
 }
