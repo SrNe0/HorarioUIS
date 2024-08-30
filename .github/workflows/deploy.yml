@@ -26,12 +26,12 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'echo "SSH connection successful"'
+          ssh -o StrictHostKeyChecking=no dev@100.112.128.60 'echo "SSH connection successful"'
 
       - name: Deploy Backend to server
         run: |
-          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deployB.sh'
+          ssh -o StrictHostKeyChecking=no dev@100.112.128.60 'bash /home/dev/deployB.sh'
 
       - name: Deploy Frontend to server
         run: |
-          ssh -o StrictHostKeyChecking=no dev@100.64.236.62 'bash /home/dev/deployF.sh'
+          ssh -o StrictHostKeyChecking=no dev@100.112.128.60 'bash /home/dev/deployF.sh'
