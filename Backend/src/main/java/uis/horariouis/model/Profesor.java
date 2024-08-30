@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -59,4 +60,6 @@ public class Profesor implements Serializable {
         }
         return nombreCompleto.toString();
     }
+    @OneToMany(mappedBy = "profesor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HorarioProfesor> horarioProfesores;
 }

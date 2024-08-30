@@ -21,6 +21,8 @@ public class AlgoritmoGeneticoService {
     @Autowired
     private HorarioRepository horarioRepository;  // Inyección del repositorio de Horario
 
+    @Autowired
+    private AjusteHorasService ajusteHorasService;
     private final List<String> logs = new ArrayList<>();
 
     public void ejecutarAlgoritmoGenetico() {
@@ -29,6 +31,8 @@ public class AlgoritmoGeneticoService {
 
         // Luego, asignar y guardar los bloques de 4 horas
         asignarYGuardarBloquesDe4Horas();
+
+        ajusteHorasService.ajustarHorariosDe5Horas();
 
         // Mostrar todos los logs al final del proceso
         mostrarLogs();
@@ -85,9 +89,14 @@ public class AlgoritmoGeneticoService {
                 Aula aula = obtenerAulaAleatoria(grupo.getAsignatura().getNecesitaComputadores());
 
                 // Asignar el primer bloque de 2 horas
-                String dia1 = obtenerDiaAleatorio(genes, grupo);
-                Time horaInicio1 = obtenerHoraInicioAleatoria(14); // Horas entre 6:00 y 20:00 para permitir 2 horas consecutivas
-                Time horaFin1 = Time.valueOf(String.format("%02d:00:00", horaInicio1.toLocalTime().getHour() + 2));
+                String dia1;
+                Time horaInicio1;
+                Time horaFin1;
+                do {
+                    dia1 = obtenerDiaAleatorio(genes, grupo);
+                    horaInicio1 = obtenerHoraInicioAleatoria(14);
+                    horaFin1 = Time.valueOf(String.format("%02d:00:00", horaInicio1.toLocalTime().getHour() + 2));
+                } while (!esProfesorDisponible(profesor, dia1, horaInicio1, horaFin1));
 
                 Gen gen1 = new Gen(grupo, profesor, aula, dia1, horaInicio1, horaFin1);
                 genes.add(gen1);
@@ -96,12 +105,13 @@ public class AlgoritmoGeneticoService {
 
                 // Asignar el segundo bloque de 2 horas en un día diferente
                 String dia2;
+                Time horaInicio2;
+                Time horaFin2;
                 do {
                     dia2 = obtenerDiaAleatorio(genes, grupo);
-                } while (dia2.equals(dia1));  // Asegurarse de que `dia2` sea diferente de `dia1`
-
-                Time horaInicio2 = obtenerHoraInicioAleatoria(14); // Horas entre 6:00 y 20:00 para permitir 2 horas consecutivas
-                Time horaFin2 = Time.valueOf(String.format("%02d:00:00", horaInicio2.toLocalTime().getHour() + 2));
+                    horaInicio2 = obtenerHoraInicioAleatoria(14);
+                    horaFin2 = Time.valueOf(String.format("%02d:00:00", horaInicio2.toLocalTime().getHour() + 2));
+                } while (!esProfesorDisponible(profesor, dia2, horaInicio2, horaFin2) || dia2.equals(dia1));
 
                 Gen gen2 = new Gen(grupo, profesor, aula, dia2, horaInicio2, horaFin2);
                 genes.add(gen2);
@@ -110,12 +120,13 @@ public class AlgoritmoGeneticoService {
 
                 // Asignar el bloque final de 1 hora en un día diferente
                 String dia3;
+                Time horaInicio3;
+                Time horaFin3;
                 do {
                     dia3 = obtenerDiaAleatorio(genes, grupo);
-                } while (dia3.equals(dia1) || dia3.equals(dia2));  // Asegurarse de que `dia3` sea diferente de `dia1` y `dia2`
-
-                Time horaInicio3 = obtenerHoraInicioAleatoria(21); // Horas entre 6:00 y 21:00 para permitir 1 hora consecutiva
-                Time horaFin3 = Time.valueOf(String.format("%02d:00:00", horaInicio3.toLocalTime().getHour() + 1));
+                    horaInicio3 = obtenerHoraInicioAleatoria(21);
+                    horaFin3 = Time.valueOf(String.format("%02d:00:00", horaInicio3.toLocalTime().getHour() + 1));
+                } while (!esProfesorDisponible(profesor, dia3, horaInicio3, horaFin3) || dia3.equals(dia1) || dia3.equals(dia2));
 
                 Gen gen3 = new Gen(grupo, profesor, aula, dia3, horaInicio3, horaFin3);
                 genes.add(gen3);
@@ -127,9 +138,6 @@ public class AlgoritmoGeneticoService {
         }
         return poblacion;
     }
-
-
-
     private List<Cromosoma> inicializarPoblacion4Horas(List<Grupo> grupos) {
         List<Cromosoma> poblacion = new ArrayList<>();
 
@@ -141,9 +149,15 @@ public class AlgoritmoGeneticoService {
 
                 // Asignar dos bloques de 2 horas
                 for (int j = 0; j < 2; j++) {
-                    String dia = obtenerDiaAleatorio(genes, grupo);
-                    Time horaInicio = obtenerHoraInicioAleatoria(16); // Horas entre 6:00 y 20:00 para permitir 2 horas consecutivas
-                    Time horaFin = Time.valueOf(String.format("%02d:00:00", horaInicio.toLocalTime().getHour() + 2));
+                    String dia;
+                    Time horaInicio;
+                    Time horaFin;
+
+                    do {
+                        dia = obtenerDiaAleatorio(genes, grupo);
+                        horaInicio = obtenerHoraInicioAleatoria(16); // Horas entre 6:00 y 20:00 para permitir 2 horas consecutivas
+                        horaFin = Time.valueOf(String.format("%02d:00:00", horaInicio.toLocalTime().getHour() + 2));
+                    } while (!esProfesorDisponible(profesor, dia, horaInicio, horaFin));
 
                     Gen gen = new Gen(grupo, profesor, aula, dia, horaInicio, horaFin);
                     genes.add(gen);
@@ -157,27 +171,106 @@ public class AlgoritmoGeneticoService {
         return poblacion;
     }
 
+
+    private boolean esProfesorDisponible(Profesor profesor, String dia, Time horaInicio, Time horaFin) {
+        List<HorarioProfesor> horariosProfesor = profesor.getHorarioProfesores();
+
+        // Itera sobre cada hora dentro del bloque solicitado
+        for (int hora = horaInicio.toLocalTime().getHour(); hora < horaFin.toLocalTime().getHour(); hora++) {
+            Time horaActualInicio = Time.valueOf(String.format("%02d:00:00", hora));
+            Time horaActualFin = Time.valueOf(String.format("%02d:00:00", hora + 1));
+
+            boolean disponible = horariosProfesor.stream().anyMatch(horarioProfesor ->
+                    horarioProfesor.getDisponibilidadHoraria().getDia().equals(dia) &&
+                            horarioProfesor.getDisponibilidadHoraria().getHoraInicio().equals(horaActualInicio) &&
+                            horarioProfesor.getDisponibilidadHoraria().getHoraFin().equals(horaActualFin)
+            );
+
+            if (!disponible) {
+                return false; // Si alguna hora no está disponible, retorna false
+            }
+        }
+
+        return true; // Todas las horas dentro del bloque están disponibles
+    }
+
+
+
+
+
+
+
     private void calcularAptitud(Cromosoma cromosoma) {
         int aptitud = 0;
 
         if (!haySolapamientoProfesor(cromosoma)) {
-            aptitud += 10;
+            aptitud += 20;  // Aumenta la penalización si no hay solapamiento
+        } else {
+            aptitud -= 50;  // Penaliza fuertemente si hay solapamiento
         }
 
         if (!haySolapamientoAula(cromosoma)) {
-            aptitud += 10;
+            aptitud += 20;
+        } else {
+            aptitud -= 50;
         }
 
         if (cumpleHorasTeoria(cromosoma)) {
-            aptitud += 10;
+            aptitud += 20;
+        } else {
+            aptitud -= 30;  // Penalización si no se cumplen las horas de teoría correctamente
         }
 
         if (aulasCorrectasAsignadas(cromosoma)) {
-            aptitud += 10;
+            aptitud += 20;
+        } else {
+            aptitud -= 40;  // Penalización si se asignan aulas incorrectas
+        }
+
+        if (disponibilidadProfesorCumplida(cromosoma)) {
+            aptitud += 20;
+        } else {
+            aptitud -= 40;  // Penalización si el profesor no está disponible
         }
 
         cromosoma.setAptitud(aptitud);
     }
+
+    private boolean disponibilidadProfesorCumplida(Cromosoma cromosoma) {
+        for (Gen gen : cromosoma.getGenes()) {
+            // Verifica que el profesor esté disponible durante las horas asignadas
+            if (!profesorDisponible(gen.getProfesor(), gen.getDia(), gen.getHoraInicio(), gen.getHoraFin())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean profesorDisponible(Profesor profesor, String dia, Time horaInicio, Time horaFin) {
+        // Supongamos que tienes una lista de horarios de profesor
+        List<HorarioProfesor> horariosProfesor = profesor.getHorarioProfesores(); // Asume que el profesor tiene una lista de horarios
+
+        // Itera sobre los horarios del profesor para el día específico
+        for (HorarioProfesor horario : horariosProfesor) {
+            if (horario.getDisponibilidadHoraria().getDia().equals(dia)) {
+                // Verifica si las horas de la asignación están completamente dentro de la disponibilidad del profesor
+                Time horaInicioDisponibilidad = horario.getDisponibilidadHoraria().getHoraInicio();
+                Time horaFinDisponibilidad = horario.getDisponibilidadHoraria().getHoraFin();
+
+                if (horaInicio.after(horaInicioDisponibilidad) || horaInicio.equals(horaInicioDisponibilidad)) {
+                    if (horaFin.before(horaFinDisponibilidad) || horaFin.equals(horaFinDisponibilidad)) {
+                        return true; // El profesor está disponible durante todo el rango de horas
+                    }
+                }
+            }
+        }
+
+        // Si no se encuentra una disponibilidad que cubra las horas solicitadas, retorna falso
+        return false;
+    }
+
+
+
 
     private boolean haySolapamientoProfesor(Cromosoma cromosoma) {
         for (int i = 0; i < cromosoma.getGenes().size(); i++) {
