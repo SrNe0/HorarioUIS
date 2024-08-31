@@ -1,0 +1,53 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.1)
+
+2024-08-30 22:33:18.468  INFO 18641 --- [           main] uis.horariouis.HorarioUisApplication     : Starting HorarioUisApplication v0.0.1-SNAPSHOT using Java 17.0.12 on ubuntu with PID 18641 (/home/dev/HorarioUIS/Backend/target/HorarioUIS-0.0.1-SNAPSHOT.jar started by dev in /home/dev/HorarioUIS/Backend)
+2024-08-30 22:33:18.475  INFO 18641 --- [           main] uis.horariouis.HorarioUisApplication     : No active profile set, falling back to 1 default profile: "default"
+2024-08-30 22:33:21.340  INFO 18641 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-30 22:33:21.594  INFO 18641 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 227 ms. Found 13 JPA repository interfaces.
+2024-08-30 22:33:24.274  INFO 18641 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2024-08-30 22:33:24.303  INFO 18641 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-30 22:33:24.304  INFO 18641 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.64]
+2024-08-30 22:33:24.493  INFO 18641 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-30 22:33:24.493  INFO 18641 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5825 ms
+2024-08-30 22:33:25.181  INFO 18641 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-08-30 22:33:25.402  INFO 18641 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.9.Final
+2024-08-30 22:33:25.969  INFO 18641 --- [           main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-08-30 22:33:26.305  INFO 18641 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-30 22:33:27.019  INFO 18641 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-30 22:33:27.087  INFO 18641 --- [           main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL57Dialect
+2024-08-30 22:33:29.797  INFO 18641 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-08-30 22:33:29.820  INFO 18641 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-30 22:33:31.546  WARN 18641 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-30 22:33:32.095 DEBUG 18641 --- [           main] org.hibernate.SQL                        : select usuario0_.id_usuario as id_usuar1_12_, usuario0_.contrasena as contrase2_12_, usuario0_.nombre_usuario as nombre_u3_12_, usuario0_.id_rol as id_rol4_12_ from usuario usuario0_
+2024-08-30 22:33:32.148 DEBUG 18641 --- [           main] org.hibernate.SQL                        : select rol0_.id_rol as id_rol1_10_0_, rol0_.nombre_rol as nombre_r2_10_0_ from rol rol0_ where rol0_.id_rol=?
+2024-08-30 22:33:32.172 DEBUG 18641 --- [           main] org.hibernate.SQL                        : select rol0_.id_rol as id_rol1_10_0_, rol0_.nombre_rol as nombre_r2_10_0_ from rol rol0_ where rol0_.id_rol=?
+2024-08-30 22:33:34.275  INFO 18641 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@d535a3d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2d760326, org.springframework.security.web.context.SecurityContextPersistenceFilter@1cfc2538, org.springframework.security.web.header.HeaderWriterFilter@2740e316, org.springframework.web.filter.CorsFilter@9e54c59, org.springframework.security.web.authentication.logout.LogoutFilter@655f69da, uis.horariouis.security.JwtRequestFilter@7fdab70c, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@756aadfc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5d342959, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@42cc183e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5dbb50f3, org.springframework.security.web.session.SessionManagementFilter@124d02b2, org.springframework.security.web.access.ExceptionTranslationFilter@34b87182, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5eea5627]
+2024-08-30 22:33:37.298  WARN 18641 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'; nested exception is org.springframework.boot.web.server.PortInUseException: Port 8080 is already in use
+2024-08-30 22:33:37.309  INFO 18641 --- [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-30 22:33:37.316  INFO 18641 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-30 22:33:37.370  INFO 18641 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-30 22:33:37.376  INFO 18641 --- [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2024-08-30 22:33:37.411  INFO 18641 --- [           main] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2024-08-30 22:33:37.477 ERROR 18641 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
