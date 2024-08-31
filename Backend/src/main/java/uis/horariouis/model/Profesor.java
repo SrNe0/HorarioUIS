@@ -70,6 +70,7 @@ public class Profesor implements Serializable {
 
     @Getter
     @OneToMany(mappedBy = "profesor")
+    @JsonIgnore
     private List<Dictado> dictados;
 
 }
