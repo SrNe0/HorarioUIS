@@ -23,12 +23,14 @@ export class ModifyComponent implements OnInit{
 
   ngOnInit(): void {
     const state = history.state;
+    console.log('Reciviendo data', state)
 
     if (state) {
       this.columnas = state.columns;
       this.data = state.data;
       this.url = state.url
     }
+    
     this.columnas.forEach(column => {
       this.modifyData.addControl(column, this.formB.control(this.data[column] || '0', Validators.required))
     });
@@ -51,7 +53,7 @@ export class ModifyComponent implements OnInit{
   }
 
   sendAction() {
-    const modifyURL = this.url + "/" +this.data[this.columnas[0]]
+    const modifyURL = this.url + "/" + this.data[this.columnas[0]]
     if (this.modifyData.valid) {
       this.columnas.forEach(column => {
         if (typeof this.data[column] === 'number'){
@@ -60,9 +62,17 @@ export class ModifyComponent implements OnInit{
           this.data[column] = this.modifyData.get(column)?.value;
         }
       });
-      this.service.modifyDataId(modifyURL, this.data)
-      alert('Datos guardados con éxito');
-      this.router.navigate(['/usuario' + this.url])
+      this.service.modifyDataId(modifyURL, this.data).subscribe({
+        next: (response) => {
+          console.log("Datos modificados con éxito:", response);
+          alert('Datos guardados con éxito');
+          this.router.navigate(['/usuario' + this.url]);
+        },
+        error: (error) => {
+          console.error("Error al modificar los datos:", error);
+          alert('Ocurrió un error al guardar los datos.');
+        }
+      });
     } else {
       alert('Por favor completa todos los campos requeridos.');
     }

@@ -12,7 +12,7 @@ export class ApiService {
 
   constructor(private router:Router, private http:HttpClient) { }
 
-  private dataUrl:string = '/api'
+  private dataUrl:string = 'http://100.112.128.60:8080/api'
 
   public getData(url:string):Observable<any>{
     return this.http.get<any>(this.dataUrl + url)
@@ -32,8 +32,9 @@ export class ApiService {
   }
 
   public modifyDataId(url:string, objeto:object):Observable<{}>{
-    const modifyURL = this.dataUrl + url
+    const modifyURL = this.dataUrl + url 
     console.log("modificando", objeto)
+    console.log(modifyURL)
     return this.http.put(modifyURL, objeto)
   }
 

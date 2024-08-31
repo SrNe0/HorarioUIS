@@ -3,16 +3,22 @@ import { TablasComponent } from "../../../../components/tablas/tablas.component"
 import { ApiService } from '../../../../services/api.service';
 import { Edificio } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { NewComponent } from '../../../../components/new/new.component';
 
 @Component({
   selector: 'app-edificios',
   standalone: true,
-  imports: [TablasComponent],
+  imports: [
+    TablasComponent, 
+    NewComponent, 
+    RouterOutlet, 
+  ],
   templateUrl: './edificios.component.html',
   styleUrl: './edificios.component.css'
 })
 export class EdificiosComponent implements OnInit{
-  constructor(private service:ApiService) {}
+  constructor(private router:Router, private Aroute:ActivatedRoute, private service:ApiService) {}
 
   private url:string = '/edificios'
 
@@ -37,10 +43,15 @@ export class EdificiosComponent implements OnInit{
   }
 
   editar(objeto:any) {
-    console.log('editar', objeto)
+    console.log('Objeto a editar: ', objeto)
+    this.router.navigate(['modificar'], {
+      relativeTo: this.Aroute,
+      state: { columns: this.columnas, data: objeto, url: this.url}
+    });
   }
 
   eliminar(objeto:any) {
-    console.log('editar', objeto)
+    console.log('eliminando:', objeto.idAsignatura)
+    this.service.deleteDataId(this.url, objeto.idAsignatura)
   }
 }
