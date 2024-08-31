@@ -1,11 +1,14 @@
 package uis.horariouis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
 
 @Data
 @Entity
@@ -60,6 +63,14 @@ public class Profesor implements Serializable {
         }
         return nombreCompleto.toString();
     }
+
     @OneToMany(mappedBy = "profesor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<HorarioProfesor> horarioProfesores;
+
+    @Getter
+    @OneToMany(mappedBy = "profesor")
+    @JsonIgnore
+    private List<Dictado> dictados;
+
 }
