@@ -70,7 +70,7 @@ CREATE TABLE `aula` (
   `id_edificio` bigint DEFAULT NULL,
   PRIMARY KEY (`id_aula`),
   KEY `FKgvg5a2mgjvya8xwgio1s35956` (`id_edificio`),
-  CONSTRAINT `FKgvg5a2mgjvya8xwgio1s35956` FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`id_edificio`)
+  CONSTRAINT `FKgvg5a2mgjvya8xwgio1s35956` FOREIGN KEY (`id_edificio`) REFERENCES `edificio` (`id_edificio`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -88,8 +88,8 @@ CREATE TABLE `dictado` (
   PRIMARY KEY (`id_dictado`),
   KEY `FKh2j3v6crvvr2g04l1jt7re7b5` (`id_asignatura`),
   KEY `FKa6000vkfcwj44in2nbwpked2t` (`id_profesor`),
-  CONSTRAINT `FKa6000vkfcwj44in2nbwpked2t` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
-  CONSTRAINT `FKh2j3v6crvvr2g04l1jt7re7b5` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`id_asignatura`)
+  CONSTRAINT `FKa6000vkfcwj44in2nbwpked2t` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`) ON DELETE CASCADE,
+  CONSTRAINT `FKh2j3v6crvvr2g04l1jt7re7b5` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`id_asignatura`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -137,7 +137,7 @@ CREATE TABLE `grupo` (
   `idasignatura` bigint DEFAULT NULL,
   PRIMARY KEY (`idgrupo`),
   KEY `FKexsnelyd41sfqwjxwiq5c8go5` (`idasignatura`),
-  CONSTRAINT `FKexsnelyd41sfqwjxwiq5c8go5` FOREIGN KEY (`idasignatura`) REFERENCES `asignatura` (`id_asignatura`)
+  CONSTRAINT `FKexsnelyd41sfqwjxwiq5c8go5` FOREIGN KEY (`idasignatura`) REFERENCES `asignatura` (`id_asignatura`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -160,9 +160,9 @@ CREATE TABLE `horario` (
   KEY `FK74io69d6km297uuf1s9mt9bej` (`id_aula`),
   KEY `FKdodah75vq84c8cdcjhs4fgo0p` (`id_grupo`),
   KEY `FK1alm3vwaj7x1qx9avlgdeaqgv` (`id_profesor`),
-  CONSTRAINT `FK1alm3vwaj7x1qx9avlgdeaqgv` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
-  CONSTRAINT `FK74io69d6km297uuf1s9mt9bej` FOREIGN KEY (`id_aula`) REFERENCES `aula` (`id_aula`),
-  CONSTRAINT `FKdodah75vq84c8cdcjhs4fgo0p` FOREIGN KEY (`id_grupo`) REFERENCES `grupo` (`idgrupo`)
+  CONSTRAINT `FK1alm3vwaj7x1qx9avlgdeaqgv` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`) ON DELETE CASCADE,
+  CONSTRAINT `FK74io69d6km297uuf1s9mt9bej` FOREIGN KEY (`id_aula`) REFERENCES `aula` (`id_aula`) ON DELETE CASCADE,
+  CONSTRAINT `FKdodah75vq84c8cdcjhs4fgo0p` FOREIGN KEY (`id_grupo`) REFERENCES `grupo` (`idgrupo`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,8 +180,8 @@ CREATE TABLE `horario_profesor` (
   PRIMARY KEY (`id_horario_profesor`),
   KEY `FKgpe5h9iq1km8h8eyxmrj1tdnl` (`id_disponibilidad`),
   KEY `FKh4yt7fegch93tj94tg8sk9yrn` (`id_profesor`),
-  CONSTRAINT `FKgpe5h9iq1km8h8eyxmrj1tdnl` FOREIGN KEY (`id_disponibilidad`) REFERENCES `disponibilidad_horaria` (`id_disponibilidad`),
-  CONSTRAINT `FKh4yt7fegch93tj94tg8sk9yrn` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`)
+  CONSTRAINT `FKgpe5h9iq1km8h8eyxmrj1tdnl` FOREIGN KEY (`id_disponibilidad`) REFERENCES `disponibilidad_horaria` (`id_disponibilidad`) ON DELETE CASCADE,
+  CONSTRAINT `FKh4yt7fegch93tj94tg8sk9yrn` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -204,7 +204,7 @@ CREATE TABLE `profesor` (
   `id_usuario` bigint DEFAULT NULL,
   PRIMARY KEY (`id_profesor`),
   KEY `FKbyhq45hsgy32alfydfpypqctp` (`id_usuario`),
-  CONSTRAINT `FKbyhq45hsgy32alfydfpypqctp` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
+  CONSTRAINT `FKbyhq45hsgy32alfydfpypqctp` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -237,8 +237,8 @@ CREATE TABLE `rol_accion` (
   PRIMARY KEY (`id_rol_accion`),
   KEY `FK26nro84udg065l6ity0y2cdyx` (`id_accion`),
   KEY `FKg8gqouveklytih3mbqrpu0mol` (`id_rol`),
-  CONSTRAINT `FK26nro84udg065l6ity0y2cdyx` FOREIGN KEY (`id_accion`) REFERENCES `accion` (`id_accion`),
-  CONSTRAINT `FKg8gqouveklytih3mbqrpu0mol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
+  CONSTRAINT `FK26nro84udg065l6ity0y2cdyx` FOREIGN KEY (`id_accion`) REFERENCES `accion` (`id_accion`) ON DELETE CASCADE,
+  CONSTRAINT `FKg8gqouveklytih3mbqrpu0mol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -256,7 +256,7 @@ CREATE TABLE `usuario` (
   `id_rol` bigint DEFAULT NULL,
   PRIMARY KEY (`id_usuario`),
   KEY `FKmyv3138vvci6kaq3y5kt4cntu` (`id_rol`),
-  CONSTRAINT `FKmyv3138vvci6kaq3y5kt4cntu` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
+  CONSTRAINT `FKmyv3138vvci6kaq3y5kt4cntu` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
