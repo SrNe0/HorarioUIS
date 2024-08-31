@@ -87,7 +87,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         // Configura las reglas de CORS (Cross-Origin Resource Sharing)
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://100.64.236.62:4200", "http://192.168.0.101:4200")); // Permite orígenes específicos
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://100.112.128.60:4200", "http://192.168.0.101:4200")); // Permite orígenes específicos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Permite métodos HTTP específicos
         configuration.setAllowedHeaders(List.of("*")); // Permite todos los encabezados
         configuration.setAllowCredentials(true); // Permite credenciales
