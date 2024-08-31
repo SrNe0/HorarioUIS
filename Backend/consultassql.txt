@@ -1,0 +1,17 @@
+Tabla de horarios general
+SELECT 
+    a.nombre AS asignatura, 
+    h.id_grupo,
+    g.nombregrupo AS grupo, 
+    h.dia, 
+    h.hora_inicio AS horaInicio, 
+    h.hora_fin AS horaFin
+FROM 
+    horario_uis.horario h
+JOIN 
+    horario_uis.grupo g ON h.id_grupo = g.idgrupo
+JOIN 
+    horario_uis.asignatura a ON g.idasignatura = a.id_asignatura
+ORDER BY 
+    a.nombre, 
+    g.nombregrupo;

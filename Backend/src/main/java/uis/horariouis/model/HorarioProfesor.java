@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
@@ -21,6 +22,7 @@ public class HorarioProfesor implements Serializable {
     @NotNull(message = "El ID del profesor es requerido")
     @ManyToOne
     @JoinColumn(name = "idProfesor", referencedColumnName = "idProfesor")
+    @JsonBackReference
     private Profesor profesor;
 
     @NotNull(message = "El ID de la disponibilidad horaria es requerido")

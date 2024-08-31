@@ -2,16 +2,18 @@ package uis.horariouis.model;
 
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "Grupo")
-public class Grupo {
+public class Grupo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -2345678901L;
@@ -22,6 +24,7 @@ public class Grupo {
     @Column(name = "idgrupo")
     private Long idGrupo;
 
+    @Getter
     @NotNull(message = "La asignatura es requerida")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idasignatura", referencedColumnName = "idasignatura")

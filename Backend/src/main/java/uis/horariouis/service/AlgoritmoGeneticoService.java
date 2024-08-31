@@ -194,19 +194,13 @@ public class AlgoritmoGeneticoService {
         return true; // Todas las horas dentro del bloque están disponibles
     }
 
-
-
-
-
-
-
     private void calcularAptitud(Cromosoma cromosoma) {
         int aptitud = 0;
 
         if (!haySolapamientoProfesor(cromosoma)) {
-            aptitud += 20;  // Aumenta la penalización si no hay solapamiento
+            aptitud += 20;
         } else {
-            aptitud -= 50;  // Penaliza fuertemente si hay solapamiento
+            aptitud -= 50;
         }
 
         if (!haySolapamientoAula(cromosoma)) {
@@ -218,23 +212,46 @@ public class AlgoritmoGeneticoService {
         if (cumpleHorasTeoria(cromosoma)) {
             aptitud += 20;
         } else {
-            aptitud -= 30;  // Penalización si no se cumplen las horas de teoría correctamente
+            aptitud -= 30;
         }
 
         if (aulasCorrectasAsignadas(cromosoma)) {
             aptitud += 20;
         } else {
-            aptitud -= 40;  // Penalización si se asignan aulas incorrectas
+            aptitud -= 40;
         }
 
         if (disponibilidadProfesorCumplida(cromosoma)) {
             aptitud += 20;
         } else {
-            aptitud -= 40;  // Penalización si el profesor no está disponible
+            aptitud -= 40;
+        }
+
+        // **Nueva regla: el profesor debe dictar la asignatura del grupo**
+        if (profesorDictaAsignaturaDelGrupo(cromosoma)) {
+            aptitud += 20;  // Aumenta la aptitud si la regla se cumple
+        } else {
+            aptitud -= 50;  // Penalización si la regla no se cumple
         }
 
         cromosoma.setAptitud(aptitud);
     }
+
+    private boolean profesorDictaAsignaturaDelGrupo(Cromosoma cromosoma) {
+        for (Gen gen : cromosoma.getGenes()) {
+            Profesor profesor = gen.getProfesor();
+            Asignatura asignaturaGrupo = gen.getGrupo().getAsignatura();
+
+            boolean dictaAsignatura = profesor.getDictados().stream()
+                    .anyMatch(dictado -> dictado.getAsignatura().equals(asignaturaGrupo));
+
+            if (!dictaAsignatura) {
+                return false;  // Si algún profesor no dicta la asignatura, retorna false
+            }
+        }
+        return true;  // Todos los profesores dictan las asignaturas asignadas
+    }
+
 
     private boolean disponibilidadProfesorCumplida(Cromosoma cromosoma) {
         for (Gen gen : cromosoma.getGenes()) {
