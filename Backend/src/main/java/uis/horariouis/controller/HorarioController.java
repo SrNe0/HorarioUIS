@@ -15,7 +15,7 @@ import uis.horariouis.verification.VerificadorRestricciones;
 import java.util.List;
 
 @RestController
-@RequestMapping("/horarios")
+@RequestMapping("/api/horarios")
 public class HorarioController {
 
     @Autowired
