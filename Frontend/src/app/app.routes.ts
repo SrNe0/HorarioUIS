@@ -38,7 +38,7 @@ export const routes: Routes = [
                 component: AsignaturasComponent,
                 children:[
                     {
-                        path: 'new',
+                        path: 'nuevo',
                         component: NewComponent
                     },
                     {
@@ -50,7 +50,17 @@ export const routes: Routes = [
             {
                 path: 'aulas',
                 title: 'Aulas',
-                component: AulasComponent
+                component: AulasComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'edificios',
@@ -58,7 +68,7 @@ export const routes: Routes = [
                 component: EdificiosComponent,
                 children:[
                     {
-                        path: 'new',
+                        path: 'nuevo',
                         component: NewComponent
                     },
                     {
@@ -70,27 +80,77 @@ export const routes: Routes = [
             {
                 path: 'usuarios',
                 title: 'Usuarios',
-                component: UsuariosComponent
+                component: UsuariosComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'grupos',
                 title: 'Grupos',
-                component: GruposComponent
+                component: GruposComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'horario',
                 title: 'Horario',
-                component: HorarioComponent
+                component: HorarioComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'profesores',
                 title: 'Profesores',
-                component: ProfesoresComponent
+                component: ProfesoresComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             },
             {
                 path: 'reportes',
                 title: 'Reportes',
-                component: ReportesComponent
+                component: ReportesComponent,
+                children:[
+                    {
+                        path: 'nuevo',
+                        component: NewComponent
+                    },
+                    {
+                        path: 'modificar',
+                        component: ModifyComponent
+                    }
+                ]
             }
         ]          
         

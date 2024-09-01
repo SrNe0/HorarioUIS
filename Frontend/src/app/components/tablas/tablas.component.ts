@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges} from '@angular/core';
 import { Acciones } from '../../interfaces/acciones';
 import { RouterLink, RouterOutlet} from '@angular/router';
 
@@ -12,11 +12,11 @@ import { RouterLink, RouterOutlet} from '@angular/router';
   templateUrl: './tablas.component.html',
   styleUrl: './tablas.component.css'
 })
-export class TablasComponent implements OnInit{
+export class TablasComponent implements OnInit, OnChanges{
 
   title:string = '';
   columns:string[] = [];
-  dataSource:any = [];
+  dataSource:any[] = [];
   dataEmpty:boolean = false;
   
 
@@ -29,17 +29,50 @@ export class TablasComponent implements OnInit{
   }
 
   @Input() set data(data: any) {
-    this.dataSource = data;
-    this.dataEmpty = Object.keys(this.dataSource).length === 0;
+    this.dataSource = Array.isArray(data) ? data : [];
+    this.dataEmpty = this.dataSource.length === 0;
     this.currentPage = 1; 
     this.updatePaginatedData(); 
   }
 
   @Output() action: EventEmitter<Acciones> = new EventEmitter<Acciones>();
 
-  onAction(accion: string, row?: any) {
-    this.action.emit({accion: accion, fila: row})
+  onAction(accion: string, objeto?: any) {
+    this.action.emit({accion: accion, fila: objeto})
   }
+
+  ngOnInit(): void {
+    this.updatePaginatedData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data']) {
+      this.updatePaginatedData();
+    }
+  }
+
+  updatePaginatedData() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedData = this.dataSource.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.updatePaginatedData();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.dataSource.length / this.itemsPerPage);
+  }
+
+  getColumnName(column: string): string {
+    return this.columnMap[column] || column;
+  }
+
+  itemsPerPage: number = 10; 
+  currentPage: number = 1; 
+  paginatedData: any[] = []; 
 
   getNestedProperty(item: string, data:any): any {
     if (item === 'nombreDocente') {
@@ -75,31 +108,4 @@ export class TablasComponent implements OnInit{
     nombreUsuario: 'Usuario',
     contrasena: 'Contraseña',
   };
-
-  getColumnName(column: string): string {
-    return this.columnMap[column] || column;
-  }
-
-  itemsPerPage: number = 10; 
-  currentPage: number = 1; 
-  paginatedData: any[] = []; 
-
-  ngOnInit(): void {
-    this.updatePaginatedData();
-  }
-
-  updatePaginatedData() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedData = this.dataSource.slice(startIndex, endIndex);
-  }
-
-  goToPage(page: number) {
-    this.currentPage = page;
-    this.updatePaginatedData();
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.dataSource.length / this.itemsPerPage);
-  }
 }

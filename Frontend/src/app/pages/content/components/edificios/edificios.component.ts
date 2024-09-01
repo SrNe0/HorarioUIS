@@ -38,20 +38,18 @@ export class EdificiosComponent implements OnInit{
     if (accion.accion == 'Editar') {
       this.editar(accion.fila)
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila.id)
+      this.eliminar(accion.fila.idEdificio)
     }
   }
 
   editar(objeto:any) {
-    console.log('Objeto a editar: ', objeto)
     this.router.navigate(['modificar'], {
       relativeTo: this.Aroute,
       state: { columns: this.columnas, data: objeto, url: this.url}
     });
   }
 
-  eliminar(objeto:any) {
-    console.log('eliminando:', objeto.idAsignatura)
-    this.service.deleteDataId(this.url, objeto.idAsignatura)
+  eliminar(idObjeto:number) {
+    console.log(this.service.deleteDataId(this.url, idObjeto))
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
@@ -15,6 +15,8 @@ export class ModifyComponent implements OnInit{
     this.modifyData = this.formB.group({});
   }
 
+  @Output() dataUpdated = new EventEmitter<any>();
+
   url?: string;
 
   modifyData: FormGroup;
@@ -23,7 +25,6 @@ export class ModifyComponent implements OnInit{
 
   ngOnInit(): void {
     const state = history.state;
-    console.log('Reciviendo data', state)
 
     if (state) {
       this.columnas = state.columns;
@@ -37,6 +38,14 @@ export class ModifyComponent implements OnInit{
 
   }
 
+  
+  getNestedProperty(item: string, data:any): any {
+    if (typeof data[item] === 'object' && data[item] !== null) {
+      return data[item]["nombre"];
+    } else {
+      return data[item];
+    }
+  }
   columnMap: { [key: string]: string } = {
     idAsignatura: 'Id',
     horasTeoria: 'Horas Teoricas',
@@ -48,23 +57,24 @@ export class ModifyComponent implements OnInit{
   }
 
   cancelAction(){
-    console.log('Cancelando accion')
+    alert('Cancelando accion')
     this.router.navigate(['/usuario' + this.url])
   }
 
   sendAction() {
-    const modifyURL = this.url + "/" + this.data[this.columnas[0]]
+    const modifyURL = this.url + "/" + this.data[this.columnas[0]];
     if (this.modifyData.valid) {
       this.columnas.forEach(column => {
-        if (typeof this.data[column] === 'number'){
+        if (typeof this.data[column] === 'number') {
           this.data[column] = parseInt(this.modifyData.get(column)?.value, 10);
-        }else{
+        } else {
           this.data[column] = this.modifyData.get(column)?.value;
         }
       });
+      
       this.service.modifyDataId(modifyURL, this.data).subscribe({
         next: (response) => {
-          console.log("Datos modificados con éxito:", response);
+          this.dataUpdated.emit(this.data);
           alert('Datos guardados con éxito');
           this.router.navigate(['/usuario' + this.url]);
         },
@@ -80,6 +90,17 @@ export class ModifyComponent implements OnInit{
 
   dataType(data:string): any{
     return typeof data
+  }
+
+  dataAnex(cabecera:string) : void{
+    switch(cabecera){
+      case ('edificio'):
+        console.log('1')
+        break;
+      default:
+        console.log('0')
+        break;
+    }
   }
 
 }

@@ -3,16 +3,22 @@ import { TablasComponent } from '../../../../components/tablas/tablas.component'
 import { ApiService } from '../../../../services/api.service';
 import { Aula } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
+import { NewComponent } from '../../../../components/new/new.component';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-aulas',
   standalone: true,
-  imports: [TablasComponent],
+  imports: [
+    TablasComponent, 
+    NewComponent, 
+    RouterOutlet,
+  ],
   templateUrl: './aulas.component.html',
   styleUrl: './aulas.component.css'
 })
 export class AulasComponent {
-  constructor(private service:ApiService) {}
+  constructor(private router:Router, private Aroute:ActivatedRoute ,private service:ApiService) {}
 
   private url:string = '/aulas'
 
@@ -23,25 +29,27 @@ export class AulasComponent {
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('aulas');  
   
-    this.service.getData(this.url).subscribe(data => {
-      this.dataAulas = data;
-    })
+    // this.service.getData(this.url).subscribe(data => {
+    //   this.dataAulas = data;
+    // })
   }
 
   onAction(accion: Acciones) {
     if (accion.accion == 'Editar') {
       this.editar(accion.fila)
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila)
+      this.eliminar(accion.fila.idAula)
     }
   }
 
   editar(objeto:any) {
-    console.log('editar', objeto)
+    this.router.navigate(['modificar'], {
+      relativeTo: this.Aroute,
+      state: { columns: this.columnas, data: objeto, url: this.url}
+    });
   }
 
-  eliminar(objeto:any) {
-    console.log('eliminando:', objeto.idAula)
-    this.service.deleteDataId(this.url, objeto.idAula)
+  eliminar(idObjeto:number) {
+    this.service.deleteDataId(this.url, idObjeto)
   }
 }

@@ -28,8 +28,10 @@ export class LoginComponent {
       try {
         const response = await firstValueFrom(this.services.authenticateLogin(this.formulario.value));
         if (!response.error) {
-          console.log('Login successful');
-          localStorage.setItem('token_user', response.jwt)
+          alert('Login successful');
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('token_user', response.jwt);
+          }
           this.router.navigate(['/home']);
         }
       } catch (error:any) {

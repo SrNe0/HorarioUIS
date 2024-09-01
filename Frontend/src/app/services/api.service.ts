@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse} from '@angular/common/http';
-import { Observable, catchError, throwError} from 'rxjs';
+import { Observable, BehaviorSubject, catchError, throwError, tap} from 'rxjs';
 import { Router } from '@angular/router';
 
 
@@ -14,30 +14,49 @@ export class ApiService {
 
   private dataUrl:string = 'http://100.112.128.60:8080/api'
 
-  public getData(url:string):Observable<any>{
-    return this.http.get<any>(this.dataUrl + url)
+  public dataSubject = new BehaviorSubject<any[]>([]);
+  public data$ = this.dataSubject.asObservable();
+
+  public getData(url: string): Observable<any[]> {
+    return this.http.get<any[]>(this.dataUrl + url).pipe(
+      tap(data => this.dataSubject.next(data)), 
+      catchError(this.handleError)
+    );
   }
 
-  public deleteDataId(url:string, id:number):Observable<{}>{
+  public deleteDataId(url: string, id: number): Observable<any> {
     const deleteUrl = `${this.dataUrl}${url}/${id}`;
-    console.log(`Se elimino el item ${id} con exito`);
-    return this.http.delete(deleteUrl);
+    return this.http.delete(deleteUrl).pipe(
+      tap(() => this.refreshData(url)), // Forzar la recarga de datos
+      catchError(this.handleError)
+    );
   }
   
   public authenticateLogin(formValue: any){
-    console.log(this.dataUrl)
     return this.http.post<any>(`${this.dataUrl}/security/authenticate`, formValue).pipe(
       catchError(this.handleError)
     );
   }
 
-  public modifyDataId(url:string, objeto:object):Observable<{}>{
-    const modifyURL = this.dataUrl + url 
-    console.log("modificando", objeto)
-    console.log(modifyURL)
-    return this.http.put(modifyURL, objeto)
+
+  public modifyDataId(url: string, objeto: any, idKey: string = 'id'): Observable<any> {
+    const modifyURL = this.dataUrl + url;
+    return this.http.put(modifyURL, objeto).pipe(
+      tap((updatedObject:any) => {
+        const currentData = this.dataSubject.getValue();
+        const index = currentData.findIndex(item => item[idKey] === updatedObject[idKey]);
+        if (index !== -1) {
+          currentData[index] = updatedObject;
+          this.dataSubject.next([...currentData]);
+        }
+      }),
+      catchError(this.handleError)
+    );
   }
 
+  private refreshData(url: string): void {
+    this.getData(url).subscribe(); 
+  }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
@@ -50,11 +69,16 @@ export class ApiService {
   }
 
   isLogged(): boolean {
-    return localStorage.getItem('token_user') ? true : false;
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token_user') ? true : false;
+    }
+    return false;
   }
-
+  
   Logout(){
-    localStorage.removeItem('token_user')
-    this.router.navigate(['/login'])
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token_user');
+      this.router.navigate(['/login']);
+    }
   }
 }
