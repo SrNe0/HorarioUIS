@@ -63,7 +63,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Valida el token JWT verificando el nombre de usuario y si el token ha expirado
+    // Válida el token JWT verificando el nombre de usuario y si el token ha expirado
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

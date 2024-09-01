@@ -101,7 +101,7 @@ public class EdificioController {
 
     @Operation(summary = "Eliminar un edificio por su ID", description = "Elimina un edificio existente por su ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Edificio eliminado exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Edificio eliminado exitosamente"),
             @ApiResponse(responseCode = "403", description = "No tiene permiso para acceder a este recurso",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class))),

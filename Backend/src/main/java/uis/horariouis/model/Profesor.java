@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Getter;
 
 @Data

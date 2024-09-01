@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Time;
 
@@ -13,6 +14,7 @@ import java.sql.Time;
 @Table(name = "DisponibilidadHoraria")
 public class DisponibilidadHoraria implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1234567890L;
 
     @Id

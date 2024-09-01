@@ -39,6 +39,13 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Configura la seguridad HTTP
         http.cors().and().csrf().disable() // Habilita CORS y deshabilita CSRF (Cross-Site Request Forgery)
@@ -58,13 +65,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler()); // Maneja excepciones de acceso denegado
         // Añade el filtro JWT antes del filtro de autenticación de nombre de usuario y contraseña
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        // Define el bean de AuthenticationManager
-        return super.authenticationManagerBean();
     }
 
     @Bean

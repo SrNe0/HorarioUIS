@@ -7,7 +7,6 @@ import uis.horariouis.model.Horario;
 import uis.horariouis.repository.HorarioRepository;
 
 import java.sql.Time;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -50,7 +49,7 @@ public class AjusteHorasService {
     }
 
     private void reducirDuracionDeHorario(Horario horario, int horasAReducir) {
-        Time nuevaHoraFin = new Time(horario.getHoraFin().getTime() - horasAReducir * 60 * 60 * 1000);
+        Time nuevaHoraFin = new Time(horario.getHoraFin().getTime() - (long) horasAReducir * 60 * 60 * 1000);
         horario.setHoraFin(nuevaHoraFin);
         horarioRepository.save(horario);
 
