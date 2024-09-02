@@ -137,21 +137,6 @@ export const routes: Routes = [
                     }
                 ]
             },
-            {
-                path: 'reportes',
-                title: 'Reportes',
-                component: ReportesComponent,
-                children:[
-                    {
-                        path: 'nuevo',
-                        component: NewComponent
-                    },
-                    {
-                        path: 'modificar',
-                        component: ModifyComponent
-                    }
-                ]
-            }
         ]          
         
     },

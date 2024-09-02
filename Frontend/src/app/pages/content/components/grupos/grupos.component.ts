@@ -1,20 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TablasComponent } from '../../../../components/tablas/tablas.component';
 import { ApiService } from '../../../../services/api.service';
 import { Grupo } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
+import { NewComponent } from '../../../../components/new/new.component';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { ConfirmacionComponent } from '../../../../components/confirmacion/confirmacion.component';
 
 @Component({
   selector: 'app-grupos',
   standalone: true,
-  imports: [TablasComponent],
+  imports: [
+    TablasComponent, 
+    NewComponent, 
+    RouterOutlet,
+    ConfirmacionComponent 
+  ],
   templateUrl: './grupos.component.html',
   styleUrl: './grupos.component.css'
 })
-export class GruposComponent {
-  constructor(private service:ApiService) {}
+export class GruposComponent implements OnInit{
+  constructor(private router: Router, private Aroute: ActivatedRoute, private service: ApiService) {}
 
   private url:string = '/grupos'
+
+  mensaje: string = '¿Estás seguro de que desea eliminar esta asignatura?';
+  showConfirmDialog: boolean = false;
+  objetoAEliminar?: Grupo;
+  nombreObjeto: string = '';
 
   dataGrupos: Grupo[] = [];
   columnas: string[] = [];
@@ -23,24 +36,53 @@ export class GruposComponent {
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('grupos');  
   
-    this.service.getData(this.url).subscribe(data => {
+    this.service.data$.subscribe(data => {
       this.dataGrupos = data;
-    })
+    });
+    this.service.getData(this.url).subscribe(); 
   }
 
   onAction(accion: Acciones) {
     if (accion.accion == 'Editar') {
-      this.editar(accion.fila)
+      this.editar(accion.fila);
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila.id)
+      this.objetoAEliminar = accion.fila;
+      this.nombreObjeto = accion.fila.nombre;
+      this.showConfirmDialog = true;
+    } else if (accion.accion == 'Crear') {
+      this.crear();
     }
   }
 
-  editar(objeto:any) {
-    console.log('editar', objeto)
+  crear() {
+    this.router.navigate(['nuevo'], {
+      relativeTo: this.Aroute,
+      state: { columns: this.columnas, url: this.url }
+    });
   }
 
-  eliminar(objeto:any) {
-    console.log('editar', objeto)
+
+  editar(objeto: any) {
+    this.router.navigate(['modificar'], {
+      relativeTo: this.Aroute,
+      state: { columns: this.columnas, data: objeto, url: this.url }
+    }).then(() => {
+      this.loadData();
+    });
+  }
+
+  confirmarEliminacion(confirmado: boolean) {
+    if (confirmado && this.objetoAEliminar) {
+      this.service.deleteDataId(this.url, this.objetoAEliminar.idGrupo).subscribe({
+    });
+    }
+    this.showConfirmDialog = false;
+    this.objetoAEliminar = null!;
+  }
+
+  loadData(): void {
+    this.service.getData(this.url).subscribe(data => {
+      this.dataGrupos = data;
+    });
   }
 }

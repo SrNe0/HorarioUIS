@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditformComponent } from './editform.component';
+import { DelayComponent } from './delay.component';
 
-describe('EditformComponent', () => {
-  let component: EditformComponent;
-  let fixture: ComponentFixture<EditformComponent>;
+describe('DelayComponent', () => {
+  let component: DelayComponent;
+  let fixture: ComponentFixture<DelayComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditformComponent]
+      imports: [DelayComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(EditformComponent);
+
+    fixture = TestBed.createComponent(DelayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

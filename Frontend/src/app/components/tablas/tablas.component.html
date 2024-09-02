@@ -8,7 +8,9 @@
                     @for (item of columns; track $index) {
                         <th class="ft-600 " [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
                     }
-                    <th colspan="2" class="ft-600 w-10">Acciones</th>
+                    @if (title !== 'Horarios') {
+                      <th colspan="2" class="ft-600 w-10">Acciones</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -17,8 +19,10 @@
                     @for (item of columns; track $index) {
                       <td>{{ getNestedProperty(item, data) }}</td>
                     }
-                    <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
-                    <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Borrar', data)"><i class="fi fi-br-trash"></i></a></td>
+                    @if (title !== 'Horarios') {
+                      <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
+                      <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Borrar', data)"><i class="fi fi-br-trash"></i></a></td>
+                    }
                   </tr>
                 }
               </tbody>

@@ -1,3 +1,5 @@
 <app-tablas [titulo]="title" [columnas]="columnas" [data]="dataEdificios" (action)="onAction($event)"></app-tablas>
 
 <router-outlet></router-outlet>
+
+<app-confirmacion [message]="mensaje" [hidden]="!showConfirmDialog" [nombreObjeto]="nombreObjeto" (confirm)="confirmarEliminacion($event)"></app-confirmacion>

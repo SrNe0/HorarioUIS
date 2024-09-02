@@ -5,6 +5,7 @@ import { Edificio } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
 import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { NewComponent } from '../../../../components/new/new.component';
+import { ConfirmacionComponent } from '../../../../components/confirmacion/confirmacion.component';
 
 @Component({
   selector: 'app-edificios',
@@ -13,6 +14,7 @@ import { NewComponent } from '../../../../components/new/new.component';
     TablasComponent, 
     NewComponent, 
     RouterOutlet, 
+    ConfirmacionComponent
   ],
   templateUrl: './edificios.component.html',
   styleUrl: './edificios.component.css'
@@ -22,6 +24,11 @@ export class EdificiosComponent implements OnInit{
 
   private url:string = '/edificios'
 
+  mensaje: string = '¿Estás seguro de que desea eliminar esta asignatura?';
+  showConfirmDialog: boolean = false;
+  objetoAEliminar?: Edificio;
+  nombreObjeto: string = '';
+
   dataEdificios: Edificio[] = [];
   columnas: string[] = [];
   title: string = 'Edificios'
@@ -29,27 +36,51 @@ export class EdificiosComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('edificios');  
   
-    this.service.getData(this.url).subscribe(data => {
+    this.service.data$.subscribe(data => {
       this.dataEdificios = data;
-    })
+    });
+    this.service.getData(this.url).subscribe(); 
   }
-
   onAction(accion: Acciones) {
     if (accion.accion == 'Editar') {
-      this.editar(accion.fila)
+      this.editar(accion.fila);
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila.idEdificio)
+      this.objetoAEliminar = accion.fila;
+      this.nombreObjeto = accion.fila.nombre;
+      this.showConfirmDialog = true;
+    } else if (accion.accion == 'Crear') {
+      this.crear();
     }
   }
 
-  editar(objeto:any) {
-    this.router.navigate(['modificar'], {
+  crear() {
+    this.router.navigate(['nuevo'], {
       relativeTo: this.Aroute,
-      state: { columns: this.columnas, data: objeto, url: this.url}
+      state: { columns: this.columnas, url: this.url }
     });
   }
 
-  eliminar(idObjeto:number) {
-    console.log(this.service.deleteDataId(this.url, idObjeto))
+  editar(objeto: any) {
+    this.router.navigate(['modificar'], {
+      relativeTo: this.Aroute,
+      state: { columns: this.columnas, data: objeto, url: this.url }
+    }).then(() => {
+      this.loadData();
+    });
+  }
+
+  confirmarEliminacion(confirmado: boolean) {
+    if (confirmado && this.objetoAEliminar) {
+      this.service.deleteDataId(this.url, this.objetoAEliminar.idEdificio).subscribe({
+    });
+    }
+    this.showConfirmDialog = false;
+    this.objetoAEliminar = null!;
+  }
+
+  loadData(): void {
+    this.service.getData(this.url).subscribe(data => {
+      this.dataEdificios = data;
+    });
   }
 }

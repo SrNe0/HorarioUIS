@@ -76,16 +76,22 @@ export class TablasComponent implements OnInit, OnChanges{
 
   getNestedProperty(item: string, data:any): any {
     if (item === 'nombreDocente') {
-      return `${data.nombre1} ${data.nombre2} ${data.apellido1} ${data.apellido2}`.trim();
+      return `${data.profesor.nombre1} ${data.profesor.nombre2} ${data.profesor.apellido1} ${data.profesor.apellido2}`.trim();
     }else{
       if (typeof data[item] === 'object'){
         if (item === 'usuario'){
           return data[item]['nombreUsuario']
         }else if (item === 'rol') {
           return data[item]['nombreRol']
+        }else if (item === 'grupo') {
+          return data[item]['nombreGrupo']
+        }else if (item === 'aula') {
+          console.log(data['aula'])
+          return data[item]['codigo']
         }else{
           return data[item]['nombre']
-        }}else{
+        }
+      }else{
         return data[item]
       }
     }
@@ -99,6 +105,7 @@ export class TablasComponent implements OnInit, OnChanges{
     idAula: 'Id',
     idProfesor: 'Id',
     idUsuario: 'Id',
+    idHorario: 'ID',
 
     horasTeoria: 'Horas Teoricas',
     horasPractica: 'Horas Practicas',
@@ -107,5 +114,7 @@ export class TablasComponent implements OnInit, OnChanges{
     nombreDocente: 'Nombre del docente',
     nombreUsuario: 'Usuario',
     contrasena: 'Contraseña',
+    horaInicio: 'Hora de Inicio',
+    horaFin: 'Hora Final'
   };
 }

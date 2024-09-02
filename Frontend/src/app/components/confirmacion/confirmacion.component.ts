@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output, Input} from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, ViewContainerRef} from '@angular/core';
+import { DelayService } from '../../services/delay.service';
 
 @Component({
   selector: 'app-confirmacion',
@@ -7,17 +8,30 @@ import { Component, EventEmitter, Output, Input} from '@angular/core';
   templateUrl: './confirmacion.component.html',
   styleUrl: './confirmacion.component.css'
 })
-export class ConfirmacionComponent {
+export class ConfirmacionComponent implements OnInit{
+  constructor(   
+    private delayService: DelayService,
+    private VCR: ViewContainerRef
+  ){}
+  
   @Input() message: string = "";
   @Input() nombreObjeto: string = "";
 
   @Output() confirm = new EventEmitter<boolean>();
 
+  ngOnInit(): void {
+    this.delayService.setViewContainerRef(this.VCR)
+  }
+
   onConfirm() {
-    this.confirm.emit(true);
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.confirm.emit(true);
+    })
   }
 
   onCancel() {
-    this.confirm.emit(false);
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.confirm.emit(false);
+    })
   }
 }

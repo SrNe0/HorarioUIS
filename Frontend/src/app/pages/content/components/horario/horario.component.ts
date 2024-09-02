@@ -3,16 +3,24 @@ import { ApiService } from '../../../../services/api.service';
 import { TablasComponent } from '../../../../components/tablas/tablas.component';
 import { Horarios } from '../../../../interfaces/horarios';
 import { getEntityPropiedades, Acciones } from '../../../../interfaces/acciones';
+import { NewComponent } from '../../../../components/new/new.component';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-horario',
   standalone: true,
-  imports: [TablasComponent],
+  imports: [
+    TablasComponent, 
+    NewComponent, 
+    RouterOutlet,
+
+  ],
   templateUrl: './horario.component.html',
   styleUrl: './horario.component.css'
 })
 export class HorarioComponent implements OnInit{
-  constructor(private service:ApiService) {}
+  constructor(private router: Router, private Aroute: ActivatedRoute, private service: ApiService) {}
 
   private url:string = '/horarios'
 
@@ -23,24 +31,28 @@ export class HorarioComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('horario');  
   
-    this.service.getData(this.url).subscribe(data => {
+    this.service.data$.subscribe(data => {
       this.dataHorarios = data;
-    })
+    });
+    this.service.getData(this.url + '/listar').subscribe(); 
   }
 
   onAction(accion: Acciones) {
     if (accion.accion == 'Editar') {
-      this.editar(accion.fila)
     } else if (accion.accion == 'Borrar') {
-      this.eliminar(accion.fila.id)
+
+    } else if (accion.accion == 'Crear') {
+      this.crear();
     }
   }
 
-  editar(objeto:any) {
-    console.log('editar', objeto)
+  crear() {
   }
 
-  eliminar(objeto:any) {
-    console.log('editar', objeto)
+
+  loadData(): void {
+    this.service.getData(this.url + '/listar').subscribe(data => {
+      this.dataHorarios = data;
+    });
   }
 }
