@@ -75,25 +75,32 @@ export class TablasComponent implements OnInit, OnChanges{
   paginatedData: any[] = []; 
 
   getNestedProperty(item: string, data:any): any {
-    if (item === 'nombreDocente') {
-      return `${data.profesor.nombre1} ${data.profesor.nombre2} ${data.profesor.apellido1} ${data.profesor.apellido2}`.trim();
-    }else{
-      if (typeof data[item] === 'object'){
-        if (item === 'usuario'){
+    if (item === 'nombreDocente' && this.title === 'Horarios') {
+      return data.profesor.nombreCompleto;
+    }else if (item === 'nombreDocente'){
+      return data.nombreCompleto;
+    }else if (item === 'asignatura'){
+      return data['grupo'][item]['nombre']
+    }else if(item === 'tieneComputadores'){
+      if (data[item] === true){
+        return 'Si'
+      }else{
+        return 'No'
+      }
+    }else if (typeof data[item] === 'object'){
+      if (item === 'usuario'){
           return data[item]['nombreUsuario']
-        }else if (item === 'rol') {
+      }else if (item === 'rol') {
           return data[item]['nombreRol']
-        }else if (item === 'grupo') {
+      }else if (item === 'grupo') {
           return data[item]['nombreGrupo']
-        }else if (item === 'aula') {
-          console.log(data['aula'])
+      }else if (item === 'aula') {
           return data[item]['codigo']
-        }else{
+      }else{
           return data[item]['nombre']
-        }
+      }
       }else{
         return data[item]
-      }
     }
 
   }
@@ -115,6 +122,7 @@ export class TablasComponent implements OnInit, OnChanges{
     nombreUsuario: 'Usuario',
     contrasena: 'Contraseña',
     horaInicio: 'Hora de Inicio',
-    horaFin: 'Hora Final'
+    horaFin: 'Hora Final',
+    tieneComputadores: 'Tiene Computadores'
   };
 }

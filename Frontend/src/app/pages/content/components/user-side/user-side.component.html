@@ -10,9 +10,12 @@
             <li><a [routerLink]="['/home']">Inicio</a></li>
             <li><a [routerLink]="['/usuario/horario']">Horarios</a></li>
             <li><a [routerLink]="['/usuario/usuarios']">Usuarios</a></li>
+            <li><a (click)="toggleCsvUpload()">Carga CVS</a></li>
           </ul>
       </nav>
       <button class="btn btn-mdg w-100" (click)="onLogout()">Log out</button>
     </div>
   </div>
 </main>
+
+<app-dragdrop [hidden]="!showCsvUpload" (fileUploaded)="onFileUploaded($event)" (closed)="closeCsvUpload()"></app-dragdrop>

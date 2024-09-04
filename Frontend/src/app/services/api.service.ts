@@ -12,7 +12,7 @@ export class ApiService {
 
   constructor(private router:Router, private http:HttpClient) { }
 
-  private dataUrl:string = 'http://100.112.128.60:8080/api'
+  private dataUrl:string = 'http://192.168.0.100:8080/api'
 
   public dataSubject = new BehaviorSubject<any[]>([]);
   public data$ = this.dataSubject.asObservable();

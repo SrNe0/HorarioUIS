@@ -42,3 +42,26 @@ export const getEntityPropiedades = (entidad:string): Array<any> => {
     return resultados
 
 }
+
+ // crear() {
+  //   this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+  //     this.router.navigate(['nuevo'], {
+  //       relativeTo: this.Aroute,
+  //       state: { columns: this.columnas, url: this.url }
+  //     }).then(() => {
+  //       this.loadData();
+  //     });
+  //   });
+  // }
+
+
+  // editar(objeto: any) {
+  //   this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+  //     this.router.navigate(['modificar'], {
+  //       relativeTo: this.Aroute,
+  //       state: { columns: this.columnas, data: objeto, url: this.url }
+  //     }).then(() => {
+  //       this.loadData();
+  //     });
+  //   });
+  // }

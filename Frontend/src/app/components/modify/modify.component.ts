@@ -21,7 +21,9 @@ export class ModifyComponent implements OnInit{
 
   modifyData: FormGroup;
   data: any;
+  dataAnx:any;
   columnas: string[] = [];
+
 
   ngOnInit(): void {
     const state = history.state;
@@ -34,11 +36,11 @@ export class ModifyComponent implements OnInit{
     
     this.columnas.forEach(column => {
       this.modifyData.addControl(column, this.formB.control(this.data[column] || '0', Validators.required))
+      
     });
 
   }
 
-  
   getNestedProperty(item: string, data:any): any {
     if (typeof data[item] === 'object' && data[item] !== null) {
       return data[item]["nombre"];
@@ -46,11 +48,6 @@ export class ModifyComponent implements OnInit{
       return data[item];
     }
   }
-  columnMap: { [key: string]: string } = {
-    idAsignatura: 'Id',
-    horasTeoria: 'Horas Teoricas',
-    horasPractica: 'Horas Practicas',
-  };
 
   getColumnName(column: string): string {
     return this.columnMap[column] || column;
@@ -71,7 +68,7 @@ export class ModifyComponent implements OnInit{
           this.data[column] = this.modifyData.get(column)?.value;
         }
       });
-      
+      console.log(this.data)
       this.service.modifyDataId(modifyURL, this.data).subscribe({
         next: (response) => {
           this.dataUpdated.emit(this.data);
@@ -88,21 +85,27 @@ export class ModifyComponent implements OnInit{
     }
   }
 
-  dataType(data:string): any{
-    return typeof data
-  }
 
-  dataAnex(cabecera:string) : void{
-    switch(cabecera){
-      case ('edificio'):
-        console.log('1')
-        break;
-      default:
-        console.log('0')
-        break;
-    }
-  }
 
+  columnMap: { [key: string]: string } = {
+    idEdificio: 'Id',
+    idAsignatura: 'Id',
+    idGrupo: 'Id',
+    idAula: 'Id',
+    idProfesor: 'Id',
+    idUsuario: 'Id',
+    idHorario: 'ID',
+
+    horasTeoria: 'Horas Teoricas',
+    horasPractica: 'Horas Practicas',
+    nombreGrupo: 'Nombre del Grupo',
+    documentoIdentidad: 'Documento de Identidad',
+    nombreDocente: 'Nombre del docente',
+    nombreUsuario: 'Usuario',
+    contrasena: 'Contraseña',
+    horaInicio: 'Hora de Inicio',
+    horaFin: 'Hora Final'
+  };
 }
 
   

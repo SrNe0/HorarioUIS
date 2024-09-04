@@ -41,6 +41,7 @@ export class EdificiosComponent implements OnInit{
     });
     this.service.getData(this.url).subscribe(); 
   }
+  
   onAction(accion: Acciones) {
     if (accion.accion == 'Editar') {
       this.editar(accion.fila);

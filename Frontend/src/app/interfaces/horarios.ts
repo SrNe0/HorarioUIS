@@ -9,11 +9,12 @@ export interface Horarios {
 }
 
 export interface Aula {
-    idAula:      number;
-    codigo:      string;
-    descripcion: string;
-    capacidad:   number;
-    edificio:    Edificio;
+    idAula:            number;
+    codigo:            string;
+    descripcion:       string;
+    capacidad:         number;
+    tieneComputadores: boolean;
+    edificio:          Edificio;
 }
 
 export interface Edificio {
@@ -29,11 +30,12 @@ export interface Grupo {
 }
 
 export interface Asignatura {
-    idAsignatura:  number;
-    codigo:        string;
-    nombre:        string;
-    horasTeoria:   number;
-    horasPractica: number;
+    idAsignatura:         number;
+    codigo:               string;
+    nombre:               string;
+    horasTeoria:          number;
+    horasPractica:        number;
+    necesitaComputadores: boolean;
 }
 
 export interface Profesor {
@@ -46,6 +48,7 @@ export interface Profesor {
     telefono:           string;
     correo:             string;
     usuario:            Usuario;
+    nombreCompleto:     string;
 }
 
 export interface Usuario {
@@ -62,9 +65,10 @@ export interface Rol {
 
 
 export class HorariosResponse{
-    idHorario =     0;
-    nombreDocente = '';
+    // id =            '';
     grupo =         '';
+    asignatura =    '';
+    nombreDocente = '';
     aula =          '';
     dia =           '';
     horaInicio =    '';
@@ -72,27 +76,24 @@ export class HorariosResponse{
 }
 
 export class AulaResponse {
-    idAula =       0;
     codigo =       '';
     descripcion =  '';
     capacidad =    0;
     edificio =     '';
+    tieneComputadores = true;
 }
 
 export class EdificioResponse {
-    idEdificio =  0;
     nombre =      '';
 }
 
 export class GrupoResponse {
-    idGrupo =      0;
     asignatura =   '';
     nombreGrupo =  '';
     cupo =         0;
 }
 
 export class AsignaturaResponse {
-    idAsignatura =   0;
     codigo =         '';
     nombre =         '';
     horasTeoria =    0;
@@ -100,7 +101,6 @@ export class AsignaturaResponse {
 }
 
 export class ProfesorResponse {
-    idProfesor =          0;
     documentoIdentidad =  '';
     nombreDocente =       '';
     telefono =            '';
@@ -109,13 +109,11 @@ export class ProfesorResponse {
 }
 
 export class UsuarioResponse {
-    idUsuario =      0;
     nombreUsuario =  '';
     contrasena =     '';
     rol =            '';
 }
 
 export class RolResponse {
-    idRol =      0;
     nombreRol =  '';
 }
