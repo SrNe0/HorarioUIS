@@ -2,6 +2,7 @@ package uis.horariouis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uis.horariouis.dto.EdificioDTO;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
 import uis.horariouis.repository.EdificioRepository;
@@ -15,27 +16,35 @@ public class EdificioService {
     @Autowired
     private EdificioRepository edificioRepository;
 
+    // Obtener todos los edificios
     public List<Edificio> getAllEdificios() {
         return edificioRepository.findAll();
     }
 
+    // Obtener un edificio por ID
     public Optional<Edificio> getEdificioById(Long id) {
         return edificioRepository.findById(id);
     }
 
-    // Método para crear un nuevo edificio
-    public Edificio createEdificio(Edificio edificio) {
-        return edificioRepository.save(edificio);  // Guarda un nuevo edificio
+    // Crear un nuevo edificio utilizando el DTO
+    public Edificio createEdificio(EdificioDTO edificioDTO) {
+        // Convertir el DTO a la entidad Edificio
+        Edificio edificio = new Edificio();
+        edificio.setNombre(edificioDTO.getNombre());  // Asigna el nombre del DTO a la entidad
+
+        return edificioRepository.save(edificio);  // Guarda el edificio en la base de datos
     }
 
-    // Método para actualizar un edificio existente
-    public Edificio updateEdificio(Long id, Edificio edificio) {
+    // Actualizar un edificio existente utilizando el DTO
+    public Edificio updateEdificio(Long id, EdificioDTO edificioDTO) {
         return edificioRepository.findById(id).map(existingEdificio -> {
-            existingEdificio.setNombre(edificio.getNombre());
-            // Aquí se pueden agregar más campos para actualizar
+            // Actualiza los campos del edificio existente con los datos del DTO
+            existingEdificio.setNombre(edificioDTO.getNombre());
             return edificioRepository.save(existingEdificio);
-        }).orElseThrow(() -> new ResourceNotFoundException("Edificio not found with id: " + id));
+        }).orElseThrow(() -> new ResourceNotFoundException("Edificio no encontrado con el id: " + id));
     }
+
+    // Eliminar un edificio por su ID
     public void deleteEdificio(Long id) {
         edificioRepository.deleteById(id);
     }

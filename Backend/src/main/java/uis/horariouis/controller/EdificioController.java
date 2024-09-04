@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uis.horariouis.dto.EdificioDTO;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Edificio;
 import uis.horariouis.model.ErrorResponse;
@@ -72,8 +73,8 @@ public class EdificioController {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/")
-    public ResponseEntity<Edificio> createEdificio(@RequestBody Edificio edificio) {
-        Edificio newEdificio = edificioService.createEdificio(edificio);
+    public ResponseEntity<Edificio> createEdificio(@RequestBody EdificioDTO edificioDTO) {
+        Edificio newEdificio = edificioService.createEdificio(edificioDTO); // Cambiamos a usar el DTO
         return ResponseEntity.status(HttpStatus.CREATED).body(newEdificio);
     }
 
@@ -90,9 +91,9 @@ public class EdificioController {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Edificio> updateEdificio(@PathVariable Long id, @RequestBody Edificio edificio) {
+    public ResponseEntity<Edificio> updateEdificio(@PathVariable Long id, @RequestBody EdificioDTO edificioDTO) {
         try {
-            Edificio updatedEdificio = edificioService.updateEdificio(id, edificio);
+            Edificio updatedEdificio = edificioService.updateEdificio(id, edificioDTO); // Cambiamos a usar el DTO
             return ResponseEntity.ok(updatedEdificio);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

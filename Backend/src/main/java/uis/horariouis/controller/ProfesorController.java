@@ -12,12 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uis.horariouis.dto.ProfesorDTO;
 import uis.horariouis.model.ErrorResponse;
 import uis.horariouis.model.Profesor;
 import uis.horariouis.service.CsvServiceProfesor;
 import uis.horariouis.service.ProfesorService;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -72,12 +74,12 @@ public class ProfesorController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<Profesor> createProfesor(@RequestBody Profesor profesor) {
-        Profesor createdProfesor = profesorService.createProfesor(profesor);
+    public ResponseEntity<Profesor> createProfesor(@Valid @RequestBody ProfesorDTO profesorDTO) {
+        Profesor createdProfesor = profesorService.createProfesor(profesorDTO);  // Usar ProfesorDTO en lugar de Profesor
         return new ResponseEntity<>(createdProfesor, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Actualizar un profesor existente", description = "Actualiza un profesor existente en el sistema. El usuario asociado se genera automáticamente utilizando el segundo apellido y el primer nombre como nombre de usuario, y el documento de identidad como contraseña. El rol del usuario se establece como 'User' (idRol=2).")
+    @Operation(summary = "Actualizar un profesor existente", description = "Actualiza un profesor existente en el sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profesor actualizado exitosamente",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Profesor.class))}),
@@ -87,8 +89,8 @@ public class ProfesorController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Profesor> updateProfesor(@PathVariable("id") Long id, @RequestBody Profesor profesorDetails) {
-        Profesor updatedProfesor = profesorService.updateProfesor(id, profesorDetails);
+    public ResponseEntity<Profesor> updateProfesor(@PathVariable("id") Long id, @Valid @RequestBody ProfesorDTO profesorDTO) {
+        Profesor updatedProfesor = profesorService.updateProfesor(id, profesorDTO);  // Usar ProfesorDTO en lugar de Profesor
         return new ResponseEntity<>(updatedProfesor, HttpStatus.OK);
     }
 

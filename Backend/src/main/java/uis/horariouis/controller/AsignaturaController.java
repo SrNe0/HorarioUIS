@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uis.horariouis.dto.AsignaturaDTO;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.Asignatura;
 import uis.horariouis.model.ErrorResponse;
@@ -71,13 +72,12 @@ public class AsignaturaController {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/")
-    public ResponseEntity<Asignatura> createAsignatura(@Valid @RequestBody Asignatura asignatura) {
-        Asignatura nuevaAsignatura = asignaturaService.save(asignatura);
+    public ResponseEntity<Asignatura> createAsignatura(@Valid @RequestBody AsignaturaDTO asignaturaDTO) {
+        Asignatura nuevaAsignatura = asignaturaService.save(asignaturaDTO);  // Usar AsignaturaDTO en lugar de Asignatura
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignatura);
     }
 
-    @Operation(summary = "Actualizar una asignatura existente", description = "Actualiza los datos de una asignatura existente basada en su ID, se tiene que agregar todos los datos " +
-            "incluidos los que no se van a editar.")
+    @Operation(summary = "Actualizar una asignatura existente", description = "Actualiza los datos de una asignatura existente basada en su ID. Se deben agregar todos los datos, incluidos los que no se van a editar.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Asignatura actualizada correctamente",
                     content = @Content(mediaType = "application/json",
@@ -90,8 +90,8 @@ public class AsignaturaController {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Asignatura> updateAsignatura(@PathVariable Long id, @Valid @RequestBody Asignatura asignatura) {
-        Asignatura asignaturaActualizada = asignaturaService.update(id, asignatura);
+    public ResponseEntity<Asignatura> updateAsignatura(@PathVariable Long id, @Valid @RequestBody AsignaturaDTO asignaturaDTO) {
+        Asignatura asignaturaActualizada = asignaturaService.update(id, asignaturaDTO);  // Usar AsignaturaDTO en lugar de Asignatura
         return ResponseEntity.ok(asignaturaActualizada);
     }
 
