@@ -54,6 +54,7 @@ public class Asignatura implements Serializable {
     // Constructores, Getters y Setters adicionales
     @Getter
     @OneToMany(mappedBy = "asignatura", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Dictado> dictados;
 
 }
