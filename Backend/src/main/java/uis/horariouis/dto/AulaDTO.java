@@ -10,7 +10,7 @@ public class AulaDTO {
     private String descripcion;
     private int capacidad;
     private String nombreEdificio; // Usamos el nombre del edificio en lugar del ID
-    private boolean tieneComputadores;
+    private Boolean tieneComputadores;
 
     // Getters y Setters
 

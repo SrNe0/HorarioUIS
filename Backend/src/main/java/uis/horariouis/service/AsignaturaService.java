@@ -43,6 +43,7 @@ public class AsignaturaService {
                     asignaturaExistente.setNombre(asignaturaDetails.getNombre());
                     asignaturaExistente.setHorasTeoria(asignaturaDetails.getHorasTeoria());
                     asignaturaExistente.setHorasPractica(asignaturaDetails.getHorasPractica());
+                    asignaturaExistente.setNecesitaComputadores(asignaturaDetails.getNecesitaComputadores());
                     return asignaturaRepository.save(asignaturaExistente);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id: " + id));

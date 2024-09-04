@@ -38,7 +38,7 @@ public class VerificadorRestricciones {
     }
 
     // Verifica si hay solapamientos de aulas en la lista de horarios.
-    private boolean verificarSolapamientoAulas(List<Horario> horarios, StringBuilder errores) {
+    public boolean verificarSolapamientoAulas(List<Horario> horarios, StringBuilder errores) {
         for (int i = 0; i < horarios.size(); i++) {
             Horario h1 = horarios.get(i);
             for (int j = i + 1; j < horarios.size(); j++) {
@@ -60,7 +60,7 @@ public class VerificadorRestricciones {
     }
 
     // Verifica si hay solapamientos de profesores en la lista de horarios.
-    private boolean verificarSolapamientoProfesores(List<Horario> horarios, StringBuilder errores) {
+    public boolean verificarSolapamientoProfesores(List<Horario> horarios, StringBuilder errores) {
         for (int i = 0; i < horarios.size(); i++) {
             Horario h1 = horarios.get(i);
             for (int j = i + 1; j < horarios.size(); j++) {
