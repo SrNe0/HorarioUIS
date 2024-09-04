@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse} from '@angular/common/http';
-import { Observable, BehaviorSubject, catchError, throwError, tap} from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, BehaviorSubject, catchError, throwError, tap } from 'rxjs';
 import { Router } from '@angular/router';
-
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +9,28 @@ import { Router } from '@angular/router';
 
 export class ApiService {
 
-  constructor(private router:Router, private http:HttpClient) { }
+  // Declaración de la propiedad dataUrl
+  private dataUrl: string;
 
-  private dataUrl:string = 'http://localhost:8080/api'
+  constructor(private router: Router, private http: HttpClient) { 
+    // Detectar si el usuario está en la red local o en Tailscale
+    const hostname = window.location.hostname;
+
+    if (hostname === 'localhost' || hostname.startsWith('192.168.')) {
+      // Si el hostname es localhost o una IP local, usar la IP local del servidor
+      this.dataUrl = 'http://192.168.0.100/api';  // Cambia a la IP local del servidor
+    } else {
+      // De lo contrario, usar la IP de Tailscale
+      this.dataUrl = 'http://100.112.128.60/api';  // IP de Tailscale del servidor
+    }
+  }
 
   public dataSubject = new BehaviorSubject<any[]>([]);
   public data$ = this.dataSubject.asObservable();
 
   public getData(url: string): Observable<any[]> {
     return this.http.get<any[]>(this.dataUrl + url).pipe(
-      tap(data => this.dataSubject.next(data)), 
+      tap(data => this.dataSubject.next(data)),
       catchError(this.handleError)
     );
   }
@@ -31,18 +42,17 @@ export class ApiService {
       catchError(this.handleError)
     );
   }
-  
-  public authenticateLogin(formValue: any){
+
+  public authenticateLogin(formValue: any) {
     return this.http.post<any>(`${this.dataUrl}/security/authenticate`, formValue).pipe(
       catchError(this.handleError)
     );
   }
 
-
   public modifyDataId(url: string, objeto: any, idKey: string = 'id'): Observable<any> {
     const modifyURL = this.dataUrl + url;
     return this.http.put(modifyURL, objeto).pipe(
-      tap((updatedObject:any) => {
+      tap((updatedObject: any) => {
         const currentData = this.dataSubject.getValue();
         const index = currentData.findIndex(item => item[idKey] === updatedObject[idKey]);
         if (index !== -1) {
@@ -55,7 +65,7 @@ export class ApiService {
   }
 
   private refreshData(url: string): void {
-    this.getData(url).subscribe(); 
+    this.getData(url).subscribe();
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -74,11 +84,12 @@ export class ApiService {
     }
     return false;
   }
-  
-  Logout(){
+
+  Logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token_user');
       this.router.navigate(['/login']);
     }
   }
 }
+
