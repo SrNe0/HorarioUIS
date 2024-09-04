@@ -14,8 +14,16 @@ public class ReparacionAlgoritmoGenetico {
 //   Esta clase está diseñada para corregir solapamientos en horarios
 //    generados por un algoritmo genético, asegurando que no haya conflictos en las asignaciones de aulas y profesores.
 
+
     @Autowired
     private AulaService aulaService; // Servicio que permite acceder a la lógica relacionada con las aulas.
+
+    // Método de corrección de solapamientos
+    // (manténlo si planeas usarlo, si no, elimínalo si no tiene propósito)
+    public void corregirSolapamientos(List<Gen> genes) {
+        corregirSolapamientoAula(genes);
+        corregirSolapamientoProfesor(genes);
+    }
 
     // Método para corregir solapamientos de aulas en una lista de genes.
     public void corregirSolapamientoAula(List<Gen> genes) {
@@ -106,4 +114,33 @@ public class ReparacionAlgoritmoGenetico {
     private Aula obtenerAulaAleatoria(boolean necesitaComputadores) {
         return aulaService.obtenerAulaAleatoria(necesitaComputadores); // Usa el servicio de aula para obtener un aula aleatoria.
     }
+    public void reubicarGenDesdeHorario(Horario horario, List<Horario> horarios) {
+        String nuevoDia;
+        Time nuevaHoraInicio;
+        Time nuevaHoraFin;
+        boolean conflictivo;
+
+        do {
+            conflictivo = false;
+            nuevoDia = obtenerDiaAleatorio();
+            nuevaHoraInicio = obtenerHoraInicioAleatoria();
+            nuevaHoraFin = Time.valueOf(String.format("%02d:00:00", nuevaHoraInicio.toLocalTime().getHour() + 2));
+
+            for (Horario h : horarios) {
+                if (!h.equals(horario) && h.getDia().equals(nuevoDia) &&
+                        timeOverlap(nuevaHoraInicio, nuevaHoraFin, h.getHoraInicio(), h.getHoraFin())) {
+                    conflictivo = true;
+                    break;
+                }
+            }
+        } while (conflictivo);
+
+        horario.setDia(nuevoDia);
+        horario.setHoraInicio(nuevaHoraInicio);
+        horario.setHoraFin(nuevaHoraFin);
+
+        // También podrías cambiar el aula si es necesario
+        horario.setAula(obtenerAulaAleatoria(horario.getGrupo().getAsignatura().getNecesitaComputadores()));
+    }
+
 }

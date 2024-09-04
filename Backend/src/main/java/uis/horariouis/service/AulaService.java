@@ -48,6 +48,8 @@ public class AulaService {
         aula.setDescripcion(aulaDTO.getDescripcion());
         aula.setCapacidad(aulaDTO.getCapacidad());
         aula.setEdificio(edificio); // Asocia el edificio encontrado por nombre
+        // Aquí se asigna el valor de tieneComputadores
+        aula.setTieneComputadores(aulaDTO.getTieneComputadores());
 
         return aulaRepository.save(aula);
     }
@@ -69,6 +71,9 @@ public class AulaService {
             aula.setDescripcion(aulaDTO.getDescripcion());
             aula.setCapacidad(aulaDTO.getCapacidad());
             aula.setEdificio(edificio);
+
+            // Aquí se asigna el valor de tieneComputadores
+            aula.setTieneComputadores(aulaDTO.getTieneComputadores());
 
             // Guarda los cambios en la base de datos
             return Optional.of(aulaRepository.save(aula));

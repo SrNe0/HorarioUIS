@@ -81,7 +81,7 @@ public class CsvServiceAula {
             Aula existingAula = existingAulaOpt.get();
             existingAula.setDescripcion(aulaDTO.getDescripcion());
             existingAula.setCapacidad(aulaDTO.getCapacidad());
-            existingAula.setTieneComputadores(aulaDTO.isTieneComputadores());
+            existingAula.setTieneComputadores(aulaDTO.getTieneComputadores());
             existingAula.setEdificio(edificio);
             aulaRepository.save(existingAula);
             log.info("Aula actualizada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());
@@ -90,7 +90,7 @@ public class CsvServiceAula {
             newAula.setCodigo(aulaDTO.getCodigo());
             newAula.setDescripcion(aulaDTO.getDescripcion());
             newAula.setCapacidad(aulaDTO.getCapacidad());
-            newAula.setTieneComputadores(aulaDTO.isTieneComputadores());
+            newAula.setTieneComputadores(aulaDTO.getTieneComputadores());
             newAula.setEdificio(edificio);
             aulaRepository.save(newAula);
             log.info("Aula creada: {} en el edificio {}", aulaDTO.getCodigo(), aulaDTO.getNombreEdificio());

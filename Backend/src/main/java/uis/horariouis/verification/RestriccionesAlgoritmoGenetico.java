@@ -174,4 +174,14 @@ public class RestriccionesAlgoritmoGenetico {
     private boolean sonGruposDiferentesMismaMateria(Grupo grupo1, Grupo grupo2) {
         return grupo1.getAsignatura().getIdAsignatura().equals(grupo2.getAsignatura().getIdAsignatura()) && !grupo1.getIdGrupo().equals(grupo2.getIdGrupo()); // Retorna true si los grupos son diferentes pero pertenecen a la misma asignatura.
     }
+    public boolean solucionValida(Cromosoma cromosoma) {
+        // Verifica todas las restricciones aplicadas en el cálculo de la aptitud
+        return !haySolapamientoProfesor(cromosoma) &&
+                !haySolapamientoAula(cromosoma) &&
+                cumpleHorasTeoria(cromosoma) &&
+                aulasCorrectasAsignadas(cromosoma) &&
+                disponibilidadProfesorCumplida(cromosoma) &&
+                profesorDictaAsignaturaDelGrupo(cromosoma);
+    }
+
 }
