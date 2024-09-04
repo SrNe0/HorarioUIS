@@ -37,16 +37,39 @@ public class UsuarioService {
         return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
 
-    // Guarda un usuario en la base de datos sin encriptar la contraseña
+    // Guarda un usuario en la base de datos
     public Usuario saveUsuario(Usuario usuario) {
-        usuarioRepository.save(usuario);
-        return usuario;
+        // Verificar si la contraseña ya está encriptada
+        if (usuario.getContrasena() != null && !usuario.getContrasena().startsWith("$2a$")) {
+            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena())); // Encriptar si no está encriptada
+        }
+        return usuarioRepository.save(usuario); // Guardar el usuario con la contraseña encriptada
     }
 
-    // Guarda un usuario en la base de datos encriptando la contraseña
+    // Guarda un usuario en la base de datos encriptando la contraseña explícitamente (opcional si no se usa el anterior)
     public void saveUsuarioConEncriptacion(Usuario usuario) {
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
         usuarioRepository.save(usuario);
+    }
+
+    // Método para actualizar el usuario
+    public Usuario updateUsuario(Long id, Usuario usuarioActualizado) {
+        Usuario usuarioExistente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificar si la contraseña ha cambiado y encriptarla
+        if (usuarioActualizado.getContrasena() != null &&
+                !usuarioActualizado.getContrasena().startsWith("$2a$") &&
+                !usuarioActualizado.getContrasena().equals(usuarioExistente.getContrasena())) {
+            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
+        }
+
+        // Actualizar otros campos (según sea necesario)
+        usuarioExistente.setNombreUsuario(usuarioActualizado.getNombreUsuario());
+        // Agregar aquí la actualización de otros campos...
+
+        // Guardar el usuario actualizado
+        return usuarioRepository.save(usuarioExistente);
     }
 
     // Elimina un usuario por su ID

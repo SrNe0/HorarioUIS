@@ -87,19 +87,17 @@ public class UsuarioController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@Parameter(description = "ID del usuario que se actualizará", required = true) @PathVariable Long id,
-                                                 @Valid @RequestBody Usuario usuario) {
-        Usuario usuarioActualizado = usuarioService.getUsuarioById(id)
-                .map(user -> {
-                    user.setNombreUsuario(usuario.getNombreUsuario());
-                    user.setContrasena(usuario.getContrasena());
-                    user.setRol(usuario.getRol());
-                    return usuarioService.saveUsuario(user);
-                }).orElseThrow(() -> new ResourceNotFoundException("Usuario not found with id: " + id));
 
-        return ResponseEntity.ok(usuarioActualizado);
+    @PutMapping("/usuarios/{id}")
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
+        try {
+            Usuario usuarioActualizado = usuarioService.updateUsuario(id, usuario);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el usuario: " + e.getMessage());
+        }
     }
+
 
     @Operation(summary = "Eliminar un usuario", description = "Elimina un usuario basado en su ID.")
     @ApiResponses(value = {
