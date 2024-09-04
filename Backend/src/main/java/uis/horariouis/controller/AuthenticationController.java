@@ -11,6 +11,7 @@ import uis.horariouis.security.JwtUtil;
 import uis.horariouis.model.AuthenticationRequest;
 import uis.horariouis.model.AuthenticationResponse;
 import uis.horariouis.model.Usuario;
+import uis.horariouis.model.Rol; // Asegúrate de tener esta importación
 import uis.horariouis.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +43,14 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+        // Declarar la variable `usuario` sin inicializarla como `null`
+        Usuario usuario;
+
         try {
             logger.info("Attempting to authenticate user: {}", authenticationRequest.getUsername());
 
             // Cargar el usuario desde la base de datos
-            Usuario usuario = usuarioService.findByNombreUsuario(authenticationRequest.getUsername());
+            usuario = usuarioService.findByNombreUsuario(authenticationRequest.getUsername());
             if (usuario == null) {
                 logger.error("User not found: {}", authenticationRequest.getUsername());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
@@ -76,6 +80,14 @@ public class AuthenticationController {
         final String jwt = jwtUtil.generateToken(userDetails);
         logger.info("Generated JWT for user: {}", authenticationRequest.getUsername());
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        // Obtener el rol del usuario
+        Rol rol = usuario.getRol();  // Ahora `usuario` es accesible aquí
+
+        // Determinar si el token tiene expiración y cuánto tiempo durará
+        boolean expires = true;  // Suponiendo que el token tiene expiración
+        int timeout = 3600; // Tiempo de expiración del token en segundos (1 hora)
+
+        // Retornar la respuesta con el token, el rol y los nuevos campos
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, rol, expires, timeout));
     }
 }
