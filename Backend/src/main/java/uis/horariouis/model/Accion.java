@@ -1,5 +1,6 @@
 package uis.horariouis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Accion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long idAccion;
 
     @NotBlank(message = "El nombre de la acción es requerido")

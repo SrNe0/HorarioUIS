@@ -1,5 +1,6 @@
 package uis.horariouis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Asignatura implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @CsvBindByName(column = "ID")
+    @JsonIgnore
     private Long idAsignatura;
 
     @NotBlank(message = "El código de la asignatura es requerido")

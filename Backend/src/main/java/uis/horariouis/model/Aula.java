@@ -1,5 +1,6 @@
 package uis.horariouis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 

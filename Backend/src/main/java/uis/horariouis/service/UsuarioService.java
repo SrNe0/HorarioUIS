@@ -3,22 +3,27 @@ package uis.horariouis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import uis.horariouis.dto.UsuarioDTO;
+import uis.horariouis.model.Rol;
 import uis.horariouis.model.Usuario;
+import uis.horariouis.repository.RolRepository;
 import uis.horariouis.repository.UsuarioRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
-@Service // Marca esta clase como un servicio gestionado por Spring
+@Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository; // Repositorio para acceder a los datos del usuario en la base de datos
+    private final RolRepository rolRepository; // Repositorio para acceder a los roles
     private final BCryptPasswordEncoder passwordEncoder; // Codificador de contraseñas
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -37,38 +42,38 @@ public class UsuarioService {
         return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
 
-    // Guarda un usuario en la base de datos
-    public Usuario saveUsuario(Usuario usuario) {
-        // Verificar si la contraseña ya está encriptada
-        if (usuario.getContrasena() != null && !usuario.getContrasena().startsWith("$2a$")) {
-            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena())); // Encriptar si no está encriptada
-        }
-        return usuarioRepository.save(usuario); // Guardar el usuario con la contraseña encriptada
+    // Guarda un usuario en la base de datos usando el DTO
+    public Usuario saveUsuario(UsuarioDTO usuarioDTO) {
+        Usuario usuario = new Usuario();
+        usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
+        usuario.setContrasena(passwordEncoder.encode(usuarioDTO.getContrasena()));
+
+        // Buscar el rol por el nombre proporcionado en el DTO
+        Rol rol = (Rol) rolRepository.findByNombreRol(usuarioDTO.getNombreRol())
+                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + usuarioDTO.getNombreRol()));
+
+        usuario.setRol(rol); // Asigna el rol encontrado
+
+        return usuarioRepository.save(usuario); // Guarda el usuario
     }
 
-    // Guarda un usuario en la base de datos encriptando la contraseña explícitamente (opcional si no se usa el anterior)
-    public void saveUsuarioConEncriptacion(Usuario usuario) {
-        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        usuarioRepository.save(usuario);
-    }
-
-    // Método para actualizar el usuario
-    public Usuario updateUsuario(Long id, Usuario usuarioActualizado) {
+    // Método para actualizar el usuario usando el DTO
+    public Usuario updateUsuario(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Verificar si la contraseña ha cambiado y encriptarla
-        if (usuarioActualizado.getContrasena() != null &&
-                !usuarioActualizado.getContrasena().startsWith("$2a$") &&
-                !usuarioActualizado.getContrasena().equals(usuarioExistente.getContrasena())) {
-            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
+        // Actualizar nombre de usuario y contraseña
+        usuarioExistente.setNombreUsuario(usuarioDTO.getNombreUsuario());
+
+        if (usuarioDTO.getContrasena() != null && !usuarioExistente.getContrasena().startsWith("$2a$")) {
+            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioDTO.getContrasena()));
         }
 
-        // Actualizar otros campos (según sea necesario)
-        usuarioExistente.setNombreUsuario(usuarioActualizado.getNombreUsuario());
-        // Agregar aquí la actualización de otros campos...
+        // Actualizar el rol si es necesario
+        Rol rol = (Rol) rolRepository.findByNombreRol(usuarioDTO.getNombreRol())
+                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + usuarioDTO.getNombreRol()));
+        usuarioExistente.setRol(rol);
 
-        // Guardar el usuario actualizado
         return usuarioRepository.save(usuarioExistente);
     }
 
