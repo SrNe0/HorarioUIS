@@ -75,7 +75,6 @@ export class TablasComponent implements OnInit, OnChanges{
   paginatedData: any[] = []; 
 
   getNestedProperty(item: string, data:any): any {
-    console.log(data)
     if (item === 'nombreDocente' && this.title === 'Horarios') {
       return `${data.profesor.nombre1} ${data.profesor.nombre2} ${data.profesor.apellido1} ${data.profesor.apellido2}`.trim();
     }else if (item === 'nombreDocente'){

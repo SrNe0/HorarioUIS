@@ -56,31 +56,25 @@ export class ModifyComponent implements OnInit{
   }
 
   sendAction() {
-    const modifyURL = this.url + "/" + this.data[this.columnas[0]];
-    if (this.modifyData.valid) {
-      this.columnas.forEach(column => {
-        if (!(column === 'idAula')){
-          if (typeof this.data[column] === 'number') {
-            this.data[column] = parseInt(this.modifyData.get(column)?.value, 10);
-          } if (typeof this.data[column]=== 'boolean'){
-            this.data[column] = true;
-          }else {
-            this.data[column] = this.modifyData.get(column)?.value;
-          }
-        }
-      });
-      console.log(this.data)
-      // this.service.modifyDataId(modifyURL, this.data).subscribe({
-      //   next: (response) => {
-      //     this.dataUpdated.emit(this.data);
-      //     alert('Datos guardados con éxito');
-      //     this.router.navigate(['/usuario' + this.url]);
-      //   },
-      //   error: (error) => {
-      //     console.error("Error al modificar los datos:", error);
-      //     alert('Ocurrió un error al guardar los datos.');
-      //   }
-      // });
+  const modifyURL = this.url + "/" + this.data[this.columnas[0]];
+
+  if (this.modifyData.valid) {
+
+    const updatedData: any = {};
+
+    this.columnas.forEach(column => {
+      const originalValue = this.data[column];
+      const newValue = this.modifyData.get(column)?.value;
+      
+      if (typeof originalValue === 'number') {
+          updatedData[column] = parseInt(newValue, 10);
+      } else {
+          updatedData[column] = newValue;
+      }
+    });
+
+    console.log(updatedData);
+
     } else {
       alert('Por favor completa todos los campos requeridos.');
     }
@@ -121,4 +115,14 @@ export class ModifyComponent implements OnInit{
   };
 }
 
-  
+        // this.service.modifyDataId(modifyURL, this.data).subscribe({
+      //   next: (response) => {
+      //     this.dataUpdated.emit(this.data);
+      //     alert('Datos guardados con éxito');
+      //     this.router.navigate(['/usuario' + this.url]);
+      //   },
+      //   error: (error) => {
+      //     console.error("Error al modificar los datos:", error);
+      //     alert('Ocurrió un error al guardar los datos.');
+      //   }
+      // });

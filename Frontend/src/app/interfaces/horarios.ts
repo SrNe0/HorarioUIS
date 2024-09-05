@@ -117,3 +117,4 @@ export class UsuarioResponse {
 export class RolResponse {
     nombreRol =  '';
 }
+
