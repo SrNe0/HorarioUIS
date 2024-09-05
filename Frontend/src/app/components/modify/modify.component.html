@@ -3,11 +3,20 @@
         <form class="form-body d-grid" [formGroup]="modifyData" (ngSubmit)="sendAction()">
 
             @for (item of columnas; track $index) {
-                <div class="form-group mb-3">
-                    <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
-                    <input type="integer" id="{{item}}" class="form-control" [placeholder]="getNestedProperty(item, data)" formControlName="{{item}}">
-                </div>
-
+                @if (item === 'necesitaComputadores' || item === 'tieneComputadores'){
+                    <div class="form-group mb-3">
+                        <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                        <select type="boolean" id="{{item}}" class="form-control" formControlName="{{item}}"> 
+                            <option value="true">Si</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                } @else{
+                    <div class="form-group mb-3">
+                        <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                        <input type="{{getypeof(getNestedProperty(item, data))}}" id="{{item}}" class="form-control" [placeholder]="getNestedProperty(item, data)" formControlName="{{item}}">
+                    </div>
+                }
             }
             <div class="text-center mt-3">
                 <button class="btn btn-mstyle me-4" type="submit" value="Enviar">Guardar</button>

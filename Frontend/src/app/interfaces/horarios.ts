@@ -65,7 +65,6 @@ export interface Rol {
 
 
 export class HorariosResponse{
-    // id =            '';
     grupo =         '';
     asignatura =    '';
     nombreDocente = '';
@@ -88,16 +87,17 @@ export class EdificioResponse {
 }
 
 export class GrupoResponse {
-    asignatura =   '';
+    codigoAsignatura =   '';
     nombreGrupo =  '';
     cupo =         0;
 }
 
 export class AsignaturaResponse {
-    codigo =         '';
-    nombre =         '';
-    horasTeoria =    0;
-    horasPractica =  0;
+    codigo =                '';
+    nombre =                '';
+    horasTeoria =           0;
+    horasPractica =         0;
+    necesitaComputadores =  true;
 }
 
 export class ProfesorResponse {

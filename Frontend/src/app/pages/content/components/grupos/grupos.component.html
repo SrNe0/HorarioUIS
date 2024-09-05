@@ -1,4 +1,4 @@
-<app-tablas [titulo]="title" [columnas]="columnas" [data]="dataGrupos"></app-tablas>
+<app-tablas [titulo]="title" [columnas]="columnas" [data]="dataGrupos" (action)="onAction($event)"></app-tablas>
 
 <router-outlet></router-outlet>
 

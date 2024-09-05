@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { TablasComponent } from '../../../../components/tablas/tablas.component';
+import { DelayService } from '../../../../services/delay.service';
 import { ApiService } from '../../../../services/api.service';
 import { Grupo } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
@@ -20,7 +21,13 @@ import { ConfirmacionComponent } from '../../../../components/confirmacion/confi
   styleUrl: './grupos.component.css'
 })
 export class GruposComponent implements OnInit{
-  constructor(private router: Router, private Aroute: ActivatedRoute, private service: ApiService) {}
+  constructor(
+    private router: Router, 
+    private Aroute: ActivatedRoute, 
+    private service: ApiService,
+    private delayService: DelayService,
+    private VCR: ViewContainerRef
+  ) {}
 
   private url:string = '/grupos'
 
@@ -36,22 +43,29 @@ export class GruposComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('grupos');  
   
-    this.service.data$.subscribe(data => {
-      this.dataGrupos = data;
+
+    this.delayService.setViewContainerRef(this.VCR);
+    
+    this.delayService.applyDelayWithLoading(600).subscribe(() =>{
+      this.service.data$.subscribe(data => {
+        this.dataGrupos = data;
+      });
+      this.service.getData(this.url).subscribe(); 
     });
-    this.service.getData(this.url).subscribe(); 
   }
 
   onAction(accion: Acciones) {
-    if (accion.accion == 'Editar') {
-      this.editar(accion.fila);
-    } else if (accion.accion == 'Borrar') {
-      this.objetoAEliminar = accion.fila;
-      this.nombreObjeto = accion.fila.nombre;
-      this.showConfirmDialog = true;
-    } else if (accion.accion == 'Crear') {
-      this.crear();
-    }
+    this.delayService.applyDelayWithLoading(500).subscribe(() =>{
+      if (accion.accion == 'Editar') {
+        this.editar(accion.fila);
+      } else if (accion.accion == 'Borrar') {
+        this.objetoAEliminar = accion.fila;
+        this.nombreObjeto = accion.fila.nombre;
+        this.showConfirmDialog = true;
+      } else if (accion.accion == 'Crear') {
+        this.crear();
+      }
+    });
   }
 
   crear() {

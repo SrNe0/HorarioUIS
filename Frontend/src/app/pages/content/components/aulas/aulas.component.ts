@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { TablasComponent } from '../../../../components/tablas/tablas.component';
+import { DelayService } from '../../../../services/delay.service';
 import { ApiService } from '../../../../services/api.service';
 import { Aula } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
@@ -19,8 +20,14 @@ import { ConfirmacionComponent } from '../../../../components/confirmacion/confi
   templateUrl: './aulas.component.html',
   styleUrl: './aulas.component.css'
 })
-export class AulasComponent {
-  constructor(private router:Router, private Aroute:ActivatedRoute ,private service:ApiService) {}
+export class AulasComponent implements OnInit{
+  constructor(
+    private router:Router,
+    private Aroute:ActivatedRoute,
+    private service:ApiService,
+    private delayService: DelayService,
+    private VCR: ViewContainerRef
+  ) {}
 
   private url:string = '/aulas'
 
@@ -36,21 +43,28 @@ export class AulasComponent {
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('aulas');  
   
-    this.service.data$.subscribe(data => {
-      this.dataAulas = data;
+    this.delayService.setViewContainerRef(this.VCR);
+    
+    this.delayService.applyDelayWithLoading(600).subscribe(() =>{
+      this.service.data$.subscribe(data => {
+        this.dataAulas = data;
+      });
+      this.service.getData(this.url).subscribe(); 
     });
-    this.service.getData(this.url).subscribe();
   }
+
   onAction(accion: Acciones) {
-    if (accion.accion == 'Editar') {
-      this.editar(accion.fila);
-    } else if (accion.accion == 'Borrar') {
-      this.objetoAEliminar = accion.fila;
-      this.nombreObjeto = accion.fila.nombre;
-      this.showConfirmDialog = true;
-    } else if (accion.accion == 'Crear') {
-      this.crear();
-    }
+    this.delayService.applyDelayWithLoading(500).subscribe(() =>{
+      if (accion.accion == 'Editar') {
+        this.editar(accion.fila);
+      } else if (accion.accion == 'Borrar') {
+        this.objetoAEliminar = accion.fila;
+        this.nombreObjeto = accion.fila.nombre;
+        this.showConfirmDialog = true;
+      } else if (accion.accion == 'Crear') {
+        this.crear();
+      }
+    });
   }
 
   crear() {
@@ -70,17 +84,21 @@ export class AulasComponent {
   }
 
   confirmarEliminacion(confirmado: boolean) {
-    if (confirmado && this.objetoAEliminar) {
-      this.service.deleteDataId(this.url, this.objetoAEliminar.idAula).subscribe({
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      if (confirmado && this.objetoAEliminar) {
+        this.service.deleteDataId(this.url, this.objetoAEliminar.idAula).subscribe({
+      });
+      }
+      this.showConfirmDialog = false;
+      this.objetoAEliminar = null!;
     });
-    }
-    this.showConfirmDialog = false;
-    this.objetoAEliminar = null!;
   }
 
   loadData(): void {
-    this.service.getData(this.url).subscribe(data => {
-      this.dataAulas = data;
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      this.service.getData(this.url).subscribe(data => {
+        this.dataAulas = data;
+      });
     });
   }
 }

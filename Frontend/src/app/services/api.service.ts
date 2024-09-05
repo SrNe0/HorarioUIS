@@ -9,21 +9,21 @@ import { Router } from '@angular/router';
 
 export class ApiService {
 
+  constructor(private router:Router, private http:HttpClient) { }
+  
+  private dataUrl: string = 'http://100.112.128.60/api';
+  
   // Declaración de la propiedad dataUrl
-  private dataUrl: string;
+  // private dataUrl: string;
 
-  constructor(private router: Router, private http: HttpClient) { 
-    // Detectar si el usuario está en la red local o en Tailscale
-    const hostname = window.location.hostname;
-
-    if (hostname === 'localhost' || hostname.startsWith('192.168.')) {
-      // Si el hostname es localhost o una IP local, usar la IP local del servidor
-      this.dataUrl = 'http://192.168.0.100/api';  // Cambia a la IP local del servidor
-    } else {
-      // De lo contrario, usar la IP de Tailscale
-      this.dataUrl = 'http://100.112.128.60/api';  // IP de Tailscale del servidor
-    }
-  }
+  // constructor(private router: Router, private http: HttpClient) { 
+  //   const hostname = window.location.hostname;
+  //   if (hostname === 'localhost' || hostname.startsWith('192.168.')) {
+  //     this.dataUrl = 'http://192.168.0.100/api';
+  //   } else {
+  //     this.dataUrl = 'http://100.112.128.60/api';
+  //   }
+  // }
 
   public dataSubject = new BehaviorSubject<any[]>([]);
   public data$ = this.dataSubject.asObservable();

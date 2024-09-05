@@ -40,15 +40,12 @@ export class AsignaturasComponent implements OnInit{
   columnas: string[] = [];
   title: string = 'Asignaturas';
 
-  mostrarMod : boolean = false;
-  mostrarCrea : boolean = false;
-
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('asignaturas');
 
     this.delayService.setViewContainerRef(this.VCR);
     
-    this.delayService.applyDelayWithLoading(1000).subscribe(() =>{
+    this.delayService.applyDelayWithLoading(600).subscribe(() =>{
       this.service.data$.subscribe(data => {
         this.dataAsignatura = data;
       });
@@ -70,15 +67,27 @@ export class AsignaturasComponent implements OnInit{
     });
   }
 
-  crear(){
-
+ crear() {
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['nuevo'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
+    });
   }
 
-  editar(objeto:Asignatura){
-
-  }
-
- 
+  editar(objeto: any) {
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['modificar'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, data: objeto, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
+    });
+  } 
 
   confirmarEliminacion(confirmado: boolean) {
     this.delayService.applyDelayWithLoading(500).subscribe(() => {

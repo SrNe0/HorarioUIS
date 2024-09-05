@@ -75,13 +75,16 @@ export class TablasComponent implements OnInit, OnChanges{
   paginatedData: any[] = []; 
 
   getNestedProperty(item: string, data:any): any {
+    console.log(data)
     if (item === 'nombreDocente' && this.title === 'Horarios') {
-      return data.profesor.nombreCompleto;
+      return `${data.profesor.nombre1} ${data.profesor.nombre2} ${data.profesor.apellido1} ${data.profesor.apellido2}`.trim();
     }else if (item === 'nombreDocente'){
-      return data.nombreCompleto;
-    }else if (item === 'asignatura'){
+      return `${data.nombre1} ${data.nombre2} ${data.apellido1} ${data.apellido2}`.trim();
+    }else if (item === 'asignatura' && this.title === 'Horarios'){
       return data['grupo'][item]['nombre']
-    }else if(item === 'tieneComputadores'){
+    }else if (item === 'codigoAsignatura' && this.title === 'Grupos'){
+      return data['asignatura']['nombre']
+    }else if(item === 'tieneComputadores' || item == 'necesitaComputadores'){
       if (data[item] === true){
         return 'Si'
       }else{
@@ -123,6 +126,7 @@ export class TablasComponent implements OnInit, OnChanges{
     contrasena: 'Contraseña',
     horaInicio: 'Hora de Inicio',
     horaFin: 'Hora Final',
-    tieneComputadores: 'Tiene Computadores'
+    tieneComputadores: 'Tiene Computadores',
+    codigoAsignatura: 'asignatura',
   };
 }

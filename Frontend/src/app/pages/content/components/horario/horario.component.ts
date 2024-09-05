@@ -34,7 +34,7 @@ export class HorarioComponent implements OnInit{
     this.service.data$.subscribe(data => {
       this.dataHorarios = data;
     });
-    this.service.getData(this.url + '/listar').subscribe(); 
+    this.service.getData(this.url).subscribe(); 
   }
 
   onAction(accion: Acciones) {

@@ -33,20 +33,17 @@ export class ModifyComponent implements OnInit{
       this.data = state.data;
       this.url = state.url
     }
-    
+    console.log(this.data)
     this.columnas.forEach(column => {
-      this.modifyData.addControl(column, this.formB.control(this.data[column] || '0', Validators.required))
+      this.modifyData.addControl(column, this.formB.control(this.getNestedProperty(column, this.data), Validators.required));
+
       
     });
 
   }
 
-  getNestedProperty(item: string, data:any): any {
-    if (typeof data[item] === 'object' && data[item] !== null) {
-      return data[item]["nombre"];
-    } else {
-      return data[item];
-    }
+  getypeof(item:any): any{
+    return typeof item
   }
 
   getColumnName(column: string): string {
@@ -62,29 +59,42 @@ export class ModifyComponent implements OnInit{
     const modifyURL = this.url + "/" + this.data[this.columnas[0]];
     if (this.modifyData.valid) {
       this.columnas.forEach(column => {
-        if (typeof this.data[column] === 'number') {
-          this.data[column] = parseInt(this.modifyData.get(column)?.value, 10);
-        } else {
-          this.data[column] = this.modifyData.get(column)?.value;
+        if (!(column === 'idAula')){
+          if (typeof this.data[column] === 'number') {
+            this.data[column] = parseInt(this.modifyData.get(column)?.value, 10);
+          } if (typeof this.data[column]=== 'boolean'){
+            this.data[column] = true;
+          }else {
+            this.data[column] = this.modifyData.get(column)?.value;
+          }
         }
       });
       console.log(this.data)
-      this.service.modifyDataId(modifyURL, this.data).subscribe({
-        next: (response) => {
-          this.dataUpdated.emit(this.data);
-          alert('Datos guardados con éxito');
-          this.router.navigate(['/usuario' + this.url]);
-        },
-        error: (error) => {
-          console.error("Error al modificar los datos:", error);
-          alert('Ocurrió un error al guardar los datos.');
-        }
-      });
+      // this.service.modifyDataId(modifyURL, this.data).subscribe({
+      //   next: (response) => {
+      //     this.dataUpdated.emit(this.data);
+      //     alert('Datos guardados con éxito');
+      //     this.router.navigate(['/usuario' + this.url]);
+      //   },
+      //   error: (error) => {
+      //     console.error("Error al modificar los datos:", error);
+      //     alert('Ocurrió un error al guardar los datos.');
+      //   }
+      // });
     } else {
       alert('Por favor completa todos los campos requeridos.');
     }
   }
 
+  getNestedProperty(item: string, data: any): any {
+    if (typeof data[item] === 'object' && data[item] !== null) {
+      return data[item]["nombre"];
+    } else if (item === "codigoAsignatura"){
+      return data['asignatura']['codigo'];
+    } else {
+      return data[item];
+    }
+  }
 
 
   columnMap: { [key: string]: string } = {
@@ -104,7 +114,10 @@ export class ModifyComponent implements OnInit{
     nombreUsuario: 'Usuario',
     contrasena: 'Contraseña',
     horaInicio: 'Hora de Inicio',
-    horaFin: 'Hora Final'
+    horaFin: 'Hora Final',
+    necesitaComputadores: 'Necesita Computadores',
+    tieneComputadores: 'tiene Computadores',
+    codigoAsignatura: 'Codigo de la asignatura',
   };
 }
 
