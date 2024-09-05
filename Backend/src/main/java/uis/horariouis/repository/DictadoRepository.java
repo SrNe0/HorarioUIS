@@ -9,6 +9,11 @@ import java.util.List;
 
 @Repository
 public interface DictadoRepository extends JpaRepository<Dictado, Long> {
+
+    // Consulta usando la entidad completa
     List<Dictado> findByAsignatura(Asignatura asignatura);
-    // Aquí puedes agregar métodos de consulta adicionales si los necesitas
+
+    // Consulta usando el campo 'idAsignatura' de la entidad 'Asignatura'
+    List<Dictado> findByAsignatura_IdAsignatura(Long idAsignatura);
 }
+

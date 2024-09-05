@@ -5,9 +5,12 @@ import org.springframework.stereotype.Service;
 import uis.horariouis.dto.AulaDTO;
 import uis.horariouis.model.Aula;
 import uis.horariouis.model.Edificio;
+import uis.horariouis.model.Horario;
 import uis.horariouis.repository.AulaRepository;
 import uis.horariouis.repository.EdificioRepository;
+import uis.horariouis.repository.HorarioRepository;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -17,6 +20,8 @@ public class AulaService {
 
     @Autowired
     private AulaRepository aulaRepository;
+
+    private final Random random = new Random();
 
     @Autowired
     private EdificioRepository edificioRepository;
@@ -83,13 +88,61 @@ public class AulaService {
         }
     }
 
-    public Aula obtenerAulaAleatoria(boolean necesitaComputadores) {
-        List<Aula> aulas = aulaRepository.findAulasByNecesitaComputadores(necesitaComputadores);
-        if (aulas.isEmpty()) {
-            return null; // o manejar el caso en que no haya aulas disponibles
+
+
+    public Aula obtenerAulaAdecuada(int cupoGrupo) {
+        List<Aula> aulasAdecuadas = aulaRepository.findAll().stream()
+                .filter(aula -> aula.getCapacidad() >= cupoGrupo)  // Filtrar aulas con capacidad suficiente
+                .toList();
+
+        if (aulasAdecuadas.isEmpty()) {
+            return null;  // No hay aulas disponibles con suficiente capacidad
         }
-        Random random = new Random();
-        return aulas.get(random.nextInt(aulas.size()));
+
+        return aulasAdecuadas.get(random.nextInt(aulasAdecuadas.size()));  // Seleccionar una aula aleatoriamente entre las adecuadas
+    }
+    @Autowired
+    private HorarioRepository horarioRepository;
+
+    // Método para verificar si hay solapamiento de horarios en un aula
+    public boolean existeSolapamiento(Aula aula, int dia, int horaInicio, int horasDuracion) {
+        Time horaInicioPropuesta = Time.valueOf(horaInicio + ":00:00");
+        Time horaFinPropuesta = Time.valueOf((horaInicio + horasDuracion) + ":00:00");
+
+        // Consulta para verificar solapamientos en el mismo aula y día
+        List<Horario> horariosSolapados = horarioRepository.findByAula_IdAulaAndDia(
+                aula.getIdAula(), convertirDia(dia)
+        );
+
+        for (Horario horario : horariosSolapados) {
+            Time horaInicioExistente = horario.getHoraInicio();
+            Time horaFinExistente = horario.getHoraFin();
+
+            // Verifica si hay solapamiento de tiempos:
+            // (horaInicioPropuesta < horaFinExistente) y (horaFinPropuesta > horaInicioExistente)
+            if (horaInicioPropuesta.before(horaFinExistente) && horaFinPropuesta.after(horaInicioExistente)) {
+                return true;  // Hay solapamiento
+            }
+        }
+
+        return false;  // No hay solapamiento
+    }
+
+
+
+
+
+    // Método para convertir el día (número) a un string de día de la semana
+    public String convertirDia(int dia) {
+        return switch (dia) {
+            case 1 -> "Lunes";
+            case 2 -> "Martes";
+            case 3 -> "Miércoles";
+            case 4 -> "Jueves";
+            case 5 -> "Viernes";
+            case 6 -> "Sábado";
+            default -> "Desconocido";
+        };
     }
 }
 

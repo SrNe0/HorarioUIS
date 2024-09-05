@@ -3,18 +3,14 @@ package uis.horariouis.service;
 import io.jenetics.*;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uis.horariouis.model.Horario;
 import uis.horariouis.model.Aula;
+import uis.horariouis.model.Horario;
 import uis.horariouis.model.Grupo;
 import uis.horariouis.model.Profesor;
-import uis.horariouis.repository.AulaRepository;
 import uis.horariouis.repository.GrupoRepository;
 import uis.horariouis.repository.HorarioRepository;
-import uis.horariouis.repository.ProfesorRepository;
-
 import java.sql.Time;
 import java.util.List;
 import java.util.Random;
@@ -26,19 +22,19 @@ public class HorarioGen {
     private HorarioRepository horarioRepository;
 
     @Autowired
-    private ProfesorRepository profesorRepository;
-
-    @Autowired
     private GrupoRepository grupoRepository;
 
     @Autowired
-    private AulaRepository aulaRepository;
+    private ProfesorService profesorService;
+
+    @Autowired
+    private AulaService aulaService;
 
     private final Random random = new Random();
 
     // Función de fitness que evalúa cada cromosoma
-    private double fitness(Genotype<IntegerGene> gt, Grupo grupo) {
-        int horasRequeridas = grupo.getAsignatura().getHorasTeoria();  // Obtener horas de teoría desde la asignatura
+    private double fitness(Genotype<IntegerGene> gt, Grupo grupo, Profesor profesor) {
+        int horasRequeridas = grupo.getAsignatura().getHorasTeoria();
         int horasAsignadas = 0;
 
         // Extraer los días y horas de los bloques
@@ -53,13 +49,29 @@ public class HorarioGen {
             fitness -= 30;  // Penaliza si los dos bloques están en el mismo día
         }
 
+        // Obtener un aula adecuada para el grupo
+        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+        if (aula == null) {
+            return -100.0;  // Penalización máxima si no hay un aula adecuada
+        }
+
+        // Penalizar si hay solapamiento en los bloques
+        if (aulaService.existeSolapamiento(aula, dia1, horaInicio1, horasRequeridas == 5 ? 3 : 2)
+                || aulaService.existeSolapamiento(aula, dia2, horaInicio2, 2)) {
+            fitness -= 100;  // Penalización fuerte por solapamiento
+        }
+
+        // Penalizar si el profesor no está relacionado con la asignatura del grupo
+        if (!profesorService.esProfesorAdecuado(grupo, profesor)) {
+            fitness -= 100;
+        }
+
         // Ajuste para materias de 5 horas (3 + 2 horas)
         if (horasRequeridas == 5) {
             horasAsignadas += 3;
             if (dia1 != dia2) {
-                horasAsignadas += 2;  // Si están en días distintos, agregar 2 horas adicionales
+                horasAsignadas += 2;
             }
-            // Penalizar si no se asignan exactamente 5 horas
             if (horasAsignadas != 5) {
                 fitness -= 50;
             }
@@ -69,18 +81,11 @@ public class HorarioGen {
         if (horasRequeridas == 4) {
             horasAsignadas += 2;
             if (dia1 != dia2) {
-                horasAsignadas += 2;  // Si están en días distintos, agregar 2 horas adicionales
+                horasAsignadas += 2;
             }
-            // Penalizar si no se asignan exactamente 4 horas
             if (horasAsignadas != 4) {
                 fitness -= 50;
             }
-        }
-
-        // Verificar que el aula asignada cumple con el cupo del grupo
-        Aula aula = obtenerAulaAdecuada(grupo.getCupo());
-        if (aula == null || aula.getCapacidad() < grupo.getCupo()) {
-            fitness -= 100;  // Penalización fuerte si no se cumple la capacidad
         }
 
         return fitness;
@@ -88,105 +93,93 @@ public class HorarioGen {
 
     // Método para generar el mejor horario usando Jenetics
     public void generarHorario() {
-        // Obtener todos los grupos con sus asignaturas
         List<Grupo> grupos = grupoRepository.findAll();
 
         for (Grupo grupo : grupos) {
-            int horasRequeridas = grupo.getAsignatura().getHorasTeoria();  // Obtener horas de teoría
+            Profesor profesor = profesorService.obtenerProfesorAdecuado(grupo);
 
-            Genotype<IntegerGene> gtf;
-
-            if (horasRequeridas == 5) {
-                // Crear el Genotipo para asignaturas de 5 horas (3 horas en un día, 2 en otro día)
-                gtf = Genotype.of(
-                        IntegerChromosome.of(1, 6),  // Día del primer bloque (3 horas)
-                        IntegerChromosome.of(6, 20),  // Hora de inicio del bloque de 3 horas
-                        IntegerChromosome.of(1, 6),  // Día del segundo bloque (2 horas)
-                        IntegerChromosome.of(6, 20)   // Hora de inicio del bloque de 2 horas
-                );
-            } else if (horasRequeridas == 4) {
-                // Crear el Genotipo para asignaturas de 4 horas (2 horas en un día, 2 en otro día)
-                gtf = Genotype.of(
-                        IntegerChromosome.of(1, 6),  // Día del primer bloque (2 horas)
-                        IntegerChromosome.of(6, 20),  // Hora de inicio del bloque de 2 horas
-                        IntegerChromosome.of(1, 6),  // Día del segundo bloque (2 horas)
-                        IntegerChromosome.of(6, 20)   // Hora de inicio del bloque de 2 horas
-                );
-            } else {
-                continue;  // Saltar si la cantidad de horas no es ni 4 ni 5
+            if (profesor == null) {
+                System.out.println("Excluyendo grupo " + grupo.getNombreGrupo() + " de la asignatura "
+                        + grupo.getAsignatura().getNombre() + " porque no tiene profesor asignado.");
+                continue;
             }
 
-            // Crear el motor de optimización
+            Genotype<IntegerGene> gtf = Genotype.of(
+                    IntegerChromosome.of(1, 6),  // Día del primer bloque
+                    IntegerChromosome.of(6, 20), // Hora inicio del primer bloque
+                    IntegerChromosome.of(1, 6),  // Día del segundo bloque
+                    IntegerChromosome.of(6, 20)  // Hora inicio del segundo bloque
+            );
+
             Engine<IntegerGene, Double> engine = Engine
-                    .builder(gt -> fitness(gt, grupo), gtf)
+                    .builder(gt -> fitness(gt, grupo, profesor), gtf)
                     .populationSize(200)
                     .optimize(Optimize.MAXIMUM)
                     .alterers(new Mutator<>(0.1), new SinglePointCrossover<>(0.6))
                     .build();
 
-            // Ejecutar el algoritmo genético para obtener la mejor solución
             Genotype<IntegerGene> result = engine.stream()
                     .limit(100)
                     .collect(EvolutionResult.toBestGenotype());
 
-            // Convertir el resultado en horarios y guardarlos en la base de datos
-            guardarHorario(result, grupo);
+            guardarHorario(result, grupo, profesor);
         }
     }
 
-    // Método para seleccionar aleatoriamente un profesor y aula adecuada
-    private Profesor obtenerProfesorAleatorio() {
-        List<Profesor> profesores = profesorRepository.findAll();
-        return profesores.get(random.nextInt(profesores.size()));
-    }
-
-    // Método para seleccionar un aula cuya capacidad sea mayor o igual al cupo del grupo
-    private Aula obtenerAulaAdecuada(int cupoGrupo) {
-        List<Aula> aulasAdecuadas = aulaRepository.findAll().stream()
-                .filter(aula -> aula.getCapacidad() >= cupoGrupo)  // Filtrar aulas con capacidad suficiente
-                .toList();
-
-        if (aulasAdecuadas.isEmpty()) {
-            return null;  // No hay aulas disponibles con suficiente capacidad
-        }
-
-        return aulasAdecuadas.get(random.nextInt(aulasAdecuadas.size()));  // Seleccionar una aula aleatoriamente entre las adecuadas
-    }
-
-    // Método para convertir el resultado en horarios y guardarlos en la base de datos
-    private void guardarHorario(Genotype<IntegerGene> result, Grupo grupo) {
-        // Extraer los días y horas de los bloques
+    private void guardarHorario(Genotype<IntegerGene> result, Grupo grupo, Profesor profesor) {
         int dia1 = result.get(0).get(0).intValue();
         int horaInicio1 = result.get(1).get(0).intValue();
         int dia2 = result.get(2).get(0).intValue();
         int horaInicio2 = result.get(3).get(0).intValue();
 
-        // Obtener valores aleatorios de la base de datos para profesor y aula adecuada
-        Profesor profesor = obtenerProfesorAleatorio();
-        Aula aula = obtenerAulaAdecuada(grupo.getCupo());
+        int horasDuracion1 = grupo.getAsignatura().getHorasTeoria() == 5 ? 3 : 2;
+        int horasDuracion2 = 2;
 
+        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+
+        // Reintentar el primer bloque si hay solapamiento
+        aula = reintentarSolapamiento(aula, dia1, horaInicio1, horasDuracion1, grupo);
         if (aula == null) {
-            throw new RuntimeException("No hay aulas con capacidad suficiente para el grupo con cupo: " + grupo.getCupo());
+            throw new RuntimeException("No se pudo encontrar un aula disponible para el primer bloque");
         }
 
-        // Guardar los horarios generados (adaptado para 3+2 horas o 2+2 horas)
-        Horario horario1 = new Horario(null, profesor, grupo, aula, convertirDia(dia1), Time.valueOf(horaInicio1 + ":00:00"), Time.valueOf((horaInicio1 + (grupo.getAsignatura().getHorasTeoria() == 5 ? 3 : 2)) + ":00:00"));
+        Horario horario1 = new Horario(null, profesor, grupo, aula, aulaService.convertirDia(dia1),
+                Time.valueOf(horaInicio1 + ":00:00"), Time.valueOf((horaInicio1 + horasDuracion1) + ":00:00"));
         horarioRepository.save(horario1);
 
-        Horario horario2 = new Horario(null, profesor, grupo, aula, convertirDia(dia2), Time.valueOf(horaInicio2 + ":00:00"), Time.valueOf((horaInicio2 + 2) + ":00:00"));
+        // Reintentar el segundo bloque si hay solapamiento
+        aula = reintentarSolapamiento(aula, dia2, horaInicio2, horasDuracion2, grupo);
+        if (aula == null) {
+            throw new RuntimeException("No se pudo encontrar un aula disponible para el segundo bloque");
+        }
+
+        Horario horario2 = new Horario(null, profesor, grupo, aula, aulaService.convertirDia(dia2),
+                Time.valueOf(horaInicio2 + ":00:00"), Time.valueOf((horaInicio2 + horasDuracion2) + ":00:00"));
         horarioRepository.save(horario2);
     }
 
-    // Método para convertir el número de día en un nombre de día (1 = Lunes, 6 = Sábado)
-    private String convertirDia(int dia) {
-        return switch (dia) {
-            case 1 -> "Lunes";
-            case 2 -> "Martes";
-            case 3 -> "Miércoles";
-            case 4 -> "Jueves";
-            case 5 -> "Viernes";
-            case 6 -> "Sábado";
-            default -> "Desconocido";
-        };
+    // Método para reintentar el solapamiento cambiando aula, día o hora
+    private Aula reintentarSolapamiento(Aula aulaInicial, int dia, int horaInicio, int horasDuracion, Grupo grupo) {
+        Aula aula = aulaInicial;
+        int intentos = 0;
+
+        // Intentar hasta 10 veces cambiar aula o reprogramar hora
+        while (aulaService.existeSolapamiento(aula, dia, horaInicio, horasDuracion) && intentos < 10) {
+            aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+
+            // Cambiar a otro día y hora si hay solapamiento
+            dia = random.nextInt(6) + 1;  // Cambiar a un día diferente (1 a 6, lunes a sábado)
+            horaInicio = random.nextInt(14) + 6;  // Cambiar a una nueva hora (de 6 a 20)
+
+            intentos++;
+        }
+
+        // Si después de 10 intentos no se encuentra una solución, devolver null
+        if (aulaService.existeSolapamiento(aula, dia, horaInicio, horasDuracion)) {
+            return null;
+        }
+
+        return aula;
     }
+
 }

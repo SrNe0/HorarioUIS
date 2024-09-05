@@ -5,18 +5,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import uis.horariouis.dto.ProfesorDTO;
 import uis.horariouis.exception.ResourceNotFoundException;
-import uis.horariouis.model.Profesor;
-import uis.horariouis.model.Rol;
-import uis.horariouis.model.Usuario;
+import uis.horariouis.model.*;
+import uis.horariouis.repository.DictadoRepository;
 import uis.horariouis.repository.ProfesorRepository;
 import uis.horariouis.repository.RolRepository;
 import uis.horariouis.repository.UsuarioRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class ProfesorService {
+    @Autowired
+    private DictadoRepository dictadoRepository;
+    private final Random random = new Random();
 
     private final ProfesorRepository profesorRepository;
     private final UsuarioRepository usuarioRepository;
@@ -97,4 +100,25 @@ public class ProfesorService {
         }
         profesorRepository.deleteById(id);
     }
+    // Método para seleccionar un profesor adecuado según la asignatura del grupo
+    public Profesor obtenerProfesorAdecuado(Grupo grupo) {
+        List<Dictado> dictados = dictadoRepository.findByAsignatura_IdAsignatura(grupo.getAsignatura().getIdAsignatura());
+        List<Profesor> profesoresAdecuados = dictados.stream()
+                .map(Dictado::getProfesor)
+                .toList();
+
+        if (profesoresAdecuados.isEmpty()) {
+            // Si no hay profesores disponibles, devolvemos null en lugar de lanzar una excepción
+            return null;
+        }
+
+        return profesoresAdecuados.get(random.nextInt(profesoresAdecuados.size()));
+    }
+
+    // Verificar si el profesor es adecuado para dictar la asignatura del grupo
+    public boolean esProfesorAdecuado(Grupo grupo, Profesor profesor) {
+        List<Dictado> dictados = dictadoRepository.findByAsignatura_IdAsignatura(grupo.getAsignatura().getIdAsignatura());
+        return dictados.stream().anyMatch(dictado -> dictado.getProfesor().getIdProfesor().equals(profesor.getIdProfesor()));
+    }
 }
+
