@@ -77,6 +77,12 @@ public class HorarioGen {
             }
         }
 
+        // Verificar que el aula asignada cumple con el cupo del grupo
+        Aula aula = obtenerAulaAdecuada(grupo.getCupo());
+        if (aula == null || aula.getCapacidad() < grupo.getCupo()) {
+            fitness -= 100;  // Penalización fuerte si no se cumple la capacidad
+        }
+
         return fitness;
     }
 
@@ -128,15 +134,23 @@ public class HorarioGen {
         }
     }
 
-    // Método para seleccionar aleatoriamente un profesor y aula
+    // Método para seleccionar aleatoriamente un profesor y aula adecuada
     private Profesor obtenerProfesorAleatorio() {
         List<Profesor> profesores = profesorRepository.findAll();
         return profesores.get(random.nextInt(profesores.size()));
     }
 
-    private Aula obtenerAulaAleatoria() {
-        List<Aula> aulas = aulaRepository.findAll();
-        return aulas.get(random.nextInt(aulas.size()));
+    // Método para seleccionar un aula cuya capacidad sea mayor o igual al cupo del grupo
+    private Aula obtenerAulaAdecuada(int cupoGrupo) {
+        List<Aula> aulasAdecuadas = aulaRepository.findAll().stream()
+                .filter(aula -> aula.getCapacidad() >= cupoGrupo)  // Filtrar aulas con capacidad suficiente
+                .toList();
+
+        if (aulasAdecuadas.isEmpty()) {
+            return null;  // No hay aulas disponibles con suficiente capacidad
+        }
+
+        return aulasAdecuadas.get(random.nextInt(aulasAdecuadas.size()));  // Seleccionar una aula aleatoriamente entre las adecuadas
     }
 
     // Método para convertir el resultado en horarios y guardarlos en la base de datos
@@ -147,9 +161,13 @@ public class HorarioGen {
         int dia2 = result.get(2).get(0).intValue();
         int horaInicio2 = result.get(3).get(0).intValue();
 
-        // Obtener valores aleatorios de la base de datos para profesor y aula
+        // Obtener valores aleatorios de la base de datos para profesor y aula adecuada
         Profesor profesor = obtenerProfesorAleatorio();
-        Aula aula = obtenerAulaAleatoria();
+        Aula aula = obtenerAulaAdecuada(grupo.getCupo());
+
+        if (aula == null) {
+            throw new RuntimeException("No hay aulas con capacidad suficiente para el grupo con cupo: " + grupo.getCupo());
+        }
 
         // Guardar los horarios generados (adaptado para 3+2 horas o 2+2 horas)
         Horario horario1 = new Horario(null, profesor, grupo, aula, convertirDia(dia1), Time.valueOf(horaInicio1 + ":00:00"), Time.valueOf((horaInicio1 + (grupo.getAsignatura().getHorasTeoria() == 5 ? 3 : 2)) + ":00:00"));
