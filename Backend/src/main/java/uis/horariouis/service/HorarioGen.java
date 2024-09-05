@@ -50,7 +50,8 @@ public class HorarioGen {
         }
 
         // Obtener un aula adecuada para el grupo
-        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo(), grupo.getAsignatura().getNecesitaComputadores());
+
         if (aula == null) {
             return -100.0;  // Penalización máxima si no hay un aula adecuada
         }
@@ -135,7 +136,8 @@ public class HorarioGen {
         int horasDuracion1 = grupo.getAsignatura().getHorasTeoria() == 5 ? 3 : 2;
         int horasDuracion2 = 2;
 
-        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+        Aula aula = aulaService.obtenerAulaAdecuada(grupo.getCupo(), grupo.getAsignatura().getNecesitaComputadores());
+
 
         // Reintentar el primer bloque si hay solapamiento
         aula = reintentarSolapamiento(aula, dia1, horaInicio1, horasDuracion1, grupo);
@@ -165,7 +167,8 @@ public class HorarioGen {
 
         // Intentar hasta 10 veces cambiar aula o reprogramar hora
         while (aulaService.existeSolapamiento(aula, dia, horaInicio, horasDuracion) && intentos < 10) {
-            aula = aulaService.obtenerAulaAdecuada(grupo.getCupo());
+            aula = aulaService.obtenerAulaAdecuada(grupo.getCupo(), grupo.getAsignatura().getNecesitaComputadores());
+
 
             // Cambiar a otro día y hora si hay solapamiento
             dia = random.nextInt(6) + 1;  // Cambiar a un día diferente (1 a 6, lunes a sábado)

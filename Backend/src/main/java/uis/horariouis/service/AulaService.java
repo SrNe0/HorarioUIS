@@ -90,17 +90,20 @@ public class AulaService {
 
 
 
-    public Aula obtenerAulaAdecuada(int cupoGrupo) {
+    public Aula obtenerAulaAdecuada(int cupoGrupo, boolean necesitaComputadores) {
+        // Filtrar aulas que tengan la capacidad adecuada y, si es necesario, computadoras.
         List<Aula> aulasAdecuadas = aulaRepository.findAll().stream()
                 .filter(aula -> aula.getCapacidad() >= cupoGrupo)  // Filtrar aulas con capacidad suficiente
+                .filter(aula -> !necesitaComputadores || aula.getTieneComputadores())  // Si necesita computadoras, filtrar aulas que las tengan
                 .toList();
 
         if (aulasAdecuadas.isEmpty()) {
-            return null;  // No hay aulas disponibles con suficiente capacidad
+            return null;  // No hay aulas disponibles con suficiente capacidad o computadoras
         }
 
         return aulasAdecuadas.get(random.nextInt(aulasAdecuadas.size()));  // Seleccionar una aula aleatoriamente entre las adecuadas
     }
+
     @Autowired
     private HorarioRepository horarioRepository;
 
