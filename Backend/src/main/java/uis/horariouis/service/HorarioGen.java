@@ -43,9 +43,9 @@ public class HorarioGen {
 
         // Extraer los días y horas de los bloques
         int dia1 = gt.get(0).get(0).intValue();
-        int horaInicio1 = gt.get(1).get(0).intValue();  // Usaremos esta variable más adelante
+        int horaInicio1 = gt.get(1).get(0).intValue();
         int dia2 = gt.get(2).get(0).intValue();
-        int horaInicio2 = gt.get(3).get(0).intValue();  // Usaremos esta variable más adelante
+        int horaInicio2 = gt.get(3).get(0).intValue();
 
         // Penalizar si los bloques están en el mismo día
         double fitness = 100.0;
@@ -53,15 +53,28 @@ public class HorarioGen {
             fitness -= 30;  // Penaliza si los dos bloques están en el mismo día
         }
 
-        // Sumar horas asignadas (3 horas en el primer bloque, 2 horas en el segundo bloque)
-        horasAsignadas += 3;
-        if (dia1 != dia2) {
-            horasAsignadas += 2;  // Agregar 2 horas adicionales si están en días distintos
+        // Ajuste para materias de 5 horas (3 + 2 horas)
+        if (horasRequeridas == 5) {
+            horasAsignadas += 3;
+            if (dia1 != dia2) {
+                horasAsignadas += 2;  // Si están en días distintos, agregar 2 horas adicionales
+            }
+            // Penalizar si no se asignan exactamente 5 horas
+            if (horasAsignadas != 5) {
+                fitness -= 50;
+            }
         }
 
-        // Penalizar si no se asignan exactamente 5 horas
-        if (horasAsignadas != horasRequeridas) {
-            fitness -= 50;  // Penaliza fuertemente si no se asignan exactamente 5 horas
+        // Ajuste para materias de 4 horas (2 + 2 horas)
+        if (horasRequeridas == 4) {
+            horasAsignadas += 2;
+            if (dia1 != dia2) {
+                horasAsignadas += 2;  // Si están en días distintos, agregar 2 horas adicionales
+            }
+            // Penalizar si no se asignan exactamente 4 horas
+            if (horasAsignadas != 4) {
+                fitness -= 50;
+            }
         }
 
         return fitness;
@@ -69,35 +82,49 @@ public class HorarioGen {
 
     // Método para generar el mejor horario usando Jenetics
     public void generarHorario() {
-        // Obtener solo los grupos que tienen asignaturas con 5 horas de teoría
+        // Obtener todos los grupos con sus asignaturas
         List<Grupo> grupos = grupoRepository.findAll();
+
         for (Grupo grupo : grupos) {
-            if (grupo.getAsignatura().getHorasTeoria() == 5) {
-                // Crear el Genotipo que maneje las asignaturas de 5 horas
-                Genotype<IntegerGene> gtf = Genotype.of(
-                        // Asignatura de 5 horas (1 bloque de 3 horas y 1 bloque de 2 horas)
-                        IntegerChromosome.of(1, 6),  // Día del primer bloque
+            int horasRequeridas = grupo.getAsignatura().getHorasTeoria();  // Obtener horas de teoría
+
+            Genotype<IntegerGene> gtf;
+
+            if (horasRequeridas == 5) {
+                // Crear el Genotipo para asignaturas de 5 horas (3 horas en un día, 2 en otro día)
+                gtf = Genotype.of(
+                        IntegerChromosome.of(1, 6),  // Día del primer bloque (3 horas)
                         IntegerChromosome.of(6, 20),  // Hora de inicio del bloque de 3 horas
-                        IntegerChromosome.of(1, 6),  // Día del segundo bloque
+                        IntegerChromosome.of(1, 6),  // Día del segundo bloque (2 horas)
                         IntegerChromosome.of(6, 20)   // Hora de inicio del bloque de 2 horas
                 );
-
-                // Crear el motor de optimización
-                Engine<IntegerGene, Double> engine = Engine
-                        .builder(gt -> fitness(gt, grupo), gtf)
-                        .populationSize(200)
-                        .optimize(Optimize.MAXIMUM)
-                        .alterers(new Mutator<>(0.1), new SinglePointCrossover<>(0.6))
-                        .build();
-
-                // Ejecutar el algoritmo genético para obtener la mejor solución
-                Genotype<IntegerGene> result = engine.stream()
-                        .limit(100)
-                        .collect(EvolutionResult.toBestGenotype());
-
-                // Convertir el resultado en horarios y guardarlos en la base de datos
-                guardarHorario(result, grupo);
+            } else if (horasRequeridas == 4) {
+                // Crear el Genotipo para asignaturas de 4 horas (2 horas en un día, 2 en otro día)
+                gtf = Genotype.of(
+                        IntegerChromosome.of(1, 6),  // Día del primer bloque (2 horas)
+                        IntegerChromosome.of(6, 20),  // Hora de inicio del bloque de 2 horas
+                        IntegerChromosome.of(1, 6),  // Día del segundo bloque (2 horas)
+                        IntegerChromosome.of(6, 20)   // Hora de inicio del bloque de 2 horas
+                );
+            } else {
+                continue;  // Saltar si la cantidad de horas no es ni 4 ni 5
             }
+
+            // Crear el motor de optimización
+            Engine<IntegerGene, Double> engine = Engine
+                    .builder(gt -> fitness(gt, grupo), gtf)
+                    .populationSize(200)
+                    .optimize(Optimize.MAXIMUM)
+                    .alterers(new Mutator<>(0.1), new SinglePointCrossover<>(0.6))
+                    .build();
+
+            // Ejecutar el algoritmo genético para obtener la mejor solución
+            Genotype<IntegerGene> result = engine.stream()
+                    .limit(100)
+                    .collect(EvolutionResult.toBestGenotype());
+
+            // Convertir el resultado en horarios y guardarlos en la base de datos
+            guardarHorario(result, grupo);
         }
     }
 
@@ -124,8 +151,8 @@ public class HorarioGen {
         Profesor profesor = obtenerProfesorAleatorio();
         Aula aula = obtenerAulaAleatoria();
 
-        // Guardar los horarios generados (primer bloque de 3 horas, segundo bloque de 2 horas)
-        Horario horario1 = new Horario(null, profesor, grupo, aula, convertirDia(dia1), Time.valueOf(horaInicio1 + ":00:00"), Time.valueOf((horaInicio1 + 3) + ":00:00"));
+        // Guardar los horarios generados (adaptado para 3+2 horas o 2+2 horas)
+        Horario horario1 = new Horario(null, profesor, grupo, aula, convertirDia(dia1), Time.valueOf(horaInicio1 + ":00:00"), Time.valueOf((horaInicio1 + (grupo.getAsignatura().getHorasTeoria() == 5 ? 3 : 2)) + ":00:00"));
         horarioRepository.save(horario1);
 
         Horario horario2 = new Horario(null, profesor, grupo, aula, convertirDia(dia2), Time.valueOf(horaInicio2 + ":00:00"), Time.valueOf((horaInicio2 + 2) + ":00:00"));
