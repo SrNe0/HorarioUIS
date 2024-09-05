@@ -13,5 +13,8 @@ public interface HorarioRepository extends JpaRepository<Horario, Long> {
 
     List<Horario> findByAula_IdAulaAndDiaAndHoraInicioAndHoraFin(Long idAula, String dia, Time horaInicio, Time horaFin);
     List<Horario> findByAula_IdAulaAndDia(Long idAula, String dia);
+    // Método para encontrar solapamientos de horarios por profesor
+    List<Horario> findByProfesor_IdProfesorAndDia(Long idProfesor, String dia);
 }
+
 

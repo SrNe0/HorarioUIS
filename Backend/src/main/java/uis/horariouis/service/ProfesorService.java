@@ -6,11 +6,9 @@ import org.springframework.stereotype.Service;
 import uis.horariouis.dto.ProfesorDTO;
 import uis.horariouis.exception.ResourceNotFoundException;
 import uis.horariouis.model.*;
-import uis.horariouis.repository.DictadoRepository;
-import uis.horariouis.repository.ProfesorRepository;
-import uis.horariouis.repository.RolRepository;
-import uis.horariouis.repository.UsuarioRepository;
+import uis.horariouis.repository.*;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -120,5 +118,57 @@ public class ProfesorService {
         List<Dictado> dictados = dictadoRepository.findByAsignatura_IdAsignatura(grupo.getAsignatura().getIdAsignatura());
         return dictados.stream().anyMatch(dictado -> dictado.getProfesor().getIdProfesor().equals(profesor.getIdProfesor()));
     }
+    @Autowired
+    private HorarioRepository horarioRepository;
+    @Autowired
+    private AulaService aulaService;
+
+    // Método para verificar si un profesor tiene solapamiento en el horario
+    public boolean existeSolapamientoProfesor(Profesor profesor, int dia, int horaInicio, int horasDuracion) {
+        Time horaInicioPropuesta = Time.valueOf(horaInicio + ":00:00");
+        Time horaFinPropuesta = Time.valueOf((horaInicio + horasDuracion) + ":00:00");
+
+        // Consulta para verificar solapamientos de profesor en el mismo día
+        List<Horario> horariosSolapados = horarioRepository.findByProfesor_IdProfesorAndDia(
+                profesor.getIdProfesor(), aulaService.convertirDia(dia)
+        );
+
+        for (Horario horario : horariosSolapados) {
+            Time horaInicioExistente = horario.getHoraInicio();
+            Time horaFinExistente = horario.getHoraFin();
+
+            // Verifica si hay solapamiento de tiempos para el profesor
+            if (horaInicioPropuesta.before(horaFinExistente) && horaFinPropuesta.after(horaInicioExistente)) {
+                return true;  // Hay solapamiento
+            }
+        }
+        return false;  // No hay solapamiento
+    }
+
+    public Profesor reintentarSolapamientoProfesor(Profesor profesorInicial, int dia, int horaInicio, int horasDuracion, Grupo grupo) {
+        Profesor profesor = profesorInicial;
+        int intentos = 0;
+
+        // Intentar hasta 10 veces cambiar de profesor o reprogramar la hora
+        while (existeSolapamientoProfesor(profesor, dia, horaInicio, horasDuracion) && intentos < 10) {
+            profesor = obtenerProfesorAdecuado(grupo);  // Cambiar de profesor si hay solapamiento
+
+            // Cambiar a otro día y hora si persiste el solapamiento
+            dia = random.nextInt(6) + 1;  // Cambiar a un día diferente (1 a 6, lunes a sábado)
+            horaInicio = random.nextInt(14) + 6;  // Cambiar a una nueva hora (de 6 a 20)
+
+            intentos++;
+        }
+
+        // Si después de 10 intentos no se encuentra una solución, devolver null
+        if (existeSolapamientoProfesor(profesor, dia, horaInicio, horasDuracion)) {
+            return null;
+        }
+
+        return profesor;
+    }
+
+
+
 }
 

@@ -9,6 +9,8 @@ import uis.horariouis.model.Horario;
 import uis.horariouis.service.HorarioGen;
 import uis.horariouis.service.HorarioService;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -26,8 +28,15 @@ public class HorarioController {
 
     @GetMapping("/generar")
     public ResponseEntity<String> generarHorario() {
-        horarioGen.generarHorario();
-        return ResponseEntity.ok("Los horarios se han generado correctamente.");
-    }
+        Instant inicio = Instant.now(); // Capturar el tiempo de inicio
+        horarioGen.generarHorario(); // Generar horarios
+        Instant fin = Instant.now(); // Capturar el tiempo de finalización
+        Duration duracion = Duration.between(inicio, fin); // Calcular la duración
+
+        long minutos = duracion.toMinutes();
+        long segundos = duracion.getSeconds() % 60;
+        long milisegundos = duracion.toMillis() % 1000;
+
+        return ResponseEntity.ok("Los horarios se han generado correctamente. Tiempo total: " + minutos+":" + segundos+":"+milisegundos);}
 }
 

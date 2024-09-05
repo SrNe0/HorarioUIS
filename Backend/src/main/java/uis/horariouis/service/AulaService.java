@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uis.horariouis.dto.AulaDTO;
 import uis.horariouis.model.Aula;
 import uis.horariouis.model.Edificio;
+import uis.horariouis.model.Grupo;
 import uis.horariouis.model.Horario;
 import uis.horariouis.repository.AulaRepository;
 import uis.horariouis.repository.EdificioRepository;
@@ -14,6 +15,9 @@ import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
+
 
 @Service
 public class AulaService {
@@ -112,7 +116,7 @@ public class AulaService {
         Time horaInicioPropuesta = Time.valueOf(horaInicio + ":00:00");
         Time horaFinPropuesta = Time.valueOf((horaInicio + horasDuracion) + ":00:00");
 
-        // Consulta para verificar solapamientos en el mismo aula y día
+        // Consulta los horarios en el mismo aula y día
         List<Horario> horariosSolapados = horarioRepository.findByAula_IdAulaAndDia(
                 aula.getIdAula(), convertirDia(dia)
         );
@@ -121,7 +125,7 @@ public class AulaService {
             Time horaInicioExistente = horario.getHoraInicio();
             Time horaFinExistente = horario.getHoraFin();
 
-            // Verifica si hay solapamiento de tiempos:
+            // Verifica si hay solapamiento en los tiempos:
             // (horaInicioPropuesta < horaFinExistente) y (horaFinPropuesta > horaInicioExistente)
             if (horaInicioPropuesta.before(horaFinExistente) && horaFinPropuesta.after(horaInicioExistente)) {
                 return true;  // Hay solapamiento
@@ -130,6 +134,7 @@ public class AulaService {
 
         return false;  // No hay solapamiento
     }
+
 
 
 
@@ -147,5 +152,47 @@ public class AulaService {
             default -> "Desconocido";
         };
     }
+
+
+    public Aula reintentarSolapamientoAula(Aula aulaInicial, int dia, int horaInicio, int horasDuracion, Grupo grupo) {
+        Aula aula = aulaInicial;
+        int intentosTotales = 0;  // Limitar los intentos totales
+        int maxIntentos = 10;  // Limitar el número total de intentos
+        Set<String> combinacionesIntentadas = new HashSet<>();  // Almacenar las combinaciones ya intentadas
+
+        // Crear una combinación inicial para evitar repetirla
+        combinacionesIntentadas.add(aula.getIdAula() + "-" + dia + "-" + horaInicio);
+
+        while (existeSolapamiento(aula, dia, horaInicio, horasDuracion) && intentosTotales < maxIntentos) {
+            // Cambiar aula y hora de manera alternada para maximizar las probabilidades de encontrar una solución
+
+            if (intentosTotales % 2 == 0) {
+                // Intentar cambiar el aula
+                aula = obtenerAulaAdecuada(grupo.getCupo(), grupo.getAsignatura().getNecesitaComputadores());
+            } else {
+                // Intentar cambiar el día y la hora
+                dia = random.nextInt(6) + 1;  // Cambiar a un día diferente (1 a 6, lunes a sábado)
+                horaInicio = random.nextInt(14) + 6;  // Cambiar a una nueva hora (de 6 a 20)
+            }
+
+            String nuevaCombinacion = aula.getIdAula() + "-" + dia + "-" + horaInicio;
+            // Verificar si esta combinación ya se ha intentado
+            if (combinacionesIntentadas.contains(nuevaCombinacion)) {
+                continue;  // Si ya se intentó, seguir a la siguiente iteración
+            }
+
+            combinacionesIntentadas.add(nuevaCombinacion);  // Almacenar la nueva combinación
+            intentosTotales++;
+        }
+
+        // Si después de los intentos sigue habiendo solapamiento, devolver null
+        if (existeSolapamiento(aula, dia, horaInicio, horasDuracion)) {
+            return null;
+        }
+
+        return aula;  // Retornar el aula sin solapamiento
+    }
+
+
 }
 
