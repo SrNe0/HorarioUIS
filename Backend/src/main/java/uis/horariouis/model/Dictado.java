@@ -1,6 +1,5 @@
 package uis.horariouis.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -28,7 +27,6 @@ public class Dictado implements Serializable {
     @NotNull(message = "El ID de la asignatura es requerido")
     @ManyToOne
     @JoinColumn(name = "idAsignatura", referencedColumnName = "idAsignatura")
-    @JsonIgnore
     private Asignatura asignatura;
 
     // Constructor vacío
