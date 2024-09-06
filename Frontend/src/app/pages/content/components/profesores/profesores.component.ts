@@ -36,10 +36,9 @@ export class ProfesoresComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('profesores');  
   
-    this.service.data$.subscribe(data => {
+    this.service.getData(this.url).subscribe(data => {
       this.dataProfes = data;
-    });
-    this.service.getData(this.url).subscribe(); 
+    }); 
   }
 
   onAction(accion: Acciones) {

@@ -36,10 +36,9 @@ export class UsuariosComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('usuarios');  
   
-    this.service.data$.subscribe(data => {
+    this.service.getData(this.url).subscribe(data => {
       this.dataUsuarios = data;
-    });
-    this.service.getData(this.url).subscribe(); 
+    }); 
   }
 
   onAction(accion: Acciones) {

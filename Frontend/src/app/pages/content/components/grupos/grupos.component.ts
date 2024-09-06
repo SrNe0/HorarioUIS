@@ -47,10 +47,9 @@ export class GruposComponent implements OnInit{
     this.delayService.setViewContainerRef(this.VCR);
     
     this.delayService.applyDelayWithLoading(600).subscribe(() =>{
-      this.service.data$.subscribe(data => {
+      this.service.getData(this.url).subscribe(data => {
         this.dataGrupos = data;
-      });
-      this.service.getData(this.url).subscribe(); 
+      }) 
     });
   }
 

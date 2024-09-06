@@ -1,23 +1,49 @@
 <main class="mcontainer d-flex position-absolute">
     <div class="content align-self-center">
         <form class="form-body d-grid" [formGroup]="modifyData" (ngSubmit)="sendAction()">
-
             @for (item of columnas; track $index) {
-                @if (item === 'necesitaComputadores' || item === 'tieneComputadores'){
-                    <div class="form-group mb-3">
-                        <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
-                        <select type="boolean" id="{{item}}" class="form-control" formControlName="{{item}}"> 
-                            <option value="true">Si</option>
-                            <option value="false">No</option>
-                        </select>
-                    </div>
-                } @else{
-                    <div class="form-group mb-3">
-                        <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
-                        <input type="{{getypeof(getNestedProperty(item, data))}}" id="{{item}}" class="form-control" [placeholder]="getNestedProperty(item, data)" formControlName="{{item}}">
-                    </div>
+                @if(!(getColumnName(item) === 'Id')){
+                    @if (item === 'necesitaComputadores' || item === 'tieneComputadores'){
+                        <div class="form-group mb-3">
+                            <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                            <select type="boolean" id="{{item}}" class="form-control" formControlName="{{item}}"> 
+                                <option value="true">Si</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    } @else if(getypeof(data[item]) === 'object'){
+                        <div class="form-group mb-3">
+                            <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                            <select type="text" id="{{item}}" class="form-control" formControlName="{{item}}"> 
+                                @if (item === 'asignatura'){
+                                    @for (asignatura of dataAsignaturas; track $index) {
+                                        <option value="{{asignatura.codigo}}">{{asignatura.nombre}}</option>
+                                    }
+                                } @else if (item === 'edificio') {
+                                    @for (edificio of dataEdificios; track $index) {
+                                        <option value="{{edificio.nombre}}">{{edificio.nombre}}</option>
+                                    }
+                                }
+    
+                            </select>
+                        </div>
+                    }@else if (item === 'rol'){
+                        <div class="form-group mb-3">
+                            <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                            <select type="boolean" id="{{item}}" class="form-control" formControlName="{{item}}"> 
+                                <option value="ADMIN">Admin</option>
+                                <option value="USER">Usuario</option>
+                            </select>
+                        </div>
+                    }@else{
+                        <div class="form-group mb-3">
+                            <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                            <input type="{{getypeof(getNestedProperty(item, data))}}" id="{{item}}" class="form-control" [placeholder]="getNestedProperty(item, data)" formControlName="{{item}}">
+                        </div>
+                    }
                 }
             }
+                
             <div class="text-center mt-3">
                 <button class="btn btn-mstyle me-4" type="submit" value="Enviar">Guardar</button>
                 <button class="btn btn-mdg ms-4" (click)="cancelAction()">Cancelar</button>

@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
+import { Asignatura, Edificio, Usuario } from '../../interfaces/horarios';
 
 @Component({
   selector: 'app-modify',
@@ -21,7 +22,8 @@ export class ModifyComponent implements OnInit{
 
   modifyData: FormGroup;
   data: any;
-  dataAnx:any;
+  dataEdificios: Edificio[] = [];
+  dataAsignaturas: Asignatura[] = [];
   columnas: string[] = [];
 
 
@@ -33,13 +35,23 @@ export class ModifyComponent implements OnInit{
       this.data = state.data;
       this.url = state.url
     }
+
+    this.loadData()
+
     console.log(this.data)
     this.columnas.forEach(column => {
       this.modifyData.addControl(column, this.formB.control(this.getNestedProperty(column, this.data), Validators.required));
-
-      
     });
 
+  }
+
+  loadData(){
+    this.service.getData('/asignaturas').subscribe(data => {
+      this.dataAsignaturas = data;
+    });
+    this.service.getData('/edificios').subscribe(data => {
+      this.dataEdificios = data;
+    });
   }
 
   getypeof(item:any): any{
@@ -57,6 +69,7 @@ export class ModifyComponent implements OnInit{
 
   sendAction() {
   const modifyURL = this.url + "/" + this.data[this.columnas[0]];
+  console.log(modifyURL)
 
   if (this.modifyData.valid) {
 
@@ -65,15 +78,34 @@ export class ModifyComponent implements OnInit{
     this.columnas.forEach(column => {
       const originalValue = this.data[column];
       const newValue = this.modifyData.get(column)?.value;
-      
-      if (typeof originalValue === 'number') {
+
+      if (!(this.getColumnName(column) === 'Id')){
+        if (typeof originalValue === 'number') {
           updatedData[column] = parseInt(newValue, 10);
-      } else {
+        } else if (column === 'edificio'){
+          const modifyColumn = 'nombre' + column.charAt(0).toUpperCase() + column.slice(1)
+          updatedData[modifyColumn] = newValue
+        }else if (newValue === 'true'){
+          updatedData[column] = true
+        }else if (newValue ==='false'){
+          updatedData[column] = false
+        }else {
           updatedData[column] = newValue;
+        }
       }
     });
 
     console.log(updatedData);
+    this.service.modifyDataId(modifyURL, updatedData).subscribe({
+    next: (response) => {
+      this.dataUpdated.emit(this.data);
+      alert('Datos guardados con éxito');
+      this.router.navigate(['/usuario' + this.url]);
+    },
+    error: (error) => {
+      console.error("Error al modificar los datos:", error);
+      alert('Ocurrió un error al guardar los datos.');
+    }});
 
     } else {
       alert('Por favor completa todos los campos requeridos.');
@@ -83,8 +115,8 @@ export class ModifyComponent implements OnInit{
   getNestedProperty(item: string, data: any): any {
     if (typeof data[item] === 'object' && data[item] !== null) {
       return data[item]["nombre"];
-    } else if (item === "codigoAsignatura"){
-      return data['asignatura']['codigo'];
+    } else if (item === "asignatura"){
+      return data[item]['nombre'];
     } else {
       return data[item];
     }
@@ -115,14 +147,3 @@ export class ModifyComponent implements OnInit{
   };
 }
 
-        // this.service.modifyDataId(modifyURL, this.data).subscribe({
-      //   next: (response) => {
-      //     this.dataUpdated.emit(this.data);
-      //     alert('Datos guardados con éxito');
-      //     this.router.navigate(['/usuario' + this.url]);
-      //   },
-      //   error: (error) => {
-      //     console.error("Error al modificar los datos:", error);
-      //     alert('Ocurrió un error al guardar los datos.');
-      //   }
-      // });

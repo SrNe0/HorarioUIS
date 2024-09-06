@@ -67,7 +67,7 @@ export class AsignaturasComponent implements OnInit{
     });
   }
 
- crear() {
+  crear() {
     this.delayService.applyDelayWithLoading(1000).subscribe(() => {
       this.router.navigate(['nuevo'], {
         relativeTo: this.Aroute,

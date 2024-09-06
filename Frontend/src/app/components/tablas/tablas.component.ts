@@ -80,29 +80,29 @@ export class TablasComponent implements OnInit, OnChanges{
     }else if (item === 'nombreDocente'){
       return `${data.nombre1} ${data.nombre2} ${data.apellido1} ${data.apellido2}`.trim();
     }else if (item === 'asignatura' && this.title === 'Horarios'){
-      return data['grupo'][item]['nombre']
-    }else if (item === 'codigoAsignatura' && this.title === 'Grupos'){
-      return data['asignatura']['nombre']
+      return data.grupo[item].nombre;
     }else if(item === 'tieneComputadores' || item == 'necesitaComputadores'){
       if (data[item] === true){
-        return 'Si'
+        return 'Si';
       }else{
-        return 'No'
+        return 'No';
       }
     }else if (typeof data[item] === 'object'){
       if (item === 'usuario'){
-          return data[item]['nombreUsuario']
+          return data[item]['nombreUsuario'];
       }else if (item === 'rol') {
-          return data[item]['nombreRol']
+          return data[item]['nombreRol'];
       }else if (item === 'grupo') {
-          return data[item]['nombreGrupo']
+          return data[item]['nombreGrupo'];
       }else if (item === 'aula') {
-          return data[item]['codigo']
+          return data[item]['codigo'];
+      }else if (item === 'asignatura') {
+        return data[item]['nombre'];
       }else{
-          return data[item]['nombre']
+          return data[item]['nombre'];
       }
       }else{
-        return data[item]
+        return data[item];
     }
 
   }
@@ -114,7 +114,7 @@ export class TablasComponent implements OnInit, OnChanges{
     idAula: 'Id',
     idProfesor: 'Id',
     idUsuario: 'Id',
-    idHorario: 'ID',
+    idHorario: 'Id',
 
     horasTeoria: 'Horas Teoricas',
     horasPractica: 'Horas Practicas',

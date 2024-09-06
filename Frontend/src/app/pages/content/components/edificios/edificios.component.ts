@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { TablasComponent } from "../../../../components/tablas/tablas.component";
+import { DelayService } from '../../../../services/delay.service';
 import { ApiService } from '../../../../services/api.service';
 import { Edificio } from '../../../../interfaces/horarios';
 import { Acciones, getEntityPropiedades } from '../../../../interfaces/acciones';
@@ -20,7 +21,13 @@ import { ConfirmacionComponent } from '../../../../components/confirmacion/confi
   styleUrl: './edificios.component.css'
 })
 export class EdificiosComponent implements OnInit{
-  constructor(private router:Router, private Aroute:ActivatedRoute, private service:ApiService) {}
+  constructor(
+    private router:Router,
+    private Aroute:ActivatedRoute,
+    private service:ApiService,
+    private delayService: DelayService,
+    private VCR: ViewContainerRef
+  ) {}
 
   private url:string = '/edificios'
 
@@ -35,11 +42,15 @@ export class EdificiosComponent implements OnInit{
 
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('edificios');  
+
+    this.delayService.setViewContainerRef(this.VCR);
   
-    this.service.data$.subscribe(data => {
-      this.dataEdificios = data;
+    this.delayService.applyDelayWithLoading(600).subscribe(() =>{
+      this.service.data$.subscribe(data => {
+        this.dataEdificios = data;
+      });
+      this.service.getData(this.url).subscribe(); 
     });
-    this.service.getData(this.url).subscribe(); 
   }
   
   onAction(accion: Acciones) {
@@ -55,9 +66,13 @@ export class EdificiosComponent implements OnInit{
   }
 
   crear() {
-    this.router.navigate(['nuevo'], {
-      relativeTo: this.Aroute,
-      state: { columns: this.columnas, url: this.url }
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['nuevo'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
     });
   }
 
@@ -69,19 +84,22 @@ export class EdificiosComponent implements OnInit{
       this.loadData();
     });
   }
-
   confirmarEliminacion(confirmado: boolean) {
-    if (confirmado && this.objetoAEliminar) {
-      this.service.deleteDataId(this.url, this.objetoAEliminar.idEdificio).subscribe({
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      if (confirmado && this.objetoAEliminar) {
+        this.service.deleteDataId(this.url, this.objetoAEliminar.idEdificio).subscribe({
+      });
+      }
+      this.showConfirmDialog = false;
+      this.objetoAEliminar = null!;
     });
-    }
-    this.showConfirmDialog = false;
-    this.objetoAEliminar = null!;
   }
 
   loadData(): void {
-    this.service.getData(this.url).subscribe(data => {
-      this.dataEdificios = data;
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      this.service.getData(this.url).subscribe(data => {
+        this.dataEdificios = data;
+      });
     });
   }
 }

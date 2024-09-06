@@ -9,14 +9,18 @@ import { Router } from '@angular/router';
 
 export class ApiService {
   constructor(private router: Router, private http: HttpClient) { 
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname.startsWith('192.168.')) {
-      this.dataUrl = 'http://192.168.0.100/api';
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      if (hostname.startsWith('192.168.')) {
+        this.dataUrl = 'http://192.168.0.100:8080/api';
+      } else {
+        this.dataUrl = 'http://100.112.128.60:8080/api';
+      }
     } else {
-      this.dataUrl = 'http://100.112.128.60/api';
+      this.dataUrl = 'http://192.168.0.100:8080/api';
     }
   }
-
+  
   private dataUrl: string;
 
   public dataSubject = new BehaviorSubject<any[]>([]);
@@ -86,4 +90,3 @@ export class ApiService {
     }
   }
 }
-

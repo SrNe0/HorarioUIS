@@ -65,6 +65,7 @@ export interface Rol {
 
 
 export class HorariosResponse{
+    idHorario =     '';
     grupo =         '';
     asignatura =    '';
     nombreDocente = '';
@@ -75,6 +76,7 @@ export class HorariosResponse{
 }
 
 export class AulaResponse {
+    idAula =       '';
     codigo =       '';
     descripcion =  '';
     capacidad =    0;
@@ -83,16 +85,19 @@ export class AulaResponse {
 }
 
 export class EdificioResponse {
+    idEdificio =  '';
     nombre =      '';
 }
 
 export class GrupoResponse {
-    codigoAsignatura =   '';
-    nombreGrupo =  '';
-    cupo =         0;
+    idGrupo =            '';   
+    asignatura =   '';
+    nombreGrupo =        '';
+    cupo =               0;
 }
 
 export class AsignaturaResponse {
+    idAsignatura =          '';
     codigo =                '';
     nombre =                '';
     horasTeoria =           0;
@@ -101,6 +106,7 @@ export class AsignaturaResponse {
 }
 
 export class ProfesorResponse {
+    idProfesor =          '';
     documentoIdentidad =  '';
     nombreDocente =       '';
     telefono =            '';
@@ -109,12 +115,14 @@ export class ProfesorResponse {
 }
 
 export class UsuarioResponse {
+    idUsuario =      '';
     nombreUsuario =  '';
     contrasena =     '';
     rol =            '';
 }
 
 export class RolResponse {
+    idRol =      '';
     nombreRol =  '';
 }
 

@@ -49,7 +49,7 @@ export class AulasComponent implements OnInit{
       this.service.data$.subscribe(data => {
         this.dataAulas = data;
       });
-      this.service.getData(this.url).subscribe(); 
+      this.service.getData(this.url).subscribe();
     });
   }
 
@@ -68,9 +68,13 @@ export class AulasComponent implements OnInit{
   }
 
   crear() {
-    this.router.navigate(['nuevo'], {
-      relativeTo: this.Aroute,
-      state: { columns: this.columnas, url: this.url }
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['nuevo'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
     });
   }
 

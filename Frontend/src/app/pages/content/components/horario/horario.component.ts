@@ -31,10 +31,9 @@ export class HorarioComponent implements OnInit{
   ngOnInit(): void {
     this.columnas = getEntityPropiedades('horario');  
   
-    this.service.data$.subscribe(data => {
+    this.service.getData(this.url).subscribe(data => {
       this.dataHorarios = data;
-    });
-    this.service.getData(this.url).subscribe(); 
+    }); 
   }
 
   onAction(accion: Acciones) {

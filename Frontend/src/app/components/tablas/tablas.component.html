@@ -6,7 +6,9 @@
             <thead>
                 <tr>
                     @for (item of columns; track $index) {
+                      @if (!(getColumnName(item) === 'Id')) {
                         <th class="ft-600 " [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
+                      }
                     }
                     @if (title !== 'Horarios') {
                       <th colspan="2" class="ft-600 w-10">Acciones</th>
@@ -17,7 +19,9 @@
                 @for (data of paginatedData; track $index) {
                   <tr>
                     @for (item of columns; track $index) {
-                      <td>{{ getNestedProperty(item, data) }}</td>
+                      @if ((!(getColumnName(item) === 'Id'))){
+                        <td>{{ getNestedProperty(item, data) }}</td>
+                      }
                     }
                     @if (title !== 'Horarios') {
                       <td><a class="clickCl text-decoration-none text-bck" (click)="onAction('Editar', data)"><i class="fi fi-br-edit"></i></a></td>
