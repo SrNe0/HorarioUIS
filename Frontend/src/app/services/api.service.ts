@@ -2,26 +2,30 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, catchError, throwError, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import ips from '../../assets/Ips.json';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class ApiService {
+export class ApiService{
   constructor(private router: Router, private http: HttpClient) { 
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
-      if (hostname.startsWith('192.168.')) {
-        this.dataUrl = 'http://192.168.0.100:8080/api';
+      console.log(hostname)
+      if (hostname.startsWith('100.112.') || hostname === 'localhost') {
+        this.dataUrl = this.ipData.tailScaleApiUrl;
       } else {
-        this.dataUrl = 'http://100.112.128.60:8080/api';
+        this.dataUrl = this.ipData.localApiUrl;
       }
     } else {
-      this.dataUrl = 'http://192.168.0.100:8080/api';
+      this.dataUrl = this.ipData.localApiUrl;
     }
+    this.dataUrl = this.dataUrl + ':8080/api'
   }
   
   private dataUrl: string;
+  private ipData: any = ips ;
 
   public dataSubject = new BehaviorSubject<any[]>([]);
   public data$ = this.dataSubject.asObservable();

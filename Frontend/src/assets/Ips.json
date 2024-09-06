@@ -1,0 +1,4 @@
+{
+    "localApiUrl": "http://192.168.0.100",
+    "tailScaleApiUrl": "http://100.112.128.60"
+}
