@@ -15,6 +15,7 @@ import uis.horariouis.repository.HorarioRepository;
 import java.sql.Time;
 import java.time.Instant;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -127,6 +128,9 @@ public class HorarioGen {
     public void generarHorario() {
         Instant inicio = Instant.now(); // Capturar el tiempo de inicio
         List<Grupo> grupos = grupoRepository.findAll();
+
+        // Aleatorizar (randomizar) la lista de grupos
+        Collections.shuffle(grupos);
 
         for (Grupo grupo : grupos) {
             try {
