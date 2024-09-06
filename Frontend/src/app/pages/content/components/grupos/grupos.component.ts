@@ -68,34 +68,43 @@ export class GruposComponent implements OnInit{
   }
 
   crear() {
-    this.router.navigate(['nuevo'], {
-      relativeTo: this.Aroute,
-      state: { columns: this.columnas, url: this.url }
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['nuevo'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
     });
   }
-
 
   editar(objeto: any) {
-    this.router.navigate(['modificar'], {
-      relativeTo: this.Aroute,
-      state: { columns: this.columnas, data: objeto, url: this.url }
-    }).then(() => {
-      this.loadData();
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['modificar'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, data: objeto, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
     });
-  }
+  } 
 
   confirmarEliminacion(confirmado: boolean) {
-    if (confirmado && this.objetoAEliminar) {
-      this.service.deleteDataId(this.url, this.objetoAEliminar.idGrupo).subscribe({
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      if (confirmado && this.objetoAEliminar) {
+        this.service.deleteDataId(this.url, this.objetoAEliminar.idGrupo).subscribe({
+      });
+      }
+      this.showConfirmDialog = false;
+      this.objetoAEliminar = null!;
     });
-    }
-    this.showConfirmDialog = false;
-    this.objetoAEliminar = null!;
   }
 
   loadData(): void {
-    this.service.getData(this.url).subscribe(data => {
-      this.dataGrupos = data;
+    this.delayService.applyDelayWithLoading(500).subscribe(() => {
+      this.service.getData(this.url).subscribe(data => {
+        this.dataGrupos = data;
+      });
     });
   }
 }

@@ -48,7 +48,6 @@ export interface Profesor {
     telefono:           string;
     correo:             string;
     usuario:            Usuario;
-    nombreCompleto:     string;
 }
 
 export interface Usuario {
@@ -108,10 +107,14 @@ export class AsignaturaResponse {
 export class ProfesorResponse {
     idProfesor =          '';
     documentoIdentidad =  '';
+    nombre1 =             '';  
+    nombre2 =             '';  
+    apellido1 =           '';
+    apellido2 =           '';
     nombreDocente =       '';
     telefono =            '';
     correo =              '';
-    usuario =             '';
+    rol =                 '';
 }
 
 export class UsuarioResponse {

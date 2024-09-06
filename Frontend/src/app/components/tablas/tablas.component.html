@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     @for (item of columns; track $index) {
-                      @if (!(getColumnName(item) === 'Id')) {
+                      @if (columnNameIgnore(getColumnName(item))) {
                         <th class="ft-600 " [class.w-5]="getColumnName(item) === 'Id'" [class.w-15]="getColumnName(item) === 'Documento de Identidad'">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</th>
                       }
                     }
@@ -19,7 +19,7 @@
                 @for (data of paginatedData; track $index) {
                   <tr>
                     @for (item of columns; track $index) {
-                      @if ((!(getColumnName(item) === 'Id'))){
+                      @if (columnNameIgnore(getColumnName(item))){
                         <td>{{ getNestedProperty(item, data) }}</td>
                       }
                     }

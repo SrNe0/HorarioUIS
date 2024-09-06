@@ -54,15 +54,17 @@ export class EdificiosComponent implements OnInit{
   }
   
   onAction(accion: Acciones) {
-    if (accion.accion == 'Editar') {
-      this.editar(accion.fila);
-    } else if (accion.accion == 'Borrar') {
-      this.objetoAEliminar = accion.fila;
-      this.nombreObjeto = accion.fila.nombre;
-      this.showConfirmDialog = true;
-    } else if (accion.accion == 'Crear') {
-      this.crear();
-    }
+    this.delayService.applyDelayWithLoading(500).subscribe(() =>{
+      if (accion.accion == 'Editar') {
+        this.editar(accion.fila);
+      } else if (accion.accion == 'Borrar') {
+        this.objetoAEliminar = accion.fila;
+        this.nombreObjeto = accion.fila.nombre;
+        this.showConfirmDialog = true;
+      } else if (accion.accion == 'Crear') {
+        this.crear();
+      }
+    });
   }
 
   crear() {
@@ -77,13 +79,16 @@ export class EdificiosComponent implements OnInit{
   }
 
   editar(objeto: any) {
-    this.router.navigate(['modificar'], {
-      relativeTo: this.Aroute,
-      state: { columns: this.columnas, data: objeto, url: this.url }
-    }).then(() => {
-      this.loadData();
+    this.delayService.applyDelayWithLoading(1000).subscribe(() => {
+      this.router.navigate(['modificar'], {
+        relativeTo: this.Aroute,
+        state: { columns: this.columnas, data: objeto, url: this.url }
+      }).then(() => {
+        this.loadData();
+      });
     });
-  }
+  } 
+
   confirmarEliminacion(confirmado: boolean) {
     this.delayService.applyDelayWithLoading(500).subscribe(() => {
       if (confirmado && this.objetoAEliminar) {

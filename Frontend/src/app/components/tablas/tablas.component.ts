@@ -70,6 +70,14 @@ export class TablasComponent implements OnInit, OnChanges{
     return this.columnMap[column] || column;
   }
 
+  columnNameIgnore(item:string){
+    if (item === 'Id' || item === 'nombre1' || item === 'nombre2' || item === 'apellido1' || item === 'apellido2' || item === 'rol'){
+      return false
+    }else {
+      return true
+    }
+  }
+
   itemsPerPage: number = 10; 
   currentPage: number = 1; 
   paginatedData: any[] = []; 

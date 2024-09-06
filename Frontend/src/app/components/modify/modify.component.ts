@@ -67,23 +67,34 @@ export class ModifyComponent implements OnInit{
     this.router.navigate(['/usuario' + this.url])
   }
 
+  columnNameIgnore(item:string){
+    if (item === 'Id' || item === 'Nombre del docente'){
+      return false
+    }else {
+      return true
+    }
+  }
+
   sendAction() {
   const modifyURL = this.url + "/" + this.data[this.columnas[0]];
   console.log(modifyURL)
 
-  if (this.modifyData.valid) {
-
+  //if (this.modifyData.valid) {
+    if (true) {
     const updatedData: any = {};
 
     this.columnas.forEach(column => {
       const originalValue = this.data[column];
       const newValue = this.modifyData.get(column)?.value;
 
-      if (!(this.getColumnName(column) === 'Id')){
+      if (this.columnNameIgnore(this.getColumnName(column))){
         if (typeof originalValue === 'number') {
           updatedData[column] = parseInt(newValue, 10);
         } else if (column === 'edificio'){
           const modifyColumn = 'nombre' + column.charAt(0).toUpperCase() + column.slice(1)
+          updatedData[modifyColumn] = newValue
+        }else if (column === 'asignatura'){
+          const modifyColumn = 'codigo' + column.charAt(0).toUpperCase() + column.slice(1)
           updatedData[modifyColumn] = newValue
         }else if (newValue === 'true'){
           updatedData[column] = true
@@ -96,6 +107,7 @@ export class ModifyComponent implements OnInit{
     });
 
     console.log(updatedData);
+    
     this.service.modifyDataId(modifyURL, updatedData).subscribe({
     next: (response) => {
       this.dataUpdated.emit(this.data);
@@ -144,6 +156,10 @@ export class ModifyComponent implements OnInit{
     necesitaComputadores: 'Necesita Computadores',
     tieneComputadores: 'tiene Computadores',
     codigoAsignatura: 'Codigo de la asignatura',
+    nombre1: 'Primer Nombre',
+    nombre2: 'Segundo Nombre',
+    apellido1: 'Primer Apellido',
+    apellido2: 'Segundo Apellido',
   };
 }
 

@@ -2,7 +2,7 @@
     <div class="content align-self-center">
         <form class="form-body d-grid" [formGroup]="modifyData" (ngSubmit)="sendAction()">
             @for (item of columnas; track $index) {
-                @if(!(getColumnName(item) === 'Id')){
+                @if(columnNameIgnore(getColumnName(item))){
                     @if (item === 'necesitaComputadores' || item === 'tieneComputadores'){
                         <div class="form-group mb-3">
                             <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
@@ -34,6 +34,11 @@
                                 <option value="ADMIN">Admin</option>
                                 <option value="USER">Usuario</option>
                             </select>
+                        </div>
+                    }@else if (item === 'nombreDocente'){
+                        <div class="form-group mb-3">
+                            <label for="{{item}}" class="form-label ft-500">{{getColumnName(item).charAt(0).toUpperCase() + getColumnName(item).slice(1)}}</label>
+                            <input type="{{getypeof(getNestedProperty(item, data))}}" id="{{item}}" class="form-control" [placeholder]="getNestedProperty(item, data)" formControlName="{{item}}">
                         </div>
                     }@else{
                         <div class="form-group mb-3">
