@@ -24,7 +24,6 @@ public class Asignatura implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @CsvBindByName(column = "ID")
-    @JsonIgnore
     private Long idAsignatura;
 
     @NotBlank(message = "El código de la asignatura es requerido")
