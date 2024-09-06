@@ -1,5 +1,7 @@
 package uis.horariouis.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,23 +20,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import uis.horariouis.service.ShellScriptExecutor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration // Indica que esta clase es una configuración de Spring
-@EnableWebSecurity // Habilita la seguridad web de Spring
+@Configuration
+@EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService; // Servicio para cargar detalles del usuario desde la base de datos
+    // Definir un logger para esta clase
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfigurer.class);
 
     @Autowired
-    private JwtRequestFilter jwtRequestFilter; // Filtro JWT para validar tokens en cada solicitud
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // Configura el gestor de autenticación con el servicio de detalles de usuario y un codificador de contraseñas
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -44,55 +50,74 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Configura la seguridad HTTP
-        http.cors().and().csrf().disable() // Habilita CORS y deshabilita CSRF (Cross-Site Request Forgery)
-                .authorizeRequests() // Permite la autorización de solicitudes
-                .antMatchers("/api/security/authenticate").permitAll() // Permite el acceso público al endpoint de autenticación
-                .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").authenticated() // Requiere autenticación para los documentos de API y Swagger UI
-                .antMatchers(HttpMethod.GET, "/**").hasAnyRole("USER", "ADMIN") // Permite acceso GET a usuarios con roles USER y ADMIN
-                .antMatchers(HttpMethod.POST, "/**").hasRole("ADMIN") // Permite acceso POST solo a usuarios con rol ADMIN
-                .antMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN") // Permite acceso PUT solo a usuarios con rol ADMIN
-                .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN") // Permite acceso DELETE solo a usuarios con rol ADMIN
-                .anyRequest().authenticated() // Requiere autenticación para cualquier otra solicitud
-                .and().httpBasic() // Habilita la autenticación básica (útil para Swagger)
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/api/security/authenticate").permitAll()
+                .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and().httpBasic()
                 .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Configura la política de sesión sin estado (stateless)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler()); // Maneja excepciones de acceso denegado
-        // Añade el filtro JWT antes del filtro de autenticación de nombre de usuario y contraseña
+                .accessDeniedHandler(accessDeniedHandler());
+
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        // Define el bean de BCryptPasswordEncoder para codificar las contraseñas
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        // Define el bean de AccessDeniedHandler para manejar accesos denegados
         return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpStatus.FORBIDDEN.value()); // Configura el estado de la respuesta como 403 (FORBIDDEN)
-            response.setContentType("application/json"); // Configura el tipo de contenido de la respuesta como JSON
-            response.getWriter().write("{\"message\": \"You do not have permission to access this resource\", \"status\": 403}"); // Escribe el mensaje de error en la respuesta
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"You do not have permission to access this resource\", \"status\": 403}");
         };
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // Configura las reglas de CORS (Cross-Origin Resource Sharing)
+        List<String> defaultIPs = List.of(
+                "http://localhost:4200",
+                "http://100.112.128.60:4200",
+                "http://192.168.0.100:4200"
+        );
+
+        List<String> dynamicIPs = new ArrayList<>();
+        try {
+            dynamicIPs = ShellScriptExecutor.getCombinedIPAddressesWithPort(
+                    "/home/dev/getIPAddr_Local.sh",
+                    "/home/dev/getIPAddr_tailScaled.sh",
+                    "4200"
+            );
+        } catch (Exception e) {
+            // Usa el logger para registrar advertencias y errores
+            logger.warn("No se pudieron ejecutar los scripts, continuando con las IPs por defecto.", e);
+        }
+
+        List<String> allowedOrigins = new ArrayList<>(defaultIPs);
+        if (!dynamicIPs.isEmpty()) {
+            allowedOrigins.addAll(dynamicIPs);
+        }
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://100.112.128.60:4200", "http://192.168.0.100:4200")); // Permite orígenes específicos
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Permite métodos HTTP específicos
-        configuration.setAllowedHeaders(List.of("*")); // Permite todos los encabezados
-        configuration.setAllowCredentials(true); // Permite credenciales
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplica la configuración a todas las rutas
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

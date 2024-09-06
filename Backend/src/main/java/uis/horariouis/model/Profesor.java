@@ -48,7 +48,6 @@ public class Profesor implements Serializable {
     // Referencia opcional a Usuario si es necesario para la lógica de negocio
     @OneToOne
     @JoinColumn(name = "idUsuario", referencedColumnName = "idUsuario")
-    @JsonIgnore
     private Usuario usuario;
 
     // Constructor, getters y setters
