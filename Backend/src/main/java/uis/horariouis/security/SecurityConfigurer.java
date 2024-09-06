@@ -88,9 +88,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         List<String> defaultIPs = List.of(
-                "http://localhost:4200",
-                "http://100.112.128.60:4200",
-                "http://192.168.0.100:4200"
+                "http://localhost:4200"
         );
 
         List<String> dynamicIPs = new ArrayList<>();
