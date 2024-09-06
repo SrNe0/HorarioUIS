@@ -24,7 +24,7 @@ public class IpSetupRunner implements CommandLineRunner {
         String tailScaleApiUrl = ips.size() > 1 ? removePort(ips.get(1)) : "http://101.112.128.60";
 
         // Escribe las IPs en el archivo config.json sin puerto
-        try (FileWriter file = new FileWriter("/home/dev/HorarioUIS/Frontend/Ips.json")) {
+        try (FileWriter file = new FileWriter("/home/dev/HorarioUIS/Frontend/src/assets/Ips.json")) {
             file.write("{\"localApiUrl\": \"" + localApiUrl + "\", \"tailScaleApiUrl\": \"" + tailScaleApiUrl + "\"}");
             System.out.println("Configuración completada: " + localApiUrl + " y " + tailScaleApiUrl);
         } catch (IOException e) {
