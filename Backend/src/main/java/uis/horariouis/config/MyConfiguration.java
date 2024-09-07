@@ -24,7 +24,8 @@ public class MyConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 // IPs por defecto con el puerto 4200
                 List<String> defaultIPs = List.of(
-                        "http://localhost:4200"
+                       "http://localhost:4200",  // Para desarrollo local
+                        "http://18.222.86.46"    // IP pública del VPS
                 );
 
                 List<String> dynamicIPs = new ArrayList<>();

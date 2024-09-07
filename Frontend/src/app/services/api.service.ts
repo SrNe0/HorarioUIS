@@ -13,7 +13,11 @@ export class ApiService{
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
       console.log(hostname)
-      if (hostname.startsWith('100.112.') || hostname === 'localhost') {
+      
+      if (hostname === '18.222.86.46') {
+        // Si el hostname es la IP pública del VPS
+        this.dataUrl = "http://18.222.86.46";  // Usa la URL pública del VPS
+      } else if (hostname.startsWith('100.112.') || hostname === 'localhost') {
         this.dataUrl = this.ipData.tailScaleApiUrl;
       } else {
         this.dataUrl = this.ipData.localApiUrl;
@@ -21,7 +25,7 @@ export class ApiService{
     } else {
       this.dataUrl = this.ipData.localApiUrl;
     }
-    this.dataUrl = this.dataUrl + ':8080/api'
+    this.dataUrl = this.dataUrl + ':/api'
   }
   
   private dataUrl: string;
